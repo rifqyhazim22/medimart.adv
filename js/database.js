@@ -12,13 +12,39 @@ class Database {
             PRODUCTS: 'medimart_products',
             USERS: 'medimart_users',
             CART: 'medimart_cart',
-            CURRENT_USER: 'medimart_current_user'
+            CURRENT_USER: 'medimart_current_user',
+            ORDERS: 'medimart_orders'
         };
 
         this.products = this.load(this.KEYS.PRODUCTS) || this.getDefaultProducts();
         this.users = this.load(this.KEYS.USERS) || this.getDefaultUsers();
-        this.cart = this.load(this.KEYS.CART) || [];
+        // Cart is now loaded per-user dynamically
         this.currentUser = this.load(this.KEYS.CURRENT_USER) || null;
+        this.orders = this.load(this.KEYS.ORDERS) || this.getDefaultOrders();
+    }
+
+    /**
+     * Get default orders for initial load
+     */
+    getDefaultOrders() {
+        return [
+            {
+                id: 'ORD-DEFAULT',
+                userId: 3, // John Doe
+                items: [
+                    {
+                        productId: 1,
+                        productName: 'Obat Pelicin',
+                        price: 25000,
+                        quantity: 2,
+                        icon: '💧'
+                    }
+                ],
+                total: 50000,
+                status: 'success',
+                createdAt: new Date().toISOString()
+            }
+        ];
     }
 
     /**
@@ -93,43 +119,51 @@ class Database {
         return [
             {
                 id: 1,
-                name: 'Paracetamol 500mg',
-                category: 'Obat Bebas',
-                description: 'Obat pereda nyeri dan penurun demam. Efektif untuk sakit kepala, sakit gigi, dan demam.',
-                price: 15000,
-                stock: 100,
-                seller: 'Admin',
-                icon: '💊'
+                name: 'Obat Pelicin',
+                category: 'Alat Kesehatan',
+                description: 'Cairan pelicin medis serbaguna.',
+                price: 25000,
+                stock: 50,
+                seller: 'seller1',
+                sellerId: 2,
+                sellerName: 'Apotek Sehat',
+                icon: '💧'
             },
             {
                 id: 2,
-                name: 'Vitamin C 1000mg',
-                category: 'Vitamin',
-                description: 'Suplemen vitamin C untuk meningkatkan daya tahan tubuh. 1 tablet per hari.',
-                price: 45000,
-                stock: 75,
-                seller: 'Admin',
-                icon: '🍊'
+                name: 'Minyak Kayu Putih',
+                category: 'Herbal',
+                description: 'Minyak ekaliptus murni untuk menghangatkan tubuh.',
+                price: 18000,
+                stock: 100,
+                seller: 'seller1',
+                sellerId: 2,
+                sellerName: 'Apotek Sehat',
+                icon: '🌿'
             },
             {
                 id: 3,
-                name: 'Betadine Solution',
-                category: 'Alat Kesehatan',
-                description: 'Antiseptik untuk luka luar. Mencegah infeksi pada luka ringan.',
-                price: 35000,
-                stock: 50,
-                seller: 'Admin',
-                icon: '🩹'
+                name: 'Balsem Otot Geliga',
+                category: 'Obat Bebas',
+                description: 'Balsem untuk meredakan nyeri otot dan keseleo.',
+                price: 12000,
+                stock: 80,
+                seller: 'seller1',
+                sellerId: 2,
+                sellerName: 'Apotek Sehat',
+                icon: '🔥'
             },
             {
                 id: 4,
-                name: 'Obat Batuk Herbal',
-                category: 'Herbal',
-                description: 'Obat batuk alami dari bahan herbal. Meredakan batuk dan tenggorokan gatal.',
-                price: 28000,
-                stock: 60,
-                seller: 'Admin',
-                icon: '🌿'
+                name: 'Kompres Demam',
+                category: 'Alat Kesehatan',
+                description: 'Plester kompres penurun panas instan.',
+                price: 8000,
+                stock: 200,
+                seller: 'seller1',
+                sellerId: 2,
+                sellerName: 'Apotek Sehat',
+                icon: '🩹'
             }
         ];
     }
@@ -165,9 +199,9 @@ class Database {
     updateProduct(id, product) {
         const index = this.products.findIndex(p => p.id === id);
         if (index !== -1) {
-            this.products[index] = { 
-                ...this.products[index], 
-                ...product 
+            this.products[index] = {
+                ...this.products[index],
+                ...product
             };
             this.save(this.KEYS.PRODUCTS, this.products);
             return true;
@@ -204,8 +238,8 @@ class Database {
      */
     getUserProducts() {
         if (!this.currentUser) return [];
-        return this.products.filter(p => 
-            p.seller === this.currentUser.username || 
+        return this.products.filter(p =>
+            p.seller === this.currentUser.username ||
             p.seller === this.currentUser.name ||
             p.sellerId === this.currentUser.id
         );
@@ -239,18 +273,45 @@ class Database {
     // ==========================================
 
     /**
+     * Get user's cart (internal)
+     */
+    _getUserCart() {
+        if (!this.currentUser) return [];
+        // Initialize carts object if not exists
+        const carts = this.load('medimart_carts') || {};
+        return carts[this.currentUser.id] || [];
+    }
+
+    /**
+     * Save user's cart
+     */
+    _saveUserCart(cartItems) {
+        if (!this.currentUser) return;
+        const carts = this.load('medimart_carts') || {};
+        carts[this.currentUser.id] = cartItems;
+        this.save('medimart_carts', carts);
+    }
+
+    /**
      * Add product to cart
      * @param {number} productId - Product ID
      * @param {number} quantity - Quantity to add
      * @returns {boolean} Success status
      */
     addToCart(productId, quantity = 1) {
+        // Admin Restriction
+        if (!this.currentUser || this.currentUser.role === 'admin') {
+            return false;
+        }
+
         const product = this.getProductById(productId);
         if (!product || product.stock < quantity) {
             return false;
         }
 
-        const existing = this.cart.find(item => item.productId === productId);
+        let cart = this._getUserCart();
+        const existing = cart.find(item => item.productId === productId);
+
         if (existing) {
             if (existing.quantity + quantity <= product.stock) {
                 existing.quantity += quantity;
@@ -258,10 +319,10 @@ class Database {
                 return false;
             }
         } else {
-            this.cart.push({ productId, quantity });
+            cart.push({ productId, quantity });
         }
-        
-        this.save(this.KEYS.CART, this.cart);
+
+        this._saveUserCart(cart);
         return true;
     }
 
@@ -272,21 +333,24 @@ class Database {
      * @returns {boolean} Success status
      */
     updateCartQuantity(productId, quantity) {
+        if (!this.currentUser) return false;
+
         const product = this.getProductById(productId);
         if (!product) return false;
 
-        const item = this.cart.find(item => item.productId === productId);
+        let cart = this._getUserCart();
+        const item = cart.find(item => item.productId === productId);
         if (!item) return false;
 
         if (quantity <= 0) {
-            this.cart = this.cart.filter(item => item.productId !== productId);
+            cart = cart.filter(item => item.productId !== productId);
         } else if (quantity <= product.stock) {
             item.quantity = quantity;
         } else {
             return false;
         }
 
-        this.save(this.KEYS.CART, this.cart);
+        this._saveUserCart(cart);
         return true;
     }
 
@@ -295,7 +359,8 @@ class Database {
      * @returns {Array} Cart items with product info
      */
     getCart() {
-        return this.cart.map(item => ({
+        const cart = this._getUserCart();
+        return cart.map(item => ({
             ...item,
             product: this.getProductById(item.productId)
         })).filter(item => item.product !== null);
@@ -306,9 +371,9 @@ class Database {
      * @returns {number} Total price
      */
     getCartTotal() {
-        return this.cart.reduce((sum, item) => {
-            const product = this.getProductById(item.productId);
-            return sum + (product ? product.price * item.quantity : 0);
+        const cart = this.getCart();
+        return cart.reduce((sum, item) => {
+            return sum + (item.product ? item.product.price * item.quantity : 0);
         }, 0);
     }
 
@@ -317,15 +382,89 @@ class Database {
      * @returns {number} Total quantity
      */
     getCartItemCount() {
-        return this.cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cart = this._getUserCart();
+        return cart.reduce((sum, item) => sum + item.quantity, 0);
     }
 
     /**
      * Clear cart
      */
     clearCart() {
-        this.cart = [];
-        this.save(this.KEYS.CART, this.cart);
+        this._saveUserCart([]);
+    }
+
+    /**
+     * Create Order
+     * @param {Array} items - Cart items
+     * @param {number} total - Total price
+     * @returns {Object} Order object
+     */
+    createOrder(items, total) {
+        if (!this.currentUser) return null;
+
+        const newOrder = {
+            id: 'ORD-' + Date.now().toString().slice(-6),
+            userId: this.currentUser.id,
+            items: items.map(i => ({
+                productId: i.productId,
+                productName: i.product.name,
+                price: i.product.price,
+                quantity: i.quantity,
+                icon: i.product.icon
+            })),
+            total: total,
+            status: 'success', // For now, assume payment success immediately
+            createdAt: new Date().toISOString()
+        };
+
+        this.orders.unshift(newOrder); // Add to beginning
+        this.save(this.KEYS.ORDERS, this.orders);
+        return newOrder;
+    }
+
+    /**
+     * Get orders for current user
+     */
+    getUserOrders() {
+        if (!this.currentUser) return [];
+        return this.orders.filter(o => o.userId === this.currentUser.id);
+    }
+
+    /**
+     * Cancel Order
+     * @param {string} orderId 
+     */
+    cancelOrder(orderId) {
+        const order = this.orders.find(o => o.id === orderId);
+        if (order && order.status !== 'cancelled') {
+            order.status = 'cancelled';
+
+            // Restore stock
+            order.items.forEach(item => {
+                const product = this.getProductById(item.productId);
+                if (product) {
+                    product.stock += item.quantity;
+                }
+            });
+            this.save(this.KEYS.PRODUCTS, this.products);
+            this.save(this.KEYS.ORDERS, this.orders);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Delete Order (History)
+     * @param {string} orderId 
+     */
+    deleteOrder(orderId) {
+        const initialLength = this.orders.length;
+        this.orders = this.orders.filter(o => o.id !== orderId);
+        if (this.orders.length < initialLength) {
+            this.save(this.KEYS.ORDERS, this.orders);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -335,7 +474,27 @@ class Database {
     checkout() {
         const items = this.getCart();
         const total = this.getCartTotal();
-        
+
+        if (items.length === 0) {
+            return { success: false, message: 'Keranjang kosong' };
+        }
+
+        // validate stock first
+        const insufficientStock = items.find(item => {
+            const product = this.getProductById(item.productId);
+            // Re-fetch product to get latest stock
+            const latestProduct = this.getProductById(item.productId);
+            return !latestProduct || latestProduct.stock < item.quantity;
+        });
+
+        if (insufficientStock) {
+            const product = this.getProductById(insufficientStock.productId);
+            return {
+                success: false,
+                message: `Stok tidak mencukupi untuk produk: ${product ? product.name : 'Unknown'}`
+            };
+        }
+
         // Reduce stock for each item
         items.forEach(item => {
             const product = this.getProductById(item.productId);
@@ -343,14 +502,19 @@ class Database {
                 product.stock -= item.quantity;
             }
         });
-        
+
         this.save(this.KEYS.PRODUCTS, this.products);
+
+        // Save Order
+        const order = this.createOrder(items, total);
+
         this.clearCart();
-        
+
         return {
             success: true,
             items: items,
-            total: total
+            total: total,
+            orderId: order ? order.id : null
         };
     }
 
@@ -365,10 +529,10 @@ class Database {
      * @returns {Object|null} User object if valid, null if invalid
      */
     authenticate(username, password) {
-        const user = this.users.find(u => 
+        const user = this.users.find(u =>
             (u.username === username || u.email === username) && u.password === password
         );
-        
+
         return user || null;
     }
 
@@ -380,7 +544,7 @@ class Database {
      */
     login(username, password) {
         const user = this.authenticate(username, password);
-        
+
         if (user) {
             this.currentUser = {
                 id: user.id,
@@ -392,7 +556,7 @@ class Database {
             this.save(this.KEYS.CURRENT_USER, this.currentUser);
             return { success: true, user: this.currentUser };
         }
-        
+
         return { success: false, message: 'Username atau password salah' };
     }
 
@@ -403,14 +567,14 @@ class Database {
      */
     register(userData) {
         // Check if username already exists
-        const existingUser = this.users.find(u => 
+        const existingUser = this.users.find(u =>
             u.username === userData.username || u.email === userData.email
         );
-        
+
         if (existingUser) {
-            return { 
-                success: false, 
-                message: 'Username atau email sudah terdaftar' 
+            return {
+                success: false,
+                message: 'Username atau email sudah terdaftar'
             };
         }
 
@@ -462,6 +626,26 @@ class Database {
      */
     getAllUsers() {
         return this.users;
+    }
+
+    /**
+     * Get customers who bought from a specific seller
+     * @param {number|string} sellerIdOrName 
+     */
+    getCustomersBySeller(sellerId) {
+        // 1. Find all orders containing items from this seller
+        const sellerOrders = this.orders.filter(order =>
+            order.items.some(item => {
+                const product = this.getProductById(item.productId);
+                return product && (product.sellerId === sellerId || product.seller === sellerId);
+            })
+        );
+
+        // 2. Extract unique User IDs
+        const custIds = [...new Set(sellerOrders.map(o => o.userId))];
+
+        // 3. Return User objects
+        return this.users.filter(u => custIds.includes(u.id));
     }
 
     // ==========================================

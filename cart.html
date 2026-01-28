@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keranjang Belanja - MediMart</title>
-    
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/cart.css">
 </head>
+
 <body>
     <!-- Header -->
     <header class="header">
@@ -21,7 +25,7 @@
                     <div class="logo-icon">💊</div>
                     <span>MediMart</span>
                 </div>
-                
+
                 <div class="search-bar">
                     <input type="text" placeholder="Cari obat, vitamin, atau produk kesehatan..." disabled>
                     <button class="search-btn">🔍</button>
@@ -32,9 +36,10 @@
                         🛒
                         <span class="cart-badge" id="cartBadge">0</span>
                     </button>
-                    
+
                     <div id="authButtons" class="user-menu">
-                        <a href="login.html" class="auth-btn btn-login" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">Login</a>
+                        <a href="login.html" class="auth-btn btn-login"
+                            style="text-decoration: none; display: flex; align-items: center; justify-content: center;">Login</a>
                     </div>
 
                     <div id="userMenu" class="user-menu hidden">
@@ -47,7 +52,7 @@
 
             <div class="nav-tabs">
                 <button class="nav-tab" onclick="window.location.href='index.html'">🏪 Marketplace</button>
-                <button class="nav-tab" onclick="window.location.href='index.html'">📊 Dashboard Toko</button>
+                <button class="nav-tab" onclick="window.location.href='index.html?tab=dashboard'">📊 Dashboard</button>
                 <button class="nav-tab active">🛒 Keranjang</button>
             </div>
         </div>
@@ -86,7 +91,7 @@
                 <div class="order-summary">
                     <div class="summary-card">
                         <h3>Ringkasan Pesanan</h3>
-                        
+
                         <div class="summary-row">
                             <span>Subtotal (<span id="summaryItemCount">0</span> item)</span>
                             <span id="subtotal">Rp 0</span>
@@ -162,34 +167,12 @@
         </div>
     </div>
 
-    <!-- Checkout Success Modal -->
-    <div class="modal" id="successModal">
-        <div class="modal-content success-modal">
-            <div class="success-icon">
-                <div class="success-checkmark">✓</div>
-            </div>
-            <h2>Checkout Berhasil!</h2>
-            <p class="success-message" id="successMessage"></p>
-            <div class="success-details">
-                <div class="detail-row">
-                    <span>Total Pembayaran:</span>
-                    <strong id="successTotal">Rp 0</strong>
-                </div>
-                <div class="detail-row">
-                    <span>Jumlah Item:</span>
-                    <strong id="successItems">0</strong>
-                </div>
-            </div>
-            <button class="btn-success-ok" onclick="closeSuccessModal()">
-                Oke, Mengerti
-            </button>
-            <a href="index.html" class="link-continue-shopping">Lanjut Belanja</a>
-        </div>
-    </div>
+
 
     <!-- JavaScript -->
     <script src="js/database.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/cart-page.js"></script>
 </body>
+
 </html>

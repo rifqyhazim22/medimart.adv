@@ -18,12 +18,43 @@ class App {
      */
     init() {
         console.log('🚀 MediMart Application Started');
-        
+
+        const user = this.db.getCurrentUser();
+
         // Initial UI update
         this.ui.updateAuthUI();
-        this.ui.renderDashboard();  // Show dashboard first
-        this.ui.renderMarketplace(); // Pre-render marketplace
         this.ui.updateCartBadge();
+
+        // Role-Based Landing Page & URL Routing
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+
+        if (user) {
+            // Logged in
+            if (tab === 'dashboard' || user.role === 'admin' || user.role === 'seller') {
+                this.ui.showDashboard();
+            } else {
+                this.ui.renderMarketplace();
+                this.ui.showMarketplace();
+            }
+        } else {
+            // Guest Mode Logic
+            const isGuestMode = sessionStorage.getItem('medimart_guest_mode') === 'true';
+
+            if (isGuestMode) {
+                // Guest Access Allowed
+                if (tab === 'dashboard') {
+                    // Allow guest to see "Login Required" dashboard
+                    this.ui.showDashboard();
+                } else {
+                    this.ui.renderMarketplace();
+                    this.ui.showMarketplace();
+                }
+            } else {
+                // No Guest Flag -> Force Login
+                window.location.href = 'login.html';
+            }
+        }
 
         // Setup debounced search
         this.debouncedSearch = Utils.debounce(() => {
@@ -76,7 +107,7 @@ class App {
         event.preventDefault();
 
         const productData = this.ui.getProductFormData();
-        
+
         // Validate
         const validation = Utils.validateProduct(productData);
         if (!validation.isValid) {
@@ -129,8 +160,14 @@ class App {
      * @param {number} productId - Product ID
      */
     addToCart(productId) {
+        // Guest Check
+        if (!this.db.isLoggedIn()) {
+            Utils.notify('Silakan login untuk mulai berbelanja 🔐', 'info');
+            return;
+        }
+
         const product = this.db.getProductById(productId);
-        
+
         if (!product) {
             Utils.notify('Produk tidak ditemukan');
             return;
@@ -142,11 +179,8 @@ class App {
         }
 
         if (this.db.addToCart(productId, 1)) {
-            if (confirm(`${product.name} ditambahkan ke keranjang! 🛒\n\nLihat keranjang sekarang?`)) {
-                window.location.href = 'cart.html';
-            } else {
-                this.ui.updateCartBadge();
-            }
+            this.ui.updateCartBadge();
+            Utils.notify(`${product.name} ditambahkan ke keranjang! 🛒`);
         } else {
             Utils.notify('Gagal menambahkan ke keranjang. Stok tidak mencukupi.');
         }
@@ -171,10 +205,103 @@ class App {
     }
 
     /**
-     * Search products
+     * Filter products by category
+     * @param {string} category - Category name or 'all'
      */
-    searchProducts() {
-        this.debouncedSearch();
+    filterProducts(category) {
+        this.ui.renderMarketplace(category);
+
+        // Update active filter button state
+        const buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach(btn => {
+            const btnText = btn.innerText;
+            const isActive =
+                (category === 'all' && btnText.includes('Semua')) ||
+                (category === 'Alat Kesehatan' && btnText.includes('Alkes')) ||
+                btnText.includes(category);
+
+            if (isActive) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    /**
+     * Cancel Order
+     * @param {string} orderId 
+     */
+    cancelOrder(orderId) {
+        if (!Utils.confirm('Yakin ingin membatalkan pesanan ini? Stok akan dikembalikan.')) return;
+
+        if (this.db.cancelOrder(orderId)) {
+            Utils.notify('Pesanan berhasil dibatalkan');
+            this.ui.renderDashboard(); // Refresh
+        } else {
+            Utils.notify('Gagal membatalkan pesanan');
+        }
+    }
+
+    /**
+     * Delete Order from History
+     * @param {string} orderId 
+     */
+    deleteOrder(orderId) {
+        if (!Utils.confirm('Hapus riwayat pesanan ini?')) return;
+
+        if (this.db.deleteOrder(orderId)) {
+            Utils.notify('Riwayat pesanan dihapus');
+            this.ui.renderDashboard(); // Refresh
+        }
+    }
+    /**
+     * Switch Store Dashboard Tab
+     * @param {string} tabName - 'products', 'users', 'settings'
+     */
+    switchStoreTab(tabName) {
+        this.ui.currentStoreTab = tabName;
+        this.ui.renderDashboard();
+    }
+
+    /**
+     * Search Store Products
+     */
+    searchStoreProducts() {
+        const input = document.getElementById('storeSearchInput');
+        this.ui.currentSearchQuery = input ? input.value : '';
+        this.ui._renderStoreProductGrid(this.db.getCurrentUser());
+    }
+
+    /**
+     * Filter Store Products
+     */
+    filterStoreProducts(category, btnElement) {
+        this.ui.currentCategory = category;
+
+        // Update visual active state
+        document.querySelectorAll('.store-content .filter-btn').forEach(b => b.classList.remove('active'));
+        if (btnElement) btnElement.classList.add('active');
+
+        this.ui._renderStoreProductGrid(this.db.getCurrentUser());
+    }
+
+    /**
+     * Toggle Product Scope (Admin Only)
+     */
+    toggleProductScope() {
+        this.ui.showAllProducts = !this.ui.showAllProducts;
+        this.ui.renderDashboard(); // Re-render to update toggle button text
+    }
+
+    /**
+     * Reset Database (Dev Tool)
+     */
+    resetDatabase() {
+        if (confirm('⚠️ PERINGATAN: Semua data (User, Produk, Order) akan dihapus dan di-reset ke default.\n\nLanjutkan?')) {
+            localStorage.clear();
+            location.reload();
+        }
     }
 }
 

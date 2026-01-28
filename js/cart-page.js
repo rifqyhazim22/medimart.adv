@@ -10,11 +10,71 @@ const db = new Database();
 let currentCart = [];
 
 // Load cart on page load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     updateAuthUI();
-    loadCart();
-    loadRecommendedProducts();
+
+    if (!db.isLoggedIn()) {
+        renderGuestLockScreen();
+    } else {
+        loadCart();
+        loadRecommendedProducts();
+    }
 });
+
+
+function renderGuestLockScreen() {
+    const container = document.querySelector('.cart-page-container');
+    if (container) {
+        container.innerHTML = `
+            <div class="cart-content">
+                <div class="dashboard-header" style="margin-bottom: 32px;">
+                    <h1>Keranjang Belanja</h1>
+                    <p>Selesaikan pesanan obat Anda</p>
+                </div>
+                
+                <div style="
+                    max-width: 600px; 
+                    margin: 0 auto; 
+                    text-align: center; 
+                    padding: 60px 32px; 
+                    background: white; 
+                    border-radius: 20px; 
+                    box-shadow: var(--shadow-md);
+                ">
+                    <div style="font-size: 80px; margin-bottom: 24px;">🔐</div>
+                    <h2 style="font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 12px; color: #1a1a1a;">
+                        Login Diperlukan
+                    </h2>
+                    <p style="color: #6b7280; margin-bottom: 32px; font-size: 16px; line-height: 1.6;">
+                        Silakan login untuk melihat keranjang belanja Anda dan melanjutkan ke pembayaran.
+                    </p>
+                    
+                    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                        <a href="login.html" class="btn-primary" style="
+                            display: inline-flex; 
+                            text-decoration: none; 
+                            padding: 12px 32px;
+                            border-radius: 12px;
+                            font-size: 16px;
+                        ">
+                            Login Sekarang
+                        </a>
+                        <a href="index.html" class="btn-secondary" style="
+                            display: inline-flex; 
+                            text-decoration: none;
+                            padding: 12px 32px;
+                            border-radius: 12px;
+                            font-size: 16px;
+                            justify-content: center;
+                        ">
+                            Kembali ke Beranda
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
 
 /**
  * Update authentication UI
@@ -29,11 +89,11 @@ function updateAuthUI() {
     if (user) {
         authButtons.classList.add('hidden');
         userMenu.classList.remove('hidden');
-        
+
         // Display user's full name
         if (userName) userName.textContent = user.name || user.username;
         if (userAvatar) {
-            const initials = user.name 
+            const initials = user.name
                 ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
                 : user.username.charAt(0).toUpperCase();
             userAvatar.textContent = initials;
@@ -83,7 +143,7 @@ function renderCart() {
     const container = document.getElementById('cartItemsContainer');
     const itemCount = document.getElementById('itemCount');
     const btnClear = document.getElementById('btnClear');
-    
+
     if (!container) return;
 
     if (currentCart.length === 0) {
@@ -98,7 +158,7 @@ function renderCart() {
                 </a>
             </div>
         `;
-        
+
         if (itemCount) itemCount.textContent = '0';
         if (btnClear) btnClear.style.display = 'none';
         return;
@@ -151,50 +211,46 @@ function renderCart() {
     }).join('');
 }
 
+// ... (previous code)
+
 /**
  * Update item quantity
  */
 function updateQuantity(productId, delta) {
     const cart = db.getCart();
     const item = cart.find(i => i.productId === productId);
-    
+
     if (!item) return;
 
     const newQty = item.quantity + delta;
-    
+
     if (db.updateCartQuantity(productId, newQty)) {
         loadCart();
     } else {
         if (newQty > item.quantity) {
-            alert('Stok tidak mencukupi');
+            Utils.notify('Stok tidak mencukupi', 'error');
         }
     }
 }
 
 /**
  * Remove item from cart
+ * No confirmation needed for better UX
  */
 function removeItem(productId) {
-    const product = db.getProductById(productId);
-    
-    if (confirm(`Hapus ${product.name} dari keranjang?`)) {
-        db.updateCartQuantity(productId, 0);
-        loadCart();
-        
-        // Show toast notification
-        showToast('Produk berhasil dihapus dari keranjang', 'success');
-    }
+    db.updateCartQuantity(productId, 0);
+    loadCart();
+    Utils.notify('Produk dihapus dari keranjang');
 }
 
 /**
  * Clear entire cart
+ * No confirmation needed
  */
 function clearCart() {
-    if (confirm('Kosongkan semua item di keranjang?')) {
-        db.clearCart();
-        loadCart();
-        showToast('Keranjang berhasil dikosongkan', 'success');
-    }
+    db.clearCart();
+    loadCart();
+    Utils.notify('Keranjang dikosongkan');
 }
 
 /**
@@ -221,7 +277,7 @@ function updateSummary() {
     if (shippingEl) shippingEl.textContent = shipping === 0 ? 'GRATIS' : Utils.formatPrice(shipping);
     if (discountEl) discountEl.textContent = discount === 0 ? 'Rp 0' : '- ' + Utils.formatPrice(discount);
     if (totalEl) totalEl.textContent = Utils.formatPrice(total);
-    
+
     if (btnCheckout) {
         btnCheckout.disabled = cart.length === 0;
     }
@@ -233,9 +289,9 @@ function updateSummary() {
 function applyPromo() {
     const promoInput = document.getElementById('promoCode');
     const code = promoInput.value.trim().toUpperCase();
-    
+
     if (!code) {
-        alert('Masukkan kode promo terlebih dahulu');
+        Utils.notify('Masukkan kode promo terlebih dahulu', 'error');
         return;
     }
 
@@ -247,69 +303,28 @@ function applyPromo() {
     };
 
     if (promoCodes[code]) {
-        showToast(`Kode promo berhasil dipakai! ${promoCodes[code].message} 🎉`, 'success');
+        Utils.notify(`Kode promo berhasil dipakai! ${promoCodes[code].message} 🎉`, 'success');
         promoInput.value = '';
     } else {
-        showToast('Kode promo tidak valid', 'error');
+        Utils.notify('Kode promo tidak valid', 'error');
     }
 }
 
 /**
- * Process checkout
+ * Redirect to checkout page
  */
 function checkout() {
     const cart = db.getCart();
-    
+
     if (cart.length === 0) {
-        alert('Keranjang Anda masih kosong');
+        Utils.notify('Keranjang Anda masih kosong', 'error');
         return;
     }
 
-    const result = db.checkout();
-    
-    if (result.success) {
-        // Show success modal
-        showSuccessModal(result);
-        loadCart();
-    } else {
-        alert('Checkout gagal. Silakan coba lagi.');
-    }
-}
-
-/**
- * Show success modal
- */
-function showSuccessModal(result) {
-    const modal = document.getElementById('successModal');
-    const successMessage = document.getElementById('successMessage');
-    const successTotal = document.getElementById('successTotal');
-    const successItems = document.getElementById('successItems');
-
-    if (successMessage) {
-        successMessage.textContent = `Pesanan Anda telah kami terima dan sedang diproses. Terima kasih telah berbelanja di MediMart!`;
-    }
-    
-    if (successTotal) {
-        successTotal.textContent = Utils.formatPrice(result.total);
-    }
-    
-    if (successItems) {
-        successItems.textContent = `${result.items.length} item`;
-    }
-
-    if (modal) {
-        modal.style.display = 'flex';
-    }
-}
-
-/**
- * Close success modal
- */
-function closeSuccessModal() {
-    const modal = document.getElementById('successModal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+    Utils.notify('Menuju pembayaran...', 'success');
+    setTimeout(() => {
+        window.location.href = 'checkout.html';
+    }, 500);
 }
 
 /**
@@ -321,7 +336,7 @@ function loadRecommendedProducts() {
 
     const allProducts = db.getProducts();
     const cartProductIds = currentCart.map(item => item.productId);
-    
+
     // Get products not in cart
     const recommended = allProducts
         .filter(p => !cartProductIds.includes(p.id) && p.stock > 0)
@@ -356,82 +371,22 @@ function loadRecommendedProducts() {
  */
 function addRecommendedToCart(productId) {
     const product = db.getProductById(productId);
-    
+
     if (!product) return;
-    
+
     if (product.stock === 0) {
-        alert('Maaf, produk ini sedang habis');
+        Utils.notify('Maaf, produk ini sedang habis', 'error');
         return;
     }
 
     if (db.addToCart(productId, 1)) {
-        showToast(`${product.name} ditambahkan ke keranjang! 🛒`, 'success');
+        Utils.notify(`${product.name} ditambahkan ke keranjang! 🛒`, 'success');
         loadCart();
         loadRecommendedProducts();
     } else {
-        alert('Gagal menambahkan ke keranjang. Stok tidak mencukupi.');
+        Utils.notify('Gagal menambahkan ke keranjang. Stok tidak mencukupi.', 'error');
     }
 }
-
-/**
- * Show toast notification
- */
-function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 24px;
-        padding: 16px 24px;
-        background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
-        color: white;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        font-weight: 600;
-        font-size: 14px;
-        z-index: 9999;
-        animation: slideInRight 0.3s ease-out;
-        max-width: 350px;
-    `;
-    
-    const icon = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
-    toast.innerHTML = `<span style="margin-right: 8px;">${icon}</span>${message}`;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'slideOutRight 0.3s ease-out';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// Add animation styles
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(100px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes slideOutRight {
-        from {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        to {
-            opacity: 0;
-            transform: translateX(100px);
-        }
-    }
-`;
-document.head.appendChild(style);
 
 // Log
 console.log('%c MediMart Cart Page ', 'background: #00B09B; color: white; font-size: 16px; font-weight: bold; padding: 10px;');
