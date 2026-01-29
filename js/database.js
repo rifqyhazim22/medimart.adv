@@ -122,14 +122,15 @@ class Database {
             {
                 id: 1,
                 name: 'Obat Stamina',
-                category: 'Herbal',
+                category: 'Obat Bebas',
                 description: 'Suplemen herbal peningkat stamina.',
                 price: 25000,
                 stock: 50,
                 seller: 'seller1',
                 sellerId: 2,
                 sellerName: 'Apotek Sehat',
-                icon: "💪"
+                icon: '💪',
+                image: "../img/vitaminC.webp"
             },
             {
                 id: 2,
@@ -141,19 +142,21 @@ class Database {
                 seller: 'seller1',
                 sellerId: 2,
                 sellerName: 'Apotek Sehat',
-                icon: '🌿'
+                icon: '🌿',
+                image: "../img/minyakKayuPutih.jpg"
             },
             {
                 id: 3,
                 name: 'Balsem Otot Geliga',
-                category: 'Obat Bebas',
+                category: 'Obat Nyeri',
                 description: 'Balsem untuk meredakan nyeri otot dan keseleo.',
                 price: 12000,
                 stock: 80,
                 seller: 'seller1',
                 sellerId: 2,
                 sellerName: 'Apotek Sehat',
-                icon: '🔥'
+                icon: '🩹',
+                image: "../img/balsemOtot.webp"
             },
             {
                 id: 4,
@@ -165,7 +168,8 @@ class Database {
                 seller: 'seller1',
                 sellerId: 2,
                 sellerName: 'Apotek Sehat',
-                icon: '🩹'
+                icon: '🩺',
+                image: "../img/byebyefever.webp"
             }
         ];
     }
