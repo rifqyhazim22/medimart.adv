@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - MediMart</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cart.css">
+    <style>
+        .checkout-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 32px;
+            padding-bottom: 40px;
+        }
+
+        .checkout-form-section {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .checkout-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .checkout-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            color: var(--text-dark);
+        }
+
+        .checkout-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .checkout-item:last-child {
+            border-bottom: none;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 12px;
+        }
+
+        .payment-option.selected {
+            border-color: var(--primary);
+            background: rgba(0, 176, 155, 0.05);
+        }
+
+        .payment-radio {
+            accent-color: var(--primary);
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 968px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-top">
+                <div class="logo">
+                    <div class="logo-icon">💊</div>
+                    <span>MediMart</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="cart-page-container">
+        <div class="cart-content">
+            <button class="btn-back" onclick="window.history.back()">
+                <span>←</span>
+                <span>Kembali ke Keranjang</span>
+            </button>
+
+            <h1 style="margin-bottom: 24px; font-family: 'Outfit', sans-serif;">Checkout Pesanan</h1>
+
+            <div class="checkout-container">
+                <!-- Left Column: Forms -->
+                <div class="checkout-forms">
+                    <!-- Shipping Address -->
+                    <div class="checkout-form-section" style="margin-bottom: 24px;">
+                        <div class="checkout-header">
+                            <h2>📍 Alamat Pengiriman</h2>
+                        </div>
+                        <form id="shippingForm">
+                            <div class="form-group">
+                                <label class="form-label">Nama Penerima</label>
+                                <input type="text" class="form-input" id="recipientName" required
+                                    placeholder="Nama lengkap penerima">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nomor Telepon</label>
+                                <input type="tel" class="form-input" id="recipientPhone" required
+                                    placeholder="08xxxxxxxxxx">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Alamat Lengkap</label>
+                                <textarea class="form-textarea" id="shippingAddress" required
+                                    placeholder="Jalan, Nomor rumah, RT/RW, Kelurahan, Kecamatan"
+                                    style="min-height: 80px;"></textarea>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="checkout-form-section">
+                        <div class="checkout-header">
+                            <h2>💳 Metode Pembayaran</h2>
+                        </div>
+                        <div class="payment-options">
+                            <label class="payment-option selected" onclick="selectPayment(this)">
+                                <input type="radio" name="payment" class="payment-radio" checked value="transfer">
+                                <span>🏦 Transfer Bank (BCA/Mandiri)</span>
+                            </label>
+                            <label class="payment-option" onclick="selectPayment(this)">
+                                <input type="radio" name="payment" class="payment-radio" value="ewallet">
+                                <span>📱 E-Wallet (GoPay/OVO/Dana)</span>
+                            </label>
+                            <label class="payment-option" onclick="selectPayment(this)">
+                                <input type="radio" name="payment" class="payment-radio" value="cod">
+                                <span>💰 Bayar di Tempat (COD)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Summary -->
+                <div class="order-summary">
+                    <div class="summary-card">
+                        <h3>Ringkasan Pesanan</h3>
+
+                        <div id="checkoutItems" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+                            <!-- Items rendered here -->
+                        </div>
+
+                        <div class="divider-summary"></div>
+
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="subtotal">Rp 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Ongkos Kirim</span>
+                            <span class="text-primary">GRATIS</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total Bayar</span>
+                            <span id="total">Rp 0</span>
+                        </div>
+
+                        <button class="btn-checkout-page" onclick="processCheckout()" id="btnConfirm">
+                            <span>Konfirmasi & Bayar</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content success-modal">
+            <div class="success-icon">
+                <div class="success-checkmark">✓</div>
+            </div>
+            <h2>Pembayaran Berhasil!</h2>
+            <p class="success-message">Terima kasih! Pesanan Anda sedang diproses.</p>
+            <div class="success-details">
+                <div class="detail-row">
+                    <span>ID Pesanan:</span>
+                    <strong id="orderId">#MED-0000</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Total:</span>
+                    <strong id="successTotal">Rp 0</strong>
+                </div>
+            </div>
+            <button class="btn-success-ok" onclick="window.location.href='index.html'">
+                Kembai ke Beranda
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/database.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/checkout.js"></script>
+</body>
+
+</html>

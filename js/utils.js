@@ -71,8 +71,35 @@ const Utils = {
      * @param {string} type - Type: success, error, info
      */
     notify(message, type = 'info') {
-        // Simple alert for now, can be replaced with custom notification
-        alert(message);
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+
+        // Icon based on type
+        let icon = 'ℹ️';
+        if (type === 'success' || message.includes('berhasil') || message.includes('ditambahkan')) {
+            type = 'success';
+            icon = '✅';
+            toast.className = `toast toast-success`;
+        } else if (type === 'error' || message.toLowerCase().includes('gagal')) {
+            type = 'error';
+            icon = '❌';
+            toast.className = `toast toast-error`;
+        }
+
+        toast.innerHTML = `
+            <span style="font-size: 18px;">${icon}</span>
+            <span>${message}</span>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            toast.style.animation = 'toastFadeOut 0.3s forwards';
+            toast.addEventListener('animationend', () => {
+                if (toast.parentNode) toast.remove();
+            });
+        }, 3000);
     },
 
     /**

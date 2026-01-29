@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediMart - Marketplace Obat Online</title>
-    
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <!-- Header -->
     <header class="header">
@@ -20,9 +24,10 @@
                     <div class="logo-icon">💊</div>
                     <span>MediMart</span>
                 </div>
-                
+
                 <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="Cari obat, vitamin, atau produk kesehatan..." onkeyup="app.searchProducts()">
+                    <input type="text" id="searchInput" placeholder="Cari obat, vitamin, atau produk kesehatan..."
+                        onkeyup="app.searchProducts()">
                     <button class="search-btn">🔍</button>
                 </div>
 
@@ -31,9 +36,10 @@
                         🛒
                         <span class="cart-badge" id="cartBadge">0</span>
                     </a>
-                    
+
                     <div id="authButtons" class="user-menu">
-                        <a href="login.html" class="auth-btn btn-login" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">Login</a>
+                        <a href="login.html" class="auth-btn btn-login"
+                            style="text-decoration: none; display: flex; align-items: center; justify-content: center;">Login</a>
                     </div>
 
                     <div id="userMenu" class="user-menu hidden">
@@ -46,7 +52,7 @@
 
             <div class="nav-tabs">
                 <button class="nav-tab" id="tabMarketplace" onclick="app.showMarketplace()">🏪 Marketplace</button>
-                <button class="nav-tab active" id="tabDashboard" onclick="app.showDashboard()">📊 Dashboard Toko</button>
+                <button class="nav-tab active" id="tabDashboard" onclick="app.showDashboard()">📊 Dashboard</button>
             </div>
         </div>
     </header>
@@ -58,14 +64,37 @@
             <div class="section-header">
                 <h2 class="section-title">Semua Produk</h2>
             </div>
+
+            <!-- Category Filters -->
+            <div class="category-filters">
+                <button class="filter-btn active" onclick="app.filterProducts('all')">
+                    <span class="filter-icon">🏥</span> Semua
+                </button>
+                <button class="filter-btn" onclick="app.filterProducts('Obat Bebas')">
+                    <span class="filter-icon">💊</span> Obat Bebas
+                </button>
+                <button class="filter-btn" onclick="app.filterProducts('Obat Keras')">
+                    <span class="filter-icon">🩺</span> Obat Keras
+                </button>
+                <button class="filter-btn" onclick="app.filterProducts('Vitamin')">
+                    <span class="filter-icon">🍊</span> Vitamin
+                </button>
+                <button class="filter-btn" onclick="app.filterProducts('Alat Kesehatan')">
+                    <span class="filter-icon">🩹</span> Alkes
+                </button>
+                <button class="filter-btn" onclick="app.filterProducts('Herbal')">
+                    <span class="filter-icon">🌿</span> Herbal
+                </button>
+            </div>
+
             <div class="products-grid" id="marketplaceProducts"></div>
         </div>
 
-        <!-- Dashboard View -->
-        <div id="dashboardView">
+        <!-- Store Dashboard View (Admin/Seller Only) -->
+        <div id="storeDashboardView" class="hidden">
             <div class="dashboard-header">
-                <h1>Dashboard Toko Saya</h1>
-                <p>Kelola produk obat Anda dengan mudah</p>
+                <h1>Dashboard Toko</h1>
+                <p>Kelola produk dan stok toko Anda</p>
                 <div class="dashboard-stats">
                     <div class="stat-card">
                         <div class="stat-value" id="totalProducts">0</div>
@@ -91,6 +120,52 @@
             </div>
             <div class="products-grid" id="dashboardProducts"></div>
         </div>
+
+        <!-- Customer Dashboard View (Buyers Only) -->
+        <div id="customerDashboardView" class="hidden">
+            <div class="dashboard-header" style="background: linear-gradient(135deg, #FF6B35, #E55A2D);">
+                <h1 id="customerGreeting">Halo, Pelanggan! 👋</h1>
+                <p>Statistik belanja dan riwayat pesanan Anda</p>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="custTotalOrders">0</div>
+                        <div class="stat-label">Total Pesanan</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="custActiveOrders">0</div>
+                        <div class="stat-label">Pesanan Berhasil</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="custTotalSpent">Rp 0</div>
+                        <div class="stat-label">Total Belanja</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Riwayat Transaksi</h2>
+            </div>
+
+            <div class="table-container"
+                style="background: white; border-radius: 12px; box-shadow: var(--shadow-sm); overflow: hidden;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--bg-light); text-align: left;">
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">ID Pesanan</th>
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">Tanggal</th>
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">Items</th>
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">Total</th>
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">Status</th>
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderHistoryBody">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- Product Modal -->
@@ -102,7 +177,8 @@
             <form onsubmit="app.saveProduct(event)">
                 <div class="form-group">
                     <label class="form-label">Nama Produk</label>
-                    <input type="text" class="form-input" id="productName" required placeholder="Contoh: Paracetamol 500mg">
+                    <input type="text" class="form-input" id="productName" required
+                        placeholder="Contoh: Paracetamol 500mg">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Kategori</label>
@@ -117,7 +193,8 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Deskripsi</label>
-                    <textarea class="form-textarea" id="productDescription" required placeholder="Deskripsi produk, manfaat, dan cara pakai"></textarea>
+                    <textarea class="form-textarea" id="productDescription" required
+                        placeholder="Deskripsi produk, manfaat, dan cara pakai"></textarea>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -143,4 +220,5 @@
     <script src="js/ui.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>
