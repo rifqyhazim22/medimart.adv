@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar - MediMart</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Outfit:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <!-- Left Side: Branding -->
+        <div class="login-left">
+            <div class="brand-content">
+                <div class="logo">
+                    <div class="logo-icon">📝</div>
+                    <h1>MediMart</h1>
+                </div>
+                <p class="tagline">Bergabunglah dengan ribuan pengguna lain<br>untuk hidup yang lebih sehat.</p>
+
+                <div class="features">
+                    <div class="feature-item">
+                        <span class="feature-icon">🚀</span>
+                        <div>
+                            <h3>Daftar Cepat</h3>
+                            <p>Proses pendaftaran mudah, hanya butuh waktu kurang dari 1 menit.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🏷️</span>
+                        <div>
+                            <h3>Promo Eksklusif</h3>
+                            <p>Dapatkan akses ke promo dan diskon khusus member baru.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">💳</span>
+                        <div>
+                            <h3>Transaksi Aman</h3>
+                            <p>Sistem pembayaran terintegrasi dan aman untuk setiap transaksi.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Form -->
+        <div class="login-right">
+            <div class="login-box">
+                <div class="login-header">
+                    <h2>Buat Akun Baru</h2>
+                    <p>Lengkapi data diri Anda untuk mendaftar</p>
+                </div>
+
+                <% if (error && error.length> 0) { %>
+                    <div class="alert alert-error"
+                        style="background-color: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+                        <%= error %>
+                    </div>
+                    <% } %>
+
+                        <form action="/auth/register" method="POST" class="login-form">
+                            <div class="form-group" style="margin-bottom: 24px;">
+                                <label style="margin-bottom: 8px; display: block; font-weight: 600;">Saya ingin
+                                    mendaftar sebagai:</label>
+                                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                                    <label class="role-option"
+                                        style="flex: 1; cursor: pointer; border: 2px solid #e5e7eb; padding: 12px; border-radius: 10px; text-align: center; font-weight: 500; transition: all 0.2s; position: relative;"
+                                        onclick="selectRegRole(this)">
+                                        <input type="radio" name="role" value="customer" checked
+                                            style="margin-right: 6px;">
+                                        Pelanggan
+                                    </label>
+                                    <label class="role-option"
+                                        style="flex: 1; cursor: pointer; border: 2px solid #e5e7eb; padding: 12px; border-radius: 10px; text-align: center; font-weight: 500; transition: all 0.2s;"
+                                        onclick="selectRegRole(this)">
+                                        <input type="radio" name="role" value="seller" style="margin-right: 6px;">
+                                        Seller
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Nama Lengkap / Nama Toko</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">📝</span>
+                                    <input type="text" name="full_name" required placeholder="Nama Lengkap Anda">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Username</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">@</span>
+                                    <input type="text" name="username" required placeholder="Buat username unik">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Email</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">📧</span>
+                                    <input type="email" name="email" required placeholder="nama@email.com">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Password</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">🔒</span>
+                                    <input type="password" name="password" required placeholder="Minimal 6 karakter">
+                                    <button type="button" class="toggle-password" onclick="togglePassword()">
+                                        <span id="toggleIcon">👁️</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-login" style="margin-top: 20px;">
+                                <span>Daftar Sekarang</span>
+                                <span class="btn-icon">✨</span>
+                            </button>
+                        </form>
+
+                        <div class="login-footer">
+                            <p>Sudah punya akun? <a href="/login" class="link-register">Login disini</a></p>
+                            <br>
+                            <a href="/" class="link-register"
+                                style="color: #6b7280; font-weight: normal; font-size: 14px;">← Kembali ke Beranda</a>
+                        </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.querySelector('input[name="password"]');
+            const toggleIcon = document.getElementById('toggleIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        // Initialize styling for checked radio
+        function updateRoleStyles() {
+            document.querySelectorAll('.role-option').forEach(label => {
+                const radio = label.querySelector('input');
+                if (radio.checked) {
+                    label.style.borderColor = '#FF6B35';
+                    label.style.backgroundColor = '#fff7ed';
+                    label.style.color = '#c2410c';
+                } else {
+                    label.style.borderColor = '#e5e7eb';
+                    label.style.backgroundColor = 'transparent';
+                    label.style.color = '#374151';
+                }
+            });
+        }
+
+        function selectRegRole(label) {
+            // Radio button click propagates, so we just update styles
+            // Use setTimeout to allow the event to process the check state
+            setTimeout(updateRoleStyles, 0);
+        }
+
+        // Run on load
+        updateRoleStyles();
+    </script>
+</body>
+
+</html>

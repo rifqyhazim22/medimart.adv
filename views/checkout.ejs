@@ -1,0 +1,249 @@
+<%- include('partials/header') %>
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/cart.css">
+    <style>
+        /* Colorful Conversion Elements */
+        :root {
+            --gradient-primary: linear-gradient(135deg, #FF6B35, #FF5252, #E040FB);
+            --gradient-hover: linear-gradient(135deg, #FF8F6B, #FF7676, #EA80FC);
+        }
+
+        /* 1. Payment Selection */
+        .payment-option.selected {
+            border-color: #FF5252 !important;
+            background: rgba(255, 82, 82, 0.05) !important;
+            box-shadow: 0 4px 10px rgba(255, 82, 82, 0.15);
+        }
+
+        .payment-radio:checked {
+            accent-color: #FF5252;
+        }
+
+        /* 2. Confirm Button */
+        .btn-checkout-page {
+            background: var(--gradient-primary) !important;
+            border: none !important;
+            color: white !important;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-checkout-page:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(255, 107, 53, 0.3);
+            background: var(--gradient-hover) !important;
+        }
+    </style>
+    <style>
+        .checkout-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 32px;
+            padding-bottom: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .checkout-form-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .checkout-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .checkout-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 12px;
+        }
+
+        .payment-option:hover {
+            border-color: #FF5252;
+        }
+
+        @media (max-width: 968px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <div class="cart-page-container">
+        <div class="cart-content">
+            <a href="/cart" class="btn-back" style="margin-bottom: 20px;">
+                <span>←</span>
+                <span>Kembali ke Keranjang</span>
+            </a>
+
+            <h1 style="margin-bottom: 24px; font-family: 'Outfit', sans-serif;">Checkout Pesanan</h1>
+
+            <form action="/orders" method="POST" id="checkoutForm">
+                <div class="checkout-container">
+                    <!-- Left Column: Forms -->
+                    <div class="checkout-forms">
+                        <!-- Shipping Address -->
+                        <div class="checkout-form-section">
+                            <div class="checkout-header">
+                                <h2>📍 Alamat Pengiriman</h2>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Nama Penerima</label>
+                                <input type="text" class="form-input" name="recipient_name" required
+                                    placeholder="Nama lengkap penerima"
+                                    value="<%= (currentUser && currentUser.full_name) || '' %>">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nomor Telepon</label>
+                                <input type="tel" class="form-input" name="recipient_phone" required
+                                    placeholder="08xxxxxxxxxx" value="<%= (currentUser && currentUser.phone) || '' %>">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Alamat Lengkap</label>
+                                <textarea class="form-textarea" name="shipping_address" required
+                                    placeholder="Jalan, Nomor rumah, RT/RW, Kelurahan, Kecamatan"
+                                    style="min-height: 80px;"><%= (currentUser && currentUser.address) || '' %></textarea>
+                            </div>
+
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="checkout-form-section">
+                            <div class="checkout-header">
+                                <h2>💳 Metode Pembayaran</h2>
+                            </div>
+                            <div class="payment-options">
+                                <label class="payment-option selected" onclick="selectPayment(this)">
+                                    <input type="radio" name="payment_method" class="payment-radio" checked
+                                        value="Transfer Bank (BCA/Mandiri)">
+                                    <span>🏦 Transfer Bank (BCA/Mandiri)</span>
+                                </label>
+                                <label class="payment-option" onclick="selectPayment(this)">
+                                    <input type="radio" name="payment_method" class="payment-radio"
+                                        value="E-Wallet (GoPay/OVO/Dana)">
+                                    <span>📱 E-Wallet (GoPay/OVO/Dana)</span>
+                                </label>
+                                <label class="payment-option" onclick="selectPayment(this)">
+                                    <input type="radio" name="payment_method" class="payment-radio"
+                                        value="COD (Bayar di Tempat)">
+                                    <span>💰 Bayar di Tempat (COD)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Summary -->
+                    <div class="order-summary">
+                        <div class="summary-card"
+                            style="background: white; padding: 24px; border-radius: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 100px;">
+                            <h3>Ringkasan Pesanan</h3>
+
+                            <div id="checkoutItems" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+                                <% cart.forEach(item=> { %>
+                                    <div
+                                        style="display: flex; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid #f3f4f6; padding-bottom: 12px;">
+                                        <img src="<%= item.image_url || '/img/default-product.svg' %>"
+                                            style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">
+                                                <%= item.name %>
+                                            </div>
+                                            <div style="font-size: 12px; color: #6b7280;">
+                                                <%= item.quantity %> x Rp <%=
+                                                        parseFloat(item.price).toLocaleString('id-ID') %>
+                                            </div>
+                                        </div>
+                                        <div style="font-weight: 600; font-size: 14px;">Rp <%= (item.price *
+                                                item.quantity).toLocaleString('id-ID') %>
+                                        </div>
+                                    </div>
+                                    <% }); %>
+                            </div>
+
+                            <div class="divider-summary" style="height: 1px; background: #e5e7eb; margin: 16px 0;">
+                            </div>
+
+                            <div class="summary-row"
+                                style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Subtotal</span>
+                                <span id="subtotal">Rp <%= cartTotal.toLocaleString('id-ID') %></span>
+                            </div>
+                            <div class="summary-row"
+                                style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                                <span>Ongkos Kirim</span>
+                                <span class="text-primary" style="color: #10b981; font-weight: 600;">GRATIS</span>
+                            </div>
+                            <div class="summary-row total"
+                                style="display: flex; justify-content: space-between; margin-bottom: 24px; font-size: 18px; font-weight: 700;">
+                                <span>Total Bayar</span>
+                                <span id="total">Rp <%= cartTotal.toLocaleString('id-ID') %></span>
+                            </div>
+
+                            <button type="submit" class="btn-checkout-page">
+                                <span>Konfirmasi & Bayar</span>
+                                <span>→</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function selectPayment(label) {
+            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+            label.classList.add('selected');
+            label.querySelector('input').checked = true;
+        }
+    </script>
+
+    <%- include('partials/footer') %>

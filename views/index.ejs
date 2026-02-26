@@ -1,0 +1,259 @@
+<%- include('partials/header', { activeTab: 'marketplace' }) %>
+
+    <div id="marketplaceView">
+        <div class="section-header">
+            <h2 class="section-title">Semua Produk</h2>
+        </div>
+
+        <!-- Category Filters - Simplified as links for now, or keep as buttons for client-side filter if we want -->
+        <div class="category-filters">
+            <a href="/" class="filter-btn <%= (!category || category === 'all') ? 'active' : '' %>"
+                style="text-decoration: none;">
+                <span class="filter-icon">🏥</span> Semua
+            </a>
+            <a href="/?category=Obat Bebas" class="filter-btn <%= (category === 'Obat Bebas') ? 'active' : '' %>"
+                style="text-decoration: none;">
+                <span class="filter-icon">💊</span> Obat Bebas
+            </a>
+            <a href="/?category=Obat Keras" class="filter-btn <%= (category === 'Obat Keras') ? 'active' : '' %>"
+                style="text-decoration: none;">
+                <span class="filter-icon">💉</span> Obat Keras
+            </a>
+            <a href="/?category=Obat Nyeri" class="filter-btn <%= (category === 'Obat Nyeri') ? 'active' : '' %>"
+                style="text-decoration: none;">
+                <span class="filter-icon">🩺</span> Obat Nyeri
+            </a>
+            <a href="/?category=Vitamin" class="filter-btn <%= (category === 'Vitamin') ? 'active' : '' %>"
+                style="text-decoration: none;">
+                <span class="filter-icon">🍊</span> Vitamin
+            </a>
+            <a href="/?category=Alat Kesehatan"
+                class="filter-btn <%= (category === 'Alat Kesehatan') ? 'active' : '' %>"
+                style="text-decoration: none;">
+                <span class="filter-icon">🩹</span> Alkes
+            </a>
+            <a href="/?category=Herbal" class="filter-btn <%= (category === 'Herbal') ? 'active' : '' %>"
+                style="text-decoration: none;">
+                <span class="filter-icon">🌿</span> Herbal
+            </a>
+        </div>
+
+        <div class="products-grid" id="marketplaceProducts">
+            <% if (products.length===0) { %>
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #6b7280;">
+                    <p>Belum ada produk yang tersedia.</p>
+                </div>
+                <% } else { %>
+                    <% products.forEach(product=> { %>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="<%= product.image_url || '/img/default-product.svg' %>"
+                                    alt="<%= product.name %>" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            <div class="product-info">
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <div class="product-category" style="margin-bottom: 0;">
+                                        <% const icons={ 'Obat Bebas' : '💊' , 'Obat Keras' : '💉' , 'Vitamin' : '🍊'
+                                            , 'Alat Kesehatan' : '🩹' , 'Herbal' : '🌿' }; const
+                                            icon=icons[product.category] || '💊' ; %>
+                                            <%= icon %>
+                                                <%= product.category %>
+                                    </div>
+                                    <% if (product.stock===0) { %>
+                                        <span class="stock-badge error"
+                                            style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Habis</span>
+                                        <% } else if (product.stock <=5) { %>
+                                            <span class="stock-badge warning"
+                                                style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Sisa:
+                                                <%= product.stock %>
+                                            </span>
+                                            <% } else { %>
+                                                <span class="stock-badge"
+                                                    style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Stok:
+                                                    <%= product.stock %>
+                                                </span>
+                                                <% } %>
+                                </div>
+                                <h3 class="product-title">
+                                    <%= product.name %>
+                                </h3>
+
+                                <!-- Seller Info -->
+                                <div
+                                    style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 12px; color: #6b7280;">
+                                    <span>🏪</span>
+                                    <span>
+                                        <%= product.seller ? (product.seller.full_name || product.seller.username)
+                                            : 'Official Store' %>
+                                    </span>
+                                </div>
+
+                                <div class="product-footer">
+                                    <div class="product-price">Rp <%= parseInt(product.price).toLocaleString('id-ID') %>
+                                    </div>
+                                    <form action="/cart/add" method="POST">
+                                        <input type="hidden" name="productId" value="<%= product.id %>">
+                                        <button type="submit" class="btn-add-cart" <%=product.stock===0 ? 'disabled'
+                                            : '' %>>
+                                            <%= product.stock===0 ? 'Habis' : '+ Keranjang' %>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                            <% } %>
+        </div>
+    </div>
+
+    <!-- Sticky Checkout Bar (Always rendered but toggled via display) -->
+    <div id="stickyCheckoutBar" style="
+        display: <%= (typeof cartCount !== 'undefined' && cartCount > 0) ? 'flex' : 'none' %>;
+        position: fixed; 
+        top: 155px; 
+        right: 20px; 
+        left: auto;
+        transform: none; 
+        width: auto; 
+        min-width: 250px;
+        background: linear-gradient(135deg, #FF6B35, #FF5252, #E040FB); 
+        color: white;
+        backdrop-filter: blur(5px); 
+        padding: 8px 16px; 
+        border-radius: 8px; 
+        box-shadow: 0 8px 20px -5px rgba(255, 107, 53, 0.4); 
+        justify-content: space-between; 
+        align-items: center; 
+        z-index: 900; 
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        animation: slideLeft 0.3s ease-out;
+    ">
+        <div style="display: flex; flex-direction: column; margin-right: 16px;">
+            <span style="font-size: 11px; opacity: 0.95; font-weight: 500; color: white;" id="stickyCount">
+                <%= typeof cartCount !=='undefined' ? cartCount : 0 %> Item
+            </span>
+            <span style="font-size: 14px; font-weight: 800; color: white;" id="stickyTotal">Rp <%= parseInt(typeof
+                    cartTotal !=='undefined' ? cartTotal : 0).toLocaleString('id-ID') %></span>
+        </div>
+        <button onclick="window.location.href='/cart'" style="
+        background: white; 
+        color: #FF5252; 
+        border: none; 
+        padding: 6px 12px; 
+        border-radius: 6px; 
+        font-size: 12px;
+        font-weight: 700; 
+        cursor: pointer; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        transition: transform 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            Lanjut ➔
+        </button>
+    </div>
+
+    <style>
+        @keyframes slideLeft {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <script>
+        // Live Search Simulation
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput) {
+            let timeout = null;
+            searchInput.addEventListener('keyup', function (e) {
+                clearTimeout(timeout);
+                timeout = setTimeout(function () {
+                    // Only submit if value changed or on enter (default form behavior handles enter)
+                    searchInput.form.submit();
+                }, 800); // 800ms debounce
+            });
+
+            // Focus back on input after reload
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('search')) {
+                searchInput.focus();
+                // Move cursor to end
+                const val = searchInput.value;
+                searchInput.value = '';
+                searchInput.value = val;
+            }
+        }
+
+        // AJAX Add to Cart
+        document.querySelectorAll('form[action="/cart/add"]').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = form.querySelector('button');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '⏳...';
+                btn.disabled = true;
+
+                try {
+                    const formData = new URLSearchParams(new FormData(form));
+                    const response = await fetch('/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Show Toast
+                        window.showToast(data.message || 'Berhasil masuk keranjang!', 'success');
+
+                        // Update Sticky Bar
+                        updateStickyBar(data.cartCount, data.cartTotal);
+                    } else {
+                        window.showToast(data.message || 'Gagal menambahkan', 'error');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    window.showToast('Terjadi kesalahan koneksi', 'error');
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            });
+        });
+
+        function updateStickyBar(count, total) {
+            // Update Sticky Bar
+            let bar = document.getElementById('stickyCheckoutBar');
+            if (bar) {
+                if (count > 0) {
+                    bar.style.display = 'flex';
+                    document.getElementById('stickyCount').textContent = count + ' Item';
+                    document.getElementById('stickyTotal').textContent = 'Rp ' + parseInt(total).toLocaleString('id-ID');
+                } else {
+                    bar.style.display = 'none';
+                }
+            }
+
+            // Update Header Badge
+            const badge = document.getElementById('cartBadge');
+            if (badge) {
+                badge.innerText = count;
+                if (count > 0) badge.style.display = 'flex';
+                else badge.style.display = 'none';
+            }
+        }
+    </script>
+
+    <%- include('partials/footer') %>

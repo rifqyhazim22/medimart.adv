@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediMart - Marketplace Obat Online</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <style>
+        /* Colorful Conversion Elements */
+        :root {
+            --gradient-primary: linear-gradient(135deg, #FF6B35, #FF5252, #E040FB);
+            --gradient-hover: linear-gradient(135deg, #FF8F6B, #FF7676, #EA80FC);
+        }
+
+        .cart-badge {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(255, 107, 53, 0.4);
+            border: 2px solid white;
+        }
+
+        .btn-add-cart {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-add-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 107, 53, 0.3);
+            background: var(--gradient-hover) !important;
+        }
+
+        .filter-btn.active {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            border-color: transparent !important;
+            box-shadow: 0 4px 10px rgba(224, 64, 251, 0.3);
+        }
+
+        .btn-login {
+            background: white;
+            color: #FF6B35 !important;
+            border: 2px solid #FF6B35 !important;
+            font-weight: 700 !important;
+        }
+
+        .btn-login:hover {
+            background: #FFF5F2 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-top">
+                <div class="logo" onclick="window.location.href='/'" style="cursor: pointer;">
+                    <div class="logo-icon">💊</div>
+                    <span>MediMart</span>
+                </div>
+
+                <div class="search-bar">
+                    <form action="/" method="GET" style="display: flex; width: 100%; align-items: center;">
+                        <input type="text" name="search" placeholder="Cari obat, vitamin..."
+                            value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+                        <button type="submit" class="search-btn">🔍</button>
+                    </form>
+                </div>
+
+                <div class="header-actions">
+                    <!-- 1. Cart: Show only for Guests or Customers (NOT for Admin/Seller) -->
+                    <% if (!currentUser || currentUser.role==='customer' ) { %>
+                        <a href="/cart" class="cart-btn"
+                            style="text-decoration: none; color: inherit; position: relative;">
+                            🛒
+                            <span class="cart-badge" id="cartBadge"
+                                style="<%= typeof cartCount !== 'undefined' && cartCount > 0 ? 'display:flex' : 'display:none' %>">
+                                <%= typeof cartCount !=='undefined' ? cartCount : 0 %>
+                            </span>
+                        </a>
+                        <% } %>
+
+                            <!-- 2. User Menu / Auth Buttons -->
+                            <% if (currentUser) { %>
+                                <div class="user-menu" style="display: flex; align-items: center; gap: 12px;">
+                                    <a href="/profile"
+                                        style="text-decoration: none; display: flex; align-items: center; gap: 8px;"
+                                        title="Lihat Profil">
+                                        <div class="user-info" style="display: flex; align-items: center; gap: 8px;">
+                                            <div class="user-avatar"
+                                                style="background-color: #FF6B35; color: white; display: flex; justify-content: center; align-items: center; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 14px;">
+                                                <%= currentUser.username.charAt(0).toUpperCase() %>
+                                            </div>
+                                            <div style="display: flex; flex-direction: column;">
+                                                <span class="user-name"
+                                                    style="font-weight: 600; font-size: 14px; color: #1f2937;">
+                                                    <%= currentUser.username %>
+                                                </span>
+                                                <span
+                                                    style="font-size: 11px; color: #6b7280; text-transform: uppercase;">
+                                                    <%= currentUser.role %>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a href="/logout" class="auth-btn btn-logout"
+                                        style="text-decoration: none; font-size: 12px; padding: 6px 12px; border: 1px solid #e5e7eb; border-radius: 6px; color: #374151; background: white; transition: all 0.2s;">Logout</a>
+                                </div>
+                                <% } else { %>
+                                    <div class="user-menu" style="display: flex; gap: 8px;">
+                                        <a href="/login" class="auth-btn btn-login"
+                                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; font-weight: 600;">Masuk</a>
+                                        <a href="/register" class="auth-btn"
+                                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; background: #f3f4f6; color: #374151; font-weight: 600;">Daftar</a>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+
+            <!-- 3. Navigation Tabs (Role Based) -->
+            <div class="nav-tabs">
+                <!-- Marketplace Tab: Guests & Customers Only -->
+                <% if (!currentUser || currentUser.role==='customer' ) { %>
+                    <button
+                        class="nav-tab <%= (typeof activeTab === 'undefined' || activeTab === 'marketplace') ? 'active' : '' %>"
+                        onclick="window.location.href='/'">🏪 Marketplace</button>
+                    <% } %>
+
+                        <!-- Role Specific Dashboards -->
+                        <% if (currentUser) { %>
+                            <% if (currentUser.role==='admin' ) { %>
+                                <button
+                                    class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'dashboard') ? 'active' : '' %>"
+                                    onclick="window.location.href='/admin/dashboard'">🛡️ Admin Dashboard</button>
+                                <% } else if (currentUser.role==='seller' ) { %>
+                                    <button
+                                        class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'dashboard') ? 'active' : '' %>"
+                                        onclick="window.location.href='/seller/dashboard'">📊 Seller Dashboard</button>
+                                    <% } else { %>
+                                        <!-- Customer -->
+                                        <button
+                                            class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'dashboard') ? 'active' : '' %>"
+                                            onclick="window.location.href='/user/dashboard'">📦 Pesanan Saya</button>
+                                        <% } %>
+                                            <% } %>
+            </div>
+        </div> <!-- Closing header-container -->
+    </header>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Global Toast Configuration
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                container: 'toast-below-header'
+            },
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        // Add CSS to push toast below the header
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .toast-below-header {
+                margin-top: 80px !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Wrapper function to be used anywhere
+        window.showToast = function (message, type = 'success') {
+            Toast.fire({
+                icon: type,
+                title: message
+            });
+        };
+
+        // Global confirmation wrapper for forms
+        window.confirmAction = function (event, message, actionBtnText = 'Ya, Lanjutkan', confirmColor = '#FF6B35') {
+            event.preventDefault(); // Stop default form submit
+            const form = event.target.closest('form') || event.target;
+
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: confirmColor,
+                cancelButtonColor: '#9ca3af',
+                confirmButtonText: actionBtnText,
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+            return false;
+        };
+    </script>
+
+    <!-- Handle Server-Side Flash Messages -->
+    <script>
+        <% if (success_msg && success_msg.length > 0) { %>
+            window.showToast('<%= success_msg %>', 'success');
+        <% } %>
+        
+        <% if (error_msg && error_msg.length > 0) { %>
+            window.showToast('<%= error_msg %>', 'error');
+        <% } %>
+        
+        <% if (error && error.length > 0) { %>
+            window.showToast('<%= error %>', 'error');
+        <% } %>
+    </script>
+
+    <div class="main-container">

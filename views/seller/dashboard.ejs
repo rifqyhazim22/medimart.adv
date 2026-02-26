@@ -1,0 +1,410 @@
+<%- include('../partials/header', { activeTab: 'dashboard' }) %>
+
+    <style>
+        /* Embedded Premium Dashboard Styles */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header & Stats */
+        .dashboard-header {
+            background: transparent;
+            padding: 0;
+            box-shadow: none;
+            color: #1f2937;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 8px;
+            background: none;
+            -webkit-text-fill-color: initial;
+        }
+
+        .dashboard-header p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.blue {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .stat-icon.orange {
+            background: #fff7ed;
+            color: #f97316;
+        }
+
+        .stat-icon.green {
+            background: #f0fdf4;
+            color: #22c55e;
+        }
+
+        .stat-content h3 {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+    </style>
+
+    <div class="main-container">
+        <div class="dashboard-container">
+            <!-- SELLER DASHBOARD -->
+            <div class="dashboard-header">
+                <h1>Dashboard Toko</h1>
+                <p>Halo, <strong>
+                        <%= currentUser.full_name || currentUser.username %>
+                    </strong>! Kelola produk Anda disini.</p>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📦</div>
+                        <div class="stat-content">
+                            <h3>Total Produk</h3>
+                            <div class="stat-value">
+                                <%= stats.totalProducts %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">📊</div>
+                        <div class="stat-content">
+                            <h3>Total Stok</h3>
+                            <div class="stat-value">
+                                <%= stats.totalStock %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">💰</div>
+                        <div class="stat-content">
+                            <h3>Nilai Inventory</h3>
+                            <div class="stat-value">Rp <%= parseInt(stats.totalValue).toLocaleString('id-ID') %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header"
+                style="margin-top: 30px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="section-title">Produk Saya</h2>
+                <a href="/products/new" class="btn-primary">
+                    <span>➕</span> Tambah Produk
+                </a>
+            </div>
+
+            <div class="products-grid">
+                <% if (products.length===0) { %>
+                    <p>Belum ada produk. Silakan tambah produk baru.</p>
+                    <% } else { %>
+                        <% products.forEach(product=> { %>
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="<%= product.image_url || '/img/default-product.svg' %>"
+                                        alt="<%= product.name %>" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-title">
+                                        <%= product.name %>
+                                    </h3>
+                                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                                        <% if (product.stock===0) { %>
+                                            <span class="stock-badge error"
+                                                style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Habis</span>
+                                            <% } else if (product.stock <=5) { %>
+                                                <span class="stock-badge warning"
+                                                    style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Sisa:
+                                                    <%= product.stock %>
+                                                </span>
+                                                <% } else { %>
+                                                    <span class="stock-badge"
+                                                        style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Stok:
+                                                        <%= product.stock %>
+                                                    </span>
+                                                    <% } %>
+                                    </div>
+                                    <p style="color: #6b7280; font-size: 14px;">Stok: <%= product.stock %>
+                                    </p>
+                                    <div class="product-footer">
+                                        <div class="product-price">Rp <%=
+                                                parseInt(product.price).toLocaleString('id-ID') %>
+                                        </div>
+                                        <div style="display: flex; gap: 8px;">
+                                            <a href="/products/<%= product.id %>/edit"
+                                                class="btn-small btn-secondary">Edit</a>
+                                            <form action="/products/<%= product.id %>?_method=DELETE" method="POST"
+                                                onsubmit="return confirmAction(event, 'Yakin ingin menghapus produk ini?', 'Ya, Hapus', '#EF4444');">
+                                                <button type="submit" class="btn-small btn-delete">Hapus</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } %>
+            </div>
+
+            <!-- SELLER INCOMING ORDERS -->
+            <div class="section-header" style="margin-top: 30px;">
+                <h2 class="section-title">Pesanan Masuk</h2>
+            </div>
+            <div class="table-container"
+                style="background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden; margin-bottom: 40px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f9fafb; text-align: left;">
+                            <th style="padding: 16px;">Tanggal</th>
+                            <th style="padding: 16px;">Produk</th>
+                            <th style="padding: 16px;">Pembeli</th>
+                            <th style="padding: 16px;">Qty</th>
+                            <th style="padding: 16px;">Total</th>
+                            <th style="padding: 16px;">Status</th>
+                            <th style="padding: 16px;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (orders.length===0) { %>
+                            <tr>
+                                <td colspan="7" style="padding: 24px; text-align: center;">Belum ada pesanan masuk.</td>
+                            </tr>
+                            <% } else { %>
+                                <% orders.forEach(item=> { %>
+                                    <tr>
+                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                            <%= new Date(item.created_at).toLocaleDateString('id-ID') %>
+                                        </td>
+                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                <img src="<%= item.image_url || '/img/default-product.svg' %>"
+                                                    style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">
+                                                <span>
+                                                    <%= item.product_name %>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                            <%= item.buyer_name %>
+                                        </td>
+                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                            <%= item.quantity %>
+                                        </td>
+                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600;">
+                                            Rp <%= (item.price_at_purchase * item.quantity).toLocaleString('id-ID') %>
+                                        </td>
+                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                            <span
+                                                style="padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500; <%= item.status === 'processed' || item.status === 'completed' ? 'background: #d1fae5; color: #065f46;' : item.status === 'rejected' || item.status === 'cancelled' ? 'background: #fee2e2; color: #b91c1c;' : 'background: #fef3c7; color: #92400e;' %>">
+                                                <%= item.status.charAt(0).toUpperCase() + item.status.slice(1) %>
+                                            </span>
+                                        </td>
+                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                            <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                                                <% if (item.status==='paid' || item.status==='pending' ) { %>
+                                                    <form action="/orders/items/<%= item.id %>/accept" method="POST"
+                                                        style="margin: 0;">
+                                                        <button type="submit"
+                                                            class="btn-small btn-primary">Proses</button>
+                                                    </form>
+                                                    <form action="/orders/items/<%= item.id %>/reject" method="POST"
+                                                        style="margin: 0;"
+                                                        onsubmit="return confirmAction(event, 'Tolak pesanan ini dan kembalikan stok?', 'Ya, Tolak', '#EF4444');">
+                                                        <button type="submit"
+                                                            class="btn-small btn-delete">Tolak</button>
+                                                    </form>
+                                                    <a href="/orders/seller/<%= item.id %>"
+                                                        class="btn-small btn-secondary"
+                                                        style="text-decoration: none;">Detail</a>
+                                                    <% } else if (item.status==='processed' ) { %>
+                                                        <form action="/orders/items/<%= item.id %>/ship" method="POST"
+                                                            style="margin: 0;">
+                                                            <button type="submit" class="btn-small btn-purple">🚚
+                                                                Kirim</button>
+                                                        </form>
+                                                        <a href="/orders/seller/<%= item.id %>"
+                                                            class="btn-small btn-secondary"
+                                                            style="text-decoration: none;">Detail</a>
+                                                        <% } else if (item.status==='shipped' ) { %>
+                                                            <span
+                                                                style="color: #6366f1; font-weight: 600; font-size: 13px;">Sedang
+                                                                Dikirim...</span>
+                                                            <a href="/orders/seller/<%= item.id %>"
+                                                                class="btn-small btn-secondary"
+                                                                style="text-decoration: none;">Detail</a>
+                                                            <% } else if (item.status==='completed' ) { %>
+                                                                <span
+                                                                    style="color: #059669; font-weight: 600; font-size: 13px;">✅
+                                                                    Selesai</span>
+                                                                <a href="/orders/seller/<%= item.id %>"
+                                                                    class="btn-small btn-secondary"
+                                                                    style="text-decoration: none;">Detail</a>
+                                                                <form action="/orders/items/<%= item.id %>/hide"
+                                                                    method="POST"
+                                                                    onsubmit="return confirmAction(event, 'Hapus dari riwayat?', 'Ya, Hapus', '#EF4444')"
+                                                                    style="margin: 0;">
+                                                                    <button type="submit" class="btn-small"
+                                                                        style="background:#e5e7eb; color:#6b7280; font-size:11px; padding: 4px 8px;">Hapus</button>
+                                                                </form>
+                                                                <% } else if (item.status==='rejected' ||
+                                                                    item.status==='cancelled' ) { %>
+                                                                    <span
+                                                                        style="color: #ef4444; font-size: 12px; font-weight: 600; text-transform: capitalize;">
+                                                                        <%= item.status %>
+                                                                    </span>
+                                                                    <form action="/orders/items/<%= item.id %>/hide"
+                                                                        method="POST"
+                                                                        onsubmit="return confirmAction(event, 'Hapus dari riwayat?', 'Ya, Hapus', '#EF4444')"
+                                                                        style="margin: 0;">
+                                                                        <button type="submit" class="btn-small"
+                                                                            style="background:#e5e7eb; color:#6b7280; font-size:11px; padding: 4px 8px;">Hapus</button>
+                                                                    </form>
+                                                                    <% } else { %>
+                                                                        <span
+                                                                            style="color: #9ca3af; font-size: 12px; text-transform: capitalize;">
+                                                                            <%= item.status %>
+                                                                        </span>
+                                                                        <a href="/orders/seller/<%= item.id %>"
+                                                                            class="btn-small btn-secondary"
+                                                                            style="text-decoration: none;">Detail</a>
+                                                                        <% } %>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+        <!-- Legacy showToast removed. Using window.showToast from header -->
+        <script>
+            // AJAX Seller Actions
+            document.addEventListener('DOMContentLoaded', () => {
+                const handleAction = async (e) => {
+                    const form = e.target.closest('form');
+                    if (!form) return;
+
+                    // Only hijack seller actions
+                    if (!form.action.includes('/accept') && !form.action.includes('/reject') && !form.action.includes('/ship'))
+                        return;
+
+                    // If user cancelled an inline confirm, default action is prevented
+                    if (e.defaultPrevented) return;
+                    e.preventDefault();
+
+                    const btn = form.querySelector('button');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '⏳';
+                    btn.disabled = true;
+
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        const data = await response.json();
+
+                        if (data.success) {
+                            window.showToast(data.message, 'success');
+
+                            // Remove Row with animation if deleted
+                            const row = form.closest('tr');
+                            row.style.transition = 'all 0.5s';
+                            const statusBadge = row.querySelector('td:nth-child(5) span');
+                            const actionCell = row.querySelector('td:nth-child(6)');
+
+                            // Update Status Badge
+                            if (statusBadge) {
+                                statusBadge.textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
+                                if (data.status === 'processed') {
+                                    statusBadge.style.background = '#d1fae5';
+                                    statusBadge.style.color = '#065f46';
+                                } else if (data.status === 'shipped') {
+                                    statusBadge.style.background = '#d1fae5';
+                                    statusBadge.style.color = '#065f46';
+                                } else if (data.status === 'rejected') {
+                                    statusBadge.style.background = '#fee2e2';
+                                    statusBadge.style.color = '#b91c1c';
+                                }
+                            }
+
+                            // Reload to get fresh buttons based on new status
+                            setTimeout(() => location.reload(), 500);
+
+                        } else {
+                            window.showToast(data.message || 'Gagal', 'error');
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        window.showToast('Terjadi kesalahan', 'error');
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                };
+
+                // Delegate event to table (better performance)
+                const table = document.querySelector('table');
+                if (table) {
+                    table.addEventListener('submit', handleAction);
+                }
+            });
+        </script>

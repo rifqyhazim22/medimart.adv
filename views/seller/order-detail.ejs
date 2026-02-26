@@ -1,0 +1,218 @@
+<%- include('../partials/header', { activeTab: 'dashboard' }) %>
+
+    <style>
+        .detail-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .detail-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .detail-header {
+            padding: 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9fafb;
+        }
+
+        .detail-section {
+            padding: 24px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .info-group {
+            margin-bottom: 16px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-paid,
+        .status-processed,
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-cancelled,
+        .status-rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #4b5563;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+    </style>
+
+    <div class="detail-container">
+        <a href="/seller/dashboard" class="btn-back">
+            <span>←</span> Kembali ke Dashboard
+        </a>
+
+        <div class="detail-card">
+            <!-- Header -->
+            <div class="detail-header">
+                <div>
+                    <h1 style="font-size: 24px; margin: 0 0 4px 0;">Order #ORD-<%= item.order_id %>-ITM-<%= item.id %>
+                    </h1>
+                    <p style="color: #6b7280; margin: 0;">
+                        <%= new Date(item.createdAt).toLocaleDateString('id-ID', { weekday: 'long' , day: 'numeric' ,
+                            month: 'long' , year: 'numeric' , hour: '2-digit' , minute: '2-digit' }) %>
+                    </p>
+                </div>
+                <div>
+                    <span class="status-badge status-<%= item.status %>">
+                        <%= item.status.toUpperCase() %>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Info Grid -->
+            <div class="detail-section">
+                <div class="info-grid">
+                    <!-- Buyer & Shipping Info -->
+                    <div>
+                        <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 18px;">👤 Informasi Pembeli</h3>
+                        <div class="info-group">
+                            <div class="info-label">Nama Pembeli</div>
+                            <div class="info-value">
+                                <%= item.Order && item.Order.User ? item.Order.User.full_name ||
+                                    item.Order.User.username : 'Unknown' %>
+                            </div>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-label">Penerima (di Alamat)</div>
+                            <div class="info-value">
+                                <%= item.Order ? item.Order.recipient_name : '-' %>
+                            </div>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-label">Telepon</div>
+                            <div class="info-value">
+                                <%= item.Order ? item.Order.recipient_phone : '-' %>
+                            </div>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-label">Alamat Pengiriman</div>
+                            <div class="info-value" style="line-height: 1.5;">
+                                <%= item.Order ? item.Order.shipping_address : '-' %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div>
+                        <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 18px;">📦 Produk Dipesan</h3>
+                        <div style="display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px;">
+                            <img src="<%= item.Product ? item.Product.image_url : '/img/default-product.svg' %>"
+                                style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 16px; margin-bottom: 4px;">
+                                    <%= item.Product ? item.Product.name : 'Unknown Product' %>
+                                </div>
+                                <div style="font-size: 14px; color: #6b7280;">
+                                    Harga Satuan: Rp <%= parseFloat(item.price_at_purchase).toLocaleString('id-ID') %>
+                                </div>
+                                <div style="font-size: 14px; color: #6b7280;">
+                                    Jumlah: <strong>
+                                        <%= item.quantity %>
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="border-top: 1px solid #e5e7eb; padding-top: 16px;">
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 700;">
+                                <span>Total Pendapatan</span>
+                                <span style="color: #FF6B35;">Rp <%= (item.price_at_purchase *
+                                        item.quantity).toLocaleString('id-ID') %></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <!-- Only show actions if not cancelled/rejected/completed -->
+            <div class="detail-section"
+                style="background: #f9fafb; display: flex; justify-content: flex-end; gap: 12px;">
+                <% if (item.status==='pending' || item.status==='paid' ) { %>
+                    <form action="/orders/items/<%= item.id %>/reject" method="POST"
+                        onsubmit="return confirmAction(event, 'Tolak pesanan ini dan kembalikan stok?', 'Ya, Tolak', '#EF4444');">
+                        <button type="submit" class="btn-danger"
+                            style="padding: 10px 20px; border-radius: 8px; font-weight: 600; border: none; background: #fee2e2; color: #b91c1c; cursor: pointer;">
+                            ❌ Tolak Pesanan
+                        </button>
+                    </form>
+                    <form action="/orders/items/<%= item.id %>/accept" method="POST">
+                        <button type="submit" class="btn-success"
+                            style="padding: 10px 20px; border-radius: 8px; font-weight: 600; border: none; background: #d1fae5; color: #065f46; cursor: pointer;">
+                            ✅ Terima/Proses
+                        </button>
+                    </form>
+                    <% } else if (item.status==='processed' ) { %>
+                        <form action="/orders/items/<%= item.id %>/ship" method="POST">
+                            <button type="submit" class="btn-primary"
+                                style="padding: 10px 20px; border-radius: 8px; font-weight: 600; border: none; background: #e0e7ff; color: #4338ca; cursor: pointer;">
+                                🚚 Kirim Pesanan
+                            </button>
+                        </form>
+                        <% } else if (item.status==='shipped' ) { %>
+                            <span style="color: #6366f1; font-weight: 600;">Sedang Dikirim... (Menunggu konfirmasi
+                                pembeli)</span>
+                            <% } else if (item.status==='completed' ) { %>
+                                <span style="color: #059669; font-weight: 600;">✅ Transaksi Selesai</span>
+                                <% } else { %>
+                                    <span style="color: #6b7280; font-weight: 600;">Status: <%= item.status %></span>
+                                    <% } %>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>

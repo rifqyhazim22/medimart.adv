@@ -1,0 +1,415 @@
+<%- include('partials/header') %>
+    <!-- CSS for Cart explicitly if needed, or rely on style.css -->
+    <link rel="stylesheet" href="/css/cart.css">
+
+    <div class="cart-page-container">
+        <div class="cart-content">
+            <!-- Cart Header -->
+            <div class="cart-page-header">
+                <a href="/" class="btn-back">
+                    <span>←</span>
+                    <span>Lanjut Belanja</span>
+                </a>
+                <h1>Keranjang Belanja</h1>
+                <p class="cart-subtitle">Review pesanan Anda sebelum checkout</p>
+            </div>
+
+            <!-- Cart Items Section -->
+            <div class="cart-main">
+                <div class="cart-items-section">
+                    <div class="section-header-cart">
+                        <h2>Item di Keranjang (<span id="itemCount">
+                                <%= cart.reduce((a, b)=> a + b.quantity, 0) %>
+                            </span>)</h2>
+                        <form action="/cart/clear" method="POST">
+                            <button type="submit" class="btn-clear">
+                                <span>🗑️</span>
+                                <span>Kosongkan</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div id="cartItemsContainer">
+                        <% if (cart.length===0) { %>
+                            <div style="text-align: center; padding: 40px; color: #6b7280;">
+                                <p>Keranjang belanja Anda kosong.</p>
+                                <a href="/" class="btn-primary"
+                                    style="margin-top: 20px; text-decoration: none; display: inline-block;">Mulai
+                                    Belanja</a>
+                            </div>
+                            <% } else { %>
+                                <% cart.forEach(item=> { %>
+                                    <div class="cart-item"
+                                        style="display: flex; gap: 20px; background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                        <div
+                                            style="width: 100px; height: 100px; border-radius: 8px; overflow: hidden; background: #f3f4f6;">
+                                            <img src="<%= item.image_url || '/img/default-product.svg' %>"
+                                                style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                        <div style="flex-grow: 1;">
+                                            <div
+                                                style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                                <h3 style="margin: 0 0 8px 0; font-size: 18px;">
+                                                    <%= item.name %>
+                                                </h3>
+                                                <form action="/cart/remove" method="POST" style="margin: 0;">
+                                                    <input type="hidden" name="productId" value="<%= item.id %>">
+                                                    <button type="submit" class="btn-remove-item"
+                                                        style="background: none; border: none; cursor: pointer; color: #ef4444; padding: 0;">
+                                                        🗑️
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            <div style="color: #6b7280; font-size: 14px; margin-bottom: 12px;">
+                                                Rp <%= parseInt(item.price).toLocaleString('id-ID') %>
+                                            </div>
+
+                                            <div
+                                                style="display: flex; align-items: center; justify-content: space-between;">
+                                                <div
+                                                    style="display: flex; align-items: center; gap: 10px; border: 1px solid #e5e7eb; border-radius: 6px; padding: 4px;">
+                                                    <form action="/cart/update" method="POST" style="margin:0;">
+                                                        <input type="hidden" name="productId" value="<%= item.id %>">
+                                                        <input type="hidden" name="action" value="decrease">
+                                                        <button type="submit"
+                                                            style="width: 28px; height: 28px; border: none; background: white; cursor: pointer; border-radius: 4px; font-weight: bold;">-</button>
+                                                    </form>
+                                                    <span class="item-qty-display"
+                                                        style="font-weight: 600; font-size: 14px; min-width: 20px; text-align: center;">
+                                                        <%= item.quantity %>
+                                                    </span>
+                                                    <form action="/cart/update" method="POST" style="margin:0;">
+                                                        <input type="hidden" name="productId" value="<%= item.id %>">
+                                                        <input type="hidden" name="action" value="increase">
+                                                        <button type="submit"
+                                                            style="width: 28px; height: 28px; border: none; background: white; cursor: pointer; border-radius: 4px; font-weight: bold;">+</button>
+                                                    </form>
+                                                </div>
+                                                <div class="item-total-display"
+                                                    style="font-weight: 700; color: #FF6B35;">
+                                                    Rp <%= (item.price * item.quantity).toLocaleString('id-ID') %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% }); %>
+                                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Order Summary Sidebar -->
+                <div class="order-summary">
+                    <div class="summary-card">
+                        <h3>Ringkasan Pesanan</h3>
+
+                        <div class="summary-row">
+                            <span>Subtotal (<%= cart.reduce((a, b)=> a + b.quantity, 0) %> item)</span>
+                            <span id="subtotal">Rp <%= subtotal.toLocaleString('id-ID') %></span>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Ongkos Kirim</span>
+                            <span class="text-primary" id="shipping">GRATIS</span>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Diskon</span>
+                            <span class="text-success" id="discount">Rp 0</span>
+                        </div>
+
+                        <div class="divider-summary"></div>
+
+                        <div class="summary-row total">
+                            <span>Total</span>
+                            <span id="total">Rp <%= subtotal.toLocaleString('id-ID') %></span>
+                        </div>
+
+                        <% if (currentUser) { %>
+                            <button onclick="window.location.href='/checkout'" class="btn-checkout-page"
+                                <%=cart.length===0 ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : '' %>>
+                                <span>Checkout Sekarang</span>
+                                <span>→</span>
+                            </button>
+                            <% } else { %>
+                                <a href="/login" class="btn-checkout-page"
+                                    style="display: flex; justify-content: center; align-items: center; text-decoration: none;">
+                                    Login untuk Checkout
+                                </a>
+                                <% } %>
+
+                                    <div class="payment-methods">
+                                        <p>Metode Pembayaran:</p>
+                                        <div class="payment-icons">
+                                            <span>💳</span>
+                                            <span>🏦</span>
+                                            <span>📱</span>
+                                            <span>💰</span>
+                                        </div>
+                                    </div>
+                    </div>
+
+                    <!-- Promo Code -->
+                    <div class="promo-card">
+                        <h4>Punya Kode Promo?</h4>
+                        <div class="promo-box">
+                            <input type="text" placeholder="Masukkan kode promo">
+                            <button type="button" class="btn btn-secondary"
+                                onclick="window.showToast('Fitur promo belum tersedia saat ini.', 'info')">Pakai</button>
+                        </div>
+                    </div>
+
+                    <!-- Trust Badges -->
+                    <div class="trust-badges">
+                        <div class="trust-item">
+                            <span class="trust-icon">✅</span>
+                            <span>Produk Original</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="trust-icon">🚚</span>
+                            <span>Pengiriman Cepat</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="trust-icon">🔒</span>
+                            <span>Transaksi Aman</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommended Products (Static for now to match layout) -->
+            <div class="recommended-section">
+                <h2 class="section-title">Mungkin Anda Tertarik</h2>
+                <div class="recommended-grid" id="recommendedProducts"
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+                    <% if (typeof recommendedProducts !=='undefined' && recommendedProducts.length> 0) { %>
+                        <% recommendedProducts.forEach(product=> { %>
+                            <div class="product-card"
+                                style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; background: white;">
+                                <div>
+                                    <img src="<%= product.image_url || '/img/default-product.svg' %>"
+                                        style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;">
+                                </div>
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px;">
+                                    <h3 style="font-size: 16px; margin: 0; flex: 1;">
+                                        <%= product.name %>
+                                    </h3>
+                                    <% if (product.stock===0) { %>
+                                        <span class="stock-badge error"
+                                            style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap;">Habis</span>
+                                        <% } else if (product.stock <=5) { %>
+                                            <span class="stock-badge warning"
+                                                style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap;">Sisa:
+                                                <%= product.stock %>
+                                            </span>
+                                            <% } else { %>
+                                                <span class="stock-badge"
+                                                    style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap;">Stok:
+                                                    <%= product.stock %>
+                                                </span>
+                                                <% } %>
+                                </div>
+                                <%= product.name %>
+                                    </h3>
+                                    <div style="font-weight: 700; color: #FF6B35; margin-bottom: 12px;">Rp <%=
+                                            parseInt(product.price).toLocaleString('id-ID') %>
+                                    </div>
+                                    <form action="/cart/add" method="POST">
+                                        <input type="hidden" name="productId" value="<%= product.id %>">
+                                        <button type="submit" class="btn-add-cart" <%=product.stock===0 ? 'disabled'
+                                            : '' %>>
+                                            <%= product.stock===0 ? 'Habis' : '+ Keranjang' %>
+                                        </button>
+                                    </form>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <p style="color: #6b7280;">Tidak ada rekomendasi saat ini.</p>
+                                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+
+        <script>
+            // AJAX Cart Update
+            document.querySelectorAll('form[action="/cart/update"]').forEach(form => {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const btn = form.querySelector('button');
+                    const previousState = btn.disabled;
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+
+                    try {
+                        const formData = new URLSearchParams(new FormData(form));
+                        const response = await fetch('/cart/update', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: formData
+                        });
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Update UI
+                            const cartItem = form.closest('.cart-item');
+                            const qtyDisplay = cartItem.querySelector('.item-qty-display');
+                            const itemTotal = cartItem.querySelector('.item-total-display');
+
+                            if (qtyDisplay) qtyDisplay.textContent = data.itemQuantity;
+                            if (itemTotal) itemTotal.innerText = 'Rp ' + parseInt(data.itemTotal).toLocaleString('id-ID');
+
+                            // Update Summary
+                            document.getElementById('subtotal').innerText = 'Rp ' + parseInt(data.subtotal).toLocaleString('id-ID');
+                            document.getElementById('total').innerText = 'Rp ' + parseInt(data.cartTotal).toLocaleString('id-ID');
+                            document.getElementById('itemCount').innerText = data.cartCount;
+
+                            // Update Header Badge
+                            const badge = document.getElementById('cartBadge');
+                            if (badge) {
+                                badge.innerText = data.cartCount;
+                                if (data.cartCount > 0) badge.style.display = 'flex';
+                                else badge.style.display = 'none';
+                            }
+
+                        } else {
+                            window.showToast(data.message || 'Gagal update keranjang', 'error');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        window.showToast('Koneksi error', 'error');
+                    } finally {
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                    }
+                });
+            });
+
+            // AJAX Clear Cart
+            const clearForm = document.querySelector('form[action="/cart/clear"]');
+            if (clearForm) {
+                clearForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const result = await Swal.fire({
+                        title: 'Konfirmasi',
+                        text: 'Yakin ingin mengosongkan keranjang?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#EF4444',
+                        cancelButtonColor: '#9ca3af',
+                        confirmButtonText: 'Ya, Kosongkan',
+                        cancelButtonText: 'Batal',
+                        reverseButtons: true
+                    });
+                    if (!result.isConfirmed) return;
+
+                    const btn = clearForm.querySelector('button');
+                    btn.disabled = true;
+                    btn.innerHTML = '⏳...';
+
+                    try {
+                        const response = await fetch('/cart/clear', {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Reload to show empty state (simplest way to clear complex DOM)
+                            window.location.reload();
+                        } else {
+                            window.showToast('Gagal mengosongkan keranjang', 'error');
+                            window.location.reload();
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        window.showToast('Terjadi kesalahan', 'error');
+                        window.location.reload();
+                    }
+                });
+            }
+
+            // AJAX Remove Item
+            document.querySelectorAll('form[action="/cart/remove"]').forEach(form => {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const result = await Swal.fire({
+                        title: 'Konfirmasi',
+                        text: 'Hapus item ini dari keranjang?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#EF4444',
+                        cancelButtonColor: '#9ca3af',
+                        confirmButtonText: 'Ya, Hapus',
+                        cancelButtonText: 'Batal',
+                        reverseButtons: true
+                    });
+                    if (!result.isConfirmed) return;
+
+                    const btn = form.querySelector('button');
+                    btn.innerHTML = '⏳';
+                    btn.disabled = true;
+
+                    try {
+                        const formData = new URLSearchParams(new FormData(form));
+                        const response = await fetch('/cart/remove', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: formData
+                        });
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Remove element or reload if empty
+                            if (data.cartCount === 0) {
+                                window.location.reload();
+                            } else {
+                                // Remove visual row
+                                // Note: Need to verify if we are deleting the last item this way vs reloading
+                                // Easiest: Reload if complex structure changes. 
+                                // Advanced: Fade out & Update totals.
+
+                                // Let's try fading out & updating for better UX
+                                const cartItem = form.closest('.cart-item');
+                                cartItem.style.transition = 'all 0.3s';
+                                cartItem.style.opacity = '0';
+                                setTimeout(() => cartItem.remove(), 300);
+
+                                // Update Totals
+                                document.getElementById('subtotal').innerText = 'Rp ' + parseInt(data.subtotal).toLocaleString('id-ID');
+                                document.getElementById('total').innerText = 'Rp ' + parseInt(data.cartTotal).toLocaleString('id-ID');
+                                document.getElementById('itemCount').innerText = data.cartCount;
+
+                                // Update Header
+                                const badge = document.getElementById('cartBadge');
+                                if (badge) {
+                                    badge.innerText = data.cartCount;
+                                    if (data.cartCount > 0) badge.style.display = 'flex';
+                                    else badge.style.display = 'none';
+                                }
+                            }
+                        } else {
+                            window.showToast(data.message || 'Gagal menghapus', 'error');
+                            window.location.reload();
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        window.showToast('Error', 'error');
+                        window.location.reload();
+                    }
+                });
+            });
+        </script>

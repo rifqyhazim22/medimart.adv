@@ -1,0 +1,87 @@
+<%- include('../partials/header', { activeTab: 'profile' }) %>
+
+    <div class="container" style="padding: 40px 20px;">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <div
+                style="background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden;">
+                <div
+                    style="background: linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%); padding: 40px 20px; text-align: center; color: white;">
+                    <div
+                        style="width: 100px; height: 100px; background: white; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #FF6B35; font-weight: bold;">
+                        <%= user.full_name ? user.full_name.charAt(0).toUpperCase() :
+                            user.username.charAt(0).toUpperCase() %>
+                    </div>
+                    <h1 style="margin: 0; font-size: 24px; font-weight: 700;">
+                        <%= user.full_name || user.username %>
+                    </h1>
+                    <p style="margin: 8px 0 0; opacity: 0.9;">
+                        <span
+                            style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <%= user.role %>
+                        </span>
+                    </p>
+                </div>
+
+                <div style="padding: 30px;">
+                    <!-- Info Grid -->
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 30px;">
+                        <div>
+                            <label
+                                style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 4px;">Username</label>
+                            <div style="font-weight: 500; color: #1f2937;">
+                                <%= user.username %>
+                            </div>
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 4px;">Email</label>
+                            <div style="font-weight: 500; color: #1f2937;">
+                                <%= user.email || '-' %>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 4px;">No.
+                                Telepon</label>
+                            <div style="font-weight: 500; color: #1f2937;">
+                                <%= user.phone || '-' %>
+                            </div>
+                        </div>
+                        <% if (user.role==='customer' ) { %>
+                            <div style="grid-column: 1 / -1;">
+                                <label
+                                    style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 4px;">Alamat
+                                    Pengiriman Utama</label>
+                                <div style="font-weight: 500; color: #1f2937; line-height: 1.5;">
+                                    <%= user.address || '-' %>
+                                </div>
+                            </div>
+                            <% } else if (user.role==='seller' ) { %>
+                                <div style="grid-column: 1 / -1;">
+                                    <label
+                                        style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 4px;">Alamat
+                                        Toko</label>
+                                    <div style="font-weight: 500; color: #1f2937; line-height: 1.5;">
+                                        <%= user.address || '-' %>
+                                    </div>
+                                </div>
+                                <% } %>
+                    </div>
+
+                    <div
+                        style="border-top: 1px solid #e5e7eb; padding-top: 24px; display: flex; justify-content: flex-end;">
+                        <a href="/profile/edit" class="btn-primary"
+                            style="display: flex; align-items: center; gap: 8px;">
+                            <span>✏️</span> Edit Profil
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <a href="/" style="color: #6b7280; text-decoration: none; font-size: 14px;">← Kembali ke Beranda</a>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>

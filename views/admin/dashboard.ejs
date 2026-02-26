@@ -1,0 +1,460 @@
+<%- include('../partials/header', { activeTab: 'dashboard' }) %>
+
+
+    <style>
+        /* Embedded Premium Dashboard Styles */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header & Stats */
+        .dashboard-header {
+            background: transparent;
+            padding: 0;
+            box-shadow: none;
+            color: #1f2937;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 8px;
+            background: none;
+            -webkit-text-fill-color: initial;
+        }
+
+        .dashboard-header p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.blue {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .stat-icon.orange {
+            background: #fff7ed;
+            color: #f97316;
+        }
+
+        .stat-icon.green {
+            background: #f0fdf4;
+            color: #22c55e;
+        }
+
+        .stat-icon.purple {
+            background: #f3e8ff;
+            color: #a855f7;
+        }
+
+        .stat-content h3 {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: #111827;
+            margin: 0;
+        }
+
+        .stat-subtitle {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        .dashboard-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f3f4f6;
+            padding: 24px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-section h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px 16px;
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .data-table td {
+            padding: 16px;
+            color: #374151;
+            font-size: 14px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-primary {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-pending {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .btn-icon-danger {
+            background: transparent;
+            color: #ef4444;
+            border: 1px solid #fee2e2;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-icon-danger:hover {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+    </style>
+
+    <div class="main-container">
+        <div class="dashboard-container">
+            <header class="dashboard-header">
+                <h1>Admin Dashboard</h1>
+                <p>Overview Sistem & Manajemen User</p>
+            </header>
+
+            <!-- System Stats -->
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon blue">👥</div>
+                    <div class="stat-content">
+                        <h3>Total User</h3>
+                        <div class="stat-value">
+                            <%= stats.totalUsers %>
+                        </div>
+                        <div class="stat-subtitle">
+                            <%= stats.totalSellers %> Sellers, <%= stats.totalCustomers %> Customers,
+                                    <%= stats.totalAdmins %> Admins
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">📦</div>
+                    <div class="stat-content">
+                        <h3>Total Produk</h3>
+                        <div class="stat-value">
+                            <%= stats.totalProducts %>
+                        </div>
+                        <div class="stat-subtitle">Aktif di platform</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">🛒</div>
+                    <div class="stat-content">
+                        <h3>Total Pesanan</h3>
+                        <div class="stat-value">
+                            <%= stats.totalOrders %>
+                        </div>
+                        <div class="stat-subtitle">Semua status</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">💰</div>
+                    <div class="stat-content">
+                        <h3>Total Pendapatan</h3>
+                        <div class="stat-value">Rp <%= stats.totalRevenue.toLocaleString('id-ID') %>
+                        </div>
+                        <div class="stat-subtitle">Pendapatan sukses</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User List -->
+            <section class="dashboard-section">
+                <h2>Daftar Pengguna</h2>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Terdaftar Pada</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% allUsers.forEach(user=> { %>
+                                <tr>
+                                    <td style="font-family: monospace; color: #6b7280;">#<%= user.id %>
+                                    </td>
+                                    <td style="font-weight: 500;">
+                                        <%= user.username %>
+                                    </td>
+                                    <td>
+                                        <%= user.email %>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge badge-<%= user.role === 'admin' ? 'primary' : (user.role === 'seller' ? 'warning' : 'success') %>">
+                                            <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString('id-ID', {
+                                            day: 'numeric' , month: 'short' , year: 'numeric' }) : '-' %>
+                                    </td>
+                                    <td>
+                                        <% if (user.role !=='admin' ) { %>
+                                            <form action="/admin/users/<%= user.id %>/delete" method="POST">
+                                                <button type="submit" class="btn-icon-danger">Hapus</button>
+                                            </form>
+                                            <% } else { %>
+                                                <span style="color: #d1d5db;">-</span>
+                                                <% } %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TRANSACTION HISTORY SECTION -->
+            <section class="dashboard-section" style="margin-top: 40px;">
+                <div class="section-header">
+                    <h2>Riwayat Transaksi (Terbaru)</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Pelanggan</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Tanggal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (recentOrders && recentOrders.length> 0) { %>
+                                <% recentOrders.forEach(order=> { %>
+                                    <tr>
+                                        <td style="font-family: monospace; font-weight: 600;">#<%= order.id %>
+                                        </td>
+                                        <td>
+                                            <%= order.customer_name %>
+                                        </td>
+                                        <td style="font-weight: 600;">Rp <%=
+                                                parseFloat(order.total_price).toLocaleString('id-ID') %>
+                                        </td>
+                                        <td>
+                                            <% let statusClass='pending' ; if (order.status==='paid' )
+                                                statusClass='info' ; if (order.status==='processing' ||
+                                                order.status==='shipped' ) statusClass='warning' ; if
+                                                (order.status==='completed' ) statusClass='success' ; if
+                                                (order.status==='cancelled' ) statusClass='danger' ; %>
+                                                <span class="badge badge-<%= statusClass %>">
+                                                    <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                                                </span>
+                                        </td>
+                                        <td>
+                                            <%= order.created_at ? new
+                                                Date(order.created_at).toLocaleDateString('id-ID', { day: 'numeric' ,
+                                                month: 'short' , year: 'numeric' }) : '-' %>
+                                        </td>
+                                        <td>
+                                            <form action="/admin/orders/<%= order.id %>/delete" method="POST"
+                                                class="ajax-form delete-form">
+                                                <button type="submit" class="btn-icon-danger">Hapus</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="6"
+                                                    style="text-align: center; padding: 40px; color: #9ca3af;">
+                                                    Belum ada transaksi terbaru.</td>
+                                            </tr>
+                                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+        <script>
+            <!-- Legacy showToast removed. Using window.showToast from header -->
+
+            // AJAX Admin Delete
+            document.addEventListener('DOMContentLoaded', () => {
+                const handleAction = async (e) => {
+                    const form = e.target.closest('form');
+                    if (!form || !form.action.includes('/delete')) return;
+
+                    e.preventDefault();
+
+                    // Confirm reject
+                    const msg = form.action.includes('users') ? 'Yakin ingin menghapus user ini? Data terkait mungkin akan hilang.' : 'Hapus PERMANEN order ini? Data tidak bisa dikembalikan.';
+                    const result = await Swal.fire({
+                        title: 'Konfirmasi',
+                        text: msg,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#EF4444',
+                        cancelButtonColor: '#9ca3af',
+                        confirmButtonText: 'Ya, Hapus',
+                        cancelButtonText: 'Batal',
+                        reverseButtons: true
+                    });
+                    if (!result.isConfirmed) return;
+
+                    const btn = form.querySelector('button');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '⏳';
+                    btn.disabled = true;
+
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        const data = await response.json();
+
+                        if (data.success) {
+                            window.showToast(data.message, 'success');
+
+                            // Remove Row with animation
+                            const row = form.closest('tr');
+                            row.style.transition = 'all 0.5s';
+                            row.style.opacity = '0';
+                            row.style.transform = 'translateX(20px)';
+                            setTimeout(() => row.remove(), 500);
+
+                        } else {
+                            window.showToast(data.message || 'Gagal', 'error');
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        window.showToast('Terjadi kesalahan', 'error');
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                };
+
+                // Delegate event to body/tables
+                document.body.addEventListener('submit', handleAction);
+            });
+        </script>
+        </body>
+
+        </html>

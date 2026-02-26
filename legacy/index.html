@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediMart - Marketplace Obat Online</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <style>
+        /* Colorful Conversion Elements */
+        :root {
+            --gradient-primary: linear-gradient(135deg, #FF6B35, #FF5252, #E040FB);
+            --gradient-hover: linear-gradient(135deg, #FF8F6B, #FF7676, #EA80FC);
+        }
+
+        /* 1. Header Cart Badge */
+        .cart-badge {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(255, 107, 53, 0.4);
+            border: 2px solid white;
+        }
+
+        /* 2. Add to Cart Button (Marketplace) */
+        .btn-add-cart {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            border: none !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-add-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 107, 53, 0.3);
+            background: var(--gradient-hover) !important;
+        }
+
+        /* 3. Filter Buttons (Active) */
+        .filter-btn.active {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            border-color: transparent !important;
+            box-shadow: 0 4px 10px rgba(224, 64, 251, 0.3);
+        }
+
+        /* 4. Login Button */
+        .btn-login {
+            background: white;
+            color: #FF6B35 !important;
+            border: 2px solid #FF6B35 !important;
+            font-weight: 700 !important;
+        }
+
+        .btn-login:hover {
+            background: #FFF5F2 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-top">
+                <div class="logo" onclick="app.showMarketplace()">
+                    <div class="logo-icon">💊</div>
+                    <span>MediMart</span>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Cari obat, vitamin, atau produk kesehatan..."
+                        onkeyup="app.searchProducts()">
+                    <button class="search-btn" onclick="app.searchProducts()">🔍</button>
+                </div>
+
+                <div class="header-actions">
+                    <a href="cart.html" class="cart-btn" style="text-decoration: none; color: inherit;">
+                        🛒
+                        <span class="cart-badge" id="cartBadge">0</span>
+                    </a>
+
+                    <div id="authButtons" class="user-menu">
+                        <a href="login.html" class="auth-btn btn-login"
+                            style="text-decoration: none; display: flex; align-items: center; justify-content: center;">Login</a>
+                    </div>
+
+                    <div id="userMenu" class="user-menu hidden">
+                        <div class="user-avatar" id="userAvatar"></div>
+                        <span class="user-name" id="userName"></span>
+                        <button class="auth-btn btn-logout" onclick="app.logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-tabs">
+                <button class="nav-tab" id="tabMarketplace" onclick="app.showMarketplace()">🏪 Marketplace</button>
+                <button class="nav-tab active" id="tabDashboard" onclick="app.showDashboard()">📊 Dashboard</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Marketplace View -->
+        <div id="marketplaceView" class="hidden">
+            <div class="section-header">
+                <h2 class="section-title">Semua Produk</h2>
+            </div>
+
+            <!-- Category Filters -->
+            <div class="category-filters">
+                <button class="filter-btn active" onclick="app.filterProducts('all')">
+                    <span class="filter-icon">🏥</span> Semua
+                </button>
+                <button class="filter-btn" onclick="app.filterProducts('Obat Bebas')">
+                    <span class="filter-icon">💊</span> Obat Bebas
+                </button>
+                <button class="filter-btn" onclick="app.filterProducts('Obat Nyeri')">
+                    <span class="filter-icon">🩺</span> Obat Nyeri
+                </button>
+                <button class="filter-btn" onclick="app.filterProducts('Vitamin')">
+                    <span class="filter-icon">🍊</span> Vitamin
+                </button>
+                <button class="filter-btn" onclick="app.filterProducts('Alat Kesehatan')">
+                    <span class="filter-icon">🩹</span> Alkes
+                </button>
+                <button class="filter-btn" onclick="app.filterProducts('Herbal')">
+                    <span class="filter-icon">🌿</span> Herbal
+                </button>
+            </div>
+
+            <div class="products-grid" id="marketplaceProducts"></div>
+        </div>
+
+        <!-- Store Dashboard View (Admin/Seller Only) -->
+        <div id="storeDashboardView" class="hidden">
+            <div class="dashboard-header">
+                <h1>Dashboard Toko</h1>
+                <p>Kelola produk dan stok toko Anda</p>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalProducts">0</div>
+                        <div class="stat-label">Total Produk</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalStock">0</div>
+                        <div class="stat-label">Total Stok</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalValue">Rp 0</div>
+                        <div class="stat-label">Nilai Inventory</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Produk Saya</h2>
+                <button class="btn-primary" onclick="app.openProductModal()">
+                    <span>➕</span>
+                    Tambah Produk
+                </button>
+            </div>
+            <div class="products-grid" id="dashboardProducts"></div>
+        </div>
+
+        <!-- Customer Dashboard View (Buyers Only) -->
+        <div id="customerDashboardView" class="hidden">
+            <div class="dashboard-header" style="background: linear-gradient(135deg, #FF6B35, #E55A2D);">
+                <h1 id="customerGreeting">Halo, Pelanggan! 👋</h1>
+                <p>Statistik belanja dan riwayat pesanan Anda</p>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="custTotalOrders">0</div>
+                        <div class="stat-label">Total Pesanan</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="custActiveOrders">0</div>
+                        <div class="stat-label">Pesanan Berhasil</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="custTotalSpent">Rp 0</div>
+                        <div class="stat-label">Total Belanja</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-header" style="justify-content: space-between; align-items: center;">
+                <h2 class="section-title">Riwayat Transaksi</h2>
+                <input type="text" id="custSearchInput" placeholder="Cari ID pesanan atau nama produk..."
+                    style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; width: 280px;"
+                    onkeyup="app.searchCustomerOrders()">
+            </div>
+
+            <div class="table-container"
+                style="background: white; border-radius: 12px; box-shadow: var(--shadow-sm); overflow: hidden;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--bg-light); text-align: left;">
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">ID Pesanan</th>
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">Tanggal</th>
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">Items</th>
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">Harga Item</th>
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border); width: 140px;">Aksi Items
+                            </th>
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">Total Harga</th>
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">Status Invoice</th>
+                            <th style="padding: 16px; border-bottom: 1px solid var(--border);">Aksi Invoice</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderHistoryBody">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="productModalTitle">➕ Tambah Produk Baru</h2>
+            </div>
+            <form onsubmit="app.saveProduct(event)">
+                <div class="form-group">
+                    <label class="form-label">Foto Produk (Opsional)</label>
+                    <div style="display: flex; gap: 16px; align-items: start;">
+                        <div id="productImagePreviewContainer" style="
+                            width: 80px; 
+                            height: 80px; 
+                            background: #f3f4f6; 
+                            border-radius: 8px; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            overflow: hidden; 
+                            border: 1px dashed #d1d5db;
+                            flex-shrink: 0;
+                        ">
+                            <span style="font-size: 24px;">📷</span>
+                        </div>
+                        <div style="flex-grow: 1;">
+                            <input type="file" id="productImageInput" accept="image/*" class="form-input"
+                                style="padding: 8px;">
+                            <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Format: JPG, PNG. Max: 1MB.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nama Produk</label>
+                    <input type="text" class="form-input" id="productName" required
+                        placeholder="Contoh: Paracetamol 500mg">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kategori</label>
+                    <select class="form-select" id="productCategory" required>
+                        <option value="">Pilih Kategori</option>
+                        <option value="Obat Bebas">Obat Bebas</option>
+                        <option value="Obat Keras">Obat Keras</option>
+                        <option value="Vitamin">Vitamin & Suplemen</option>
+                        <option value="Alat Kesehatan">Alat Kesehatan</option>
+                        <option value="Herbal">Obat Herbal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Deskripsi</label>
+                    <textarea class="form-textarea" id="productDescription" required
+                        placeholder="Deskripsi produk, manfaat, dan cara pakai"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Harga (Rp)</label>
+                        <input type="number" class="form-input" id="productPrice" required min="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Stok</label>
+                        <input type="number" class="form-input" id="productStock" required min="0" placeholder="0">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="app.closeProductModal()">Batal</button>
+                    <button type="submit" class="btn-submit">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Crop Image Modal -->
+    <div id="cropModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>✂️ Crop Image</h2>
+                <button class="close-modal" onclick="app.closeCropModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <div class="crop-container" style="max-height: 400px; width: 100%; margin-bottom: 20px;">
+                    <img id="imageToCrop" style="max-width: 100%;">
+                </div>
+                <div class="form-actions">
+                    <button class="btn-secondary" onclick="app.closeCropModal()">Batal</button>
+                    <button class="btn-primary" onclick="app.saveCrop()">Potong & Simpan ✂️</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Orders Modal -->
+    <div id="customerOrdersModal" class="modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 80vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2 id="customerOrdersTitle">📦 Riwayat Pesanan Customer</h2>
+                <button class="close-modal" onclick="app.closeCustomerOrdersModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="customerOrdersList" class="order-list-container">
+                    <!-- Orders injected here -->
+                </div>
+            </div>
+            <div class="modal-footer" style="padding-top: 20px; text-align: right;">
+                <button class="btn-secondary" onclick="app.closeCustomerOrdersModal()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal (Master-Detail View) -->
+    <div id="orderDetailModal" class="modal">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2 id="orderDetailTitle">📄 Rincian Pesanan</h2>
+                <div id="orderDetailStatusBadge"></div>
+                <button class="close-modal" onclick="app.closeOrderDetailModal()">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Invoice Info & Shipping -->
+                <div
+                    style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 24px; background: #f9fafb; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;">
+                    <div>
+                        <h4 style="color: #6b7280; font-size: 12px; text-transform: uppercase; margin-bottom: 8px;">Info
+                            Pesanan</h4>
+                        <div style="font-weight: 600; font-size: 16px; margin-bottom: 4px;" id="odOrderId">#ORD-0000
+                        </div>
+                        <div style="font-size: 14px; color: #4b5563;" id="odDate">01 Jan 2024</div>
+                    </div>
+                    <div>
+                        <h4 style="color: #6b7280; font-size: 12px; text-transform: uppercase; margin-bottom: 8px;">
+                            Alamat Pengiriman</h4>
+                        <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;" id="odRecipient">Nama
+                            Penerima</div>
+                        <div style="font-size: 14px; color: #4b5563;" id="odPhone">08123456789</div>
+                        <div style="font-size: 14px; color: #4b5563; margin-top: 4px; line-height: 1.4;" id="odAddress">
+                            Alamat Lengkap...</div>
+                    </div>
+                    <div>
+                        <h4 style="color: #6b7280; font-size: 12px; text-transform: uppercase; margin-bottom: 8px;">
+                            Pembayaran</h4>
+                        <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;" id="odPaymentMethod">
+                            Transfer Bank</div>
+                        <div style="font-size: 14px; color: #4b5563;" id="odPaymentStatus">Lunas</div>
+                    </div>
+                </div>
+
+                <!-- Items Table -->
+                <div style="margin-bottom: 24px; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead style="background: #f3f4f6;">
+                            <tr>
+                                <th
+                                    style="padding: 12px 16px; text-align: left; font-size: 12px; color: #6b7280; text-transform: uppercase;">
+                                    Produk</th>
+                                <th
+                                    style="padding: 12px 16px; text-align: right; font-size: 12px; color: #6b7280; text-transform: uppercase;">
+                                    Harga Satuan</th>
+                                <th
+                                    style="padding: 12px 16px; text-align: center; font-size: 12px; color: #6b7280; text-transform: uppercase;">
+                                    Qty</th>
+                                <th
+                                    style="padding: 12px 16px; text-align: right; font-size: 12px; color: #6b7280; text-transform: uppercase;">
+                                    Subtotal</th>
+                                <th
+                                    style="padding: 12px 16px; text-align: center; font-size: 12px; color: #6b7280; text-transform: uppercase;">
+                                    Status</th>
+                                <th
+                                    style="padding: 12px 16px; text-align: center; font-size: 12px; color: #6b7280; text-transform: uppercase;">
+                                    Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="odItemsBody">
+                            <!-- Items Injected Here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Summary Footer -->
+                <div style="display: flex; justify-content: flex-end;">
+                    <div
+                        style="width: 300px; background: #f9fafb; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;">
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                            <span style="color: #6b7280;">Subtotal</span>
+                            <span style="font-weight: 500;" id="odSubtotal">Rp 0</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                            <span style="color: #6b7280;">Ongkos Kirim</span>
+                            <span style="font-weight: 500; color: #10b981;">Gratis</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; display: none;"
+                            id="odDiscountRow">
+                            <span style="color: #6b7280;">Diskon <span id="odPromoCode"></span></span>
+                            <span style="font-weight: 500; color: #10b981;" id="odDiscount">- Rp 0</span>
+                        </div>
+                        <div style="border-top: 1px dashed #d1d5db; margin: 12px 0;"></div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 700;">Total Bayar</span>
+                            <span style="font-weight: 700; font-size: 18px; color: var(--primary);" id="odTotal">Rp
+                                0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Global Actions -->
+                <div id="odGlobalActions"
+                    style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+                    <button class="btn-small" onclick="app.closeOrderDetailModal()"
+                        style="background: white; border: 1px solid #d1d5db; color: #374151; padding: 10px 20px; font-size: 14px;">
+                        Tutup
+                    </button>
+                    <!-- Global Cancel Button will be injected here if applicable -->
+                    <div id="odGlobalCancelContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Checkout Bar -->
+    <div id="stickyCheckoutBar" class="hidden" style="
+        position: fixed; 
+        top: 155px; 
+        right: 20px; 
+        left: auto;
+        transform: none; 
+        width: auto; 
+        min-width: 250px;
+        background: linear-gradient(135deg, #FF6B35, #FF5252, #E040FB); 
+        color: white;
+        backdrop-filter: blur(5px); 
+        padding: 8px 16px; 
+        border-radius: 8px; 
+        box-shadow: 0 8px 20px -5px rgba(255, 107, 53, 0.4); 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        z-index: 900; 
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        animation: slideLeft 0.3s ease-out;
+    ">
+        <div style="display: flex; flex-direction: column; margin-right: 16px;">
+            <span style="font-size: 11px; opacity: 0.95; font-weight: 500; color: white;" id="stickyCount">0 Item</span>
+            <span style="font-size: 14px; font-weight: 800; color: white;" id="stickyTotal">Rp 0</span>
+        </div>
+        <button onclick="window.location.href='cart.html'" style="
+            background: white; 
+            color: #FF5252; 
+            border: none; 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            font-size: 12px;
+            font-weight: 700; 
+            cursor: pointer; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            transition: transform 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            Checkout ➔
+        </button>
+    </div>
+
+    <!-- Animation Keyframes (Inline for simplicity) -->
+    <style>
+        @keyframes slideLeft {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

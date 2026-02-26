@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MediMart</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <!-- Left Side - Branding -->
+        <div class="login-left">
+            <div class="brand-content">
+                <div class="logo">
+                    <div class="logo-icon">💊</div>
+                    <h1>MediMart</h1>
+                </div>
+                <p class="tagline">Marketplace Obat & Produk Kesehatan Terpercaya</p>
+
+                <div class="features">
+                    <div class="feature-item">
+                        <span class="feature-icon">🏪</span>
+                        <div>
+                            <h3>Marketplace Lengkap</h3>
+                            <p>Ribuan produk kesehatan tersedia</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <div>
+                            <h3>Dashboard Seller</h3>
+                            <p>Kelola toko Anda dengan mudah</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🔒</span>
+                        <div>
+                            <h3>Aman & Terpercaya</h3>
+                            <p>Transaksi dijamin keamanannya</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="login-right">
+            <div class="login-box">
+                <div id="loginView">
+                    <div class="login-header">
+                        <h2>Selamat Datang!</h2>
+                        <p>Silakan login sesuai peran Anda</p>
+                    </div>
+
+                    <!-- Role Tabs (Visual Only - handled by backend check) -->
+                    <div class="role-tabs"
+                        style="display: flex; gap: 8px; margin-bottom: 24px; padding: 4px; background: #f3f4f6; border-radius: 12px;">
+                        <button type="button" class="role-tab active" onclick="selectRole('customer')"
+                            style="flex: 1; padding: 8px; border: none; border-radius: 8px; background: white; color: #FF6B35; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                            Pelanggan
+                        </button>
+                        <button type="button" class="role-tab" onclick="selectRole('seller')"
+                            style="flex: 1; padding: 8px; border: none; border-radius: 8px; background: transparent; color: #6b7280; font-weight: 500; cursor: pointer; transition: all 0.3s;">
+                            Seller
+                        </button>
+                        <button type="button" class="role-tab" onclick="selectRole('admin')"
+                            style="flex: 1; padding: 8px; border: none; border-radius: 8px; background: transparent; color: #6b7280; font-weight: 500; cursor: pointer; transition: all 0.3s;">
+                            Admin
+                        </button>
+                    </div>
+
+                    <% if (error && error.length> 0) { %>
+                        <div class="alert alert-error"
+                            style="background-color: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+                            <%= error %>
+                        </div>
+                        <% } %>
+                            <% if (success_msg && success_msg.length> 0) { %>
+                                <div class="alert alert-success"
+                                    style="background-color: #d1e7dd; color: #0f5132; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+                                    <%= success_msg %>
+                                </div>
+                                <% } %>
+
+                                    <form id="loginForm" class="login-form" action="/auth/login" method="POST">
+                                        <input type="hidden" id="roleInput" name="role" value="customer">
+
+                                        <div class="form-group">
+                                            <label for="username">Email / Username</label>
+                                            <div class="input-wrapper">
+                                                <span class="input-icon">👤</span>
+                                                <input type="text" id="username" name="username"
+                                                    placeholder="Masukkan email atau username" required
+                                                    autocomplete="username">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div
+                                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                                <label for="password" style="margin-bottom: 0;">Password</label>
+                                            </div>
+                                            <div class="input-wrapper">
+                                                <span class="input-icon">🔒</span>
+                                                <input type="password" id="password" name="password"
+                                                    placeholder="Masukkan password" required
+                                                    autocomplete="current-password">
+                                                <button type="button" class="toggle-password"
+                                                    onclick="togglePassword()">
+                                                    <span id="toggleIcon">👁️</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-options">
+                                            <label class="remember-me">
+                                                <input type="checkbox" id="rememberMe" name="remember_me">
+                                                <span>Ingat saya</span>
+                                            </label>
+                                            <a href="/forgot-password" class="forgot-password">Lupa password?</a>
+                                        </div>
+
+                                        <button type="submit" class="btn-login">
+                                            <span>Login</span>
+                                            <span class="btn-icon">→</span>
+                                        </button>
+
+                                        <div class="divider">
+                                            <span>atau</span>
+                                        </div>
+
+                                        <a href="/" class="btn-guest"
+                                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; background: white; color: #374151; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                            <span>🛒</span>
+                                            <span>Lanjut sebagai Tamu</span>
+                                        </a>
+                                    </form>
+
+                                    <div class="login-footer">
+                                        <p>Belum punya akun? <a href="/register" class="link-register">Daftar
+                                                sekarang</a></p>
+                                    </div>
+
+                                    <!-- Demo Credentials Info -->
+                                    <div class="demo-info"
+                                        style="margin-top: 20px; padding: 16px; background: #f9fafb; border-radius: 8px; font-size: 13px; color: #6b7280;">
+                                        <p style="margin-bottom: 8px; color: #374151;"><strong>💡 Akun Demo (Auto-Fill
+                                                Aktif):</strong></p>
+                                        <p style="margin: 4px 0;">Pilih tab di atas untuk mengisi akun secara otomatis.
+                                        </p>
+                                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Default credentials
+        const credentials = {
+            customer: { username: 'user', password: 'user123' },
+            seller: { username: 'seller1', password: 'seller123' },
+            admin: { username: 'admin', password: 'admin123' }
+        };
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        function selectRole(role) {
+            // Update hidden input
+            document.getElementById('roleInput').value = role;
+
+            // Visual feedback
+            document.querySelectorAll('.role-tab').forEach(tab => {
+                tab.style.background = 'transparent';
+                tab.style.color = '#6b7280';
+                tab.style.boxShadow = 'none';
+                tab.classList.remove('active');
+            });
+            const activeTab = event.currentTarget; // Use currentTarget to ensure we get the button
+            activeTab.style.background = 'white';
+            activeTab.style.color = '#FF6B35';
+            activeTab.style.boxShadow = '0 1px 2px rgba(0,0,0,0.1)';
+            activeTab.classList.add('active');
+
+            // Auto-fill credentials
+            if (credentials[role]) {
+                document.getElementById('username').value = credentials[role].username;
+                document.getElementById('password').value = credentials[role].password;
+            }
+        }
+
+        // Initialize with default (customer) on load
+        document.addEventListener('DOMContentLoaded', () => {
+            selectRole('customer');
+            // Manually trigger visual state for first tab since selectRole depends on event
+            const firstTab = document.querySelector('.role-tab');
+            if (firstTab) {
+                firstTab.style.background = 'white';
+                firstTab.style.color = '#FF6B35';
+                firstTab.style.boxShadow = '0 1px 2px rgba(0,0,0,0.1)';
+                firstTab.classList.add('active');
+            }
+        });
+    </script>
+</body>
+
+</html>
