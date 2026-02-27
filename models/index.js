@@ -14,6 +14,9 @@ const db = {};
 let sequelize;
 const customConfig = { ...config };
 
+// Wajib untuk Vercel Serverless: memaksa bundler menyertakan modul 'pg'
+customConfig.dialectModule = require('pg');
+
 // Paksa konfigurasi SSL jika berjalan di Vercel/Production
 if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
   customConfig.dialectOptions = {
@@ -30,20 +33,14 @@ if (customConfig.use_env_variable) {
   sequelize = new Sequelize(customConfig.database, customConfig.username, customConfig.password, customConfig);
 }
 
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      (file.slice(-3) === '.js' || file.slice(-3) === '.ts') &&
-      file.indexOf('.test.js') === -1
-    );
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
-  });
+db.User = require('./user.js')(sequelize, Sequelize.DataTypes);
+db.Buyer = require('./buyer.js')(sequelize, Sequelize.DataTypes);
+db.Seller = require('./seller.js')(sequelize, Sequelize.DataTypes);
+db.Admin = require('./admin.js')(sequelize, Sequelize.DataTypes);
+db.Product = require('./product.js')(sequelize, Sequelize.DataTypes);
+db.Order = require('./order.js')(sequelize, Sequelize.DataTypes);
+db.OrderItem = require('./orderitem.js')(sequelize, Sequelize.DataTypes);
+db.TempMigration = require('./temp_migration.js')(sequelize, Sequelize.DataTypes);
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
