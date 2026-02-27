@@ -10,10 +10,22 @@ const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 
 let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+const customConfig = { ...config };
+
+// Paksa konfigurasi SSL jika berjalan di Vercel/Production
+if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+  customConfig.dialectOptions = {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
+  };
+}
+
+if (customConfig.use_env_variable) {
+  sequelize = new Sequelize(process.env[customConfig.use_env_variable], customConfig);
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  sequelize = new Sequelize(customConfig.database, customConfig.username, customConfig.password, customConfig);
 }
 
 fs
@@ -22,7 +34,7 @@ fs
     return (
       file.indexOf('.') !== 0 &&
       file !== basename &&
-      file.slice(-3) === '.js' &&
+      (file.slice(-3) === '.js' || file.slice(-3) === '.ts') &&
       file.indexOf('.test.js') === -1
     );
   })
