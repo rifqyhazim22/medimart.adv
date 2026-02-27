@@ -21,7 +21,13 @@ module.exports = {
 
     edit: async (req, res) => {
         try {
-            const user = await User.findByPk(req.session.user.id);
+            const user = await User.findByPk(req.session.user.id, {
+                include: [
+                    { model: Seller, as: 'seller' },
+                    { model: Buyer, as: 'buyer' },
+                    { model: Admin, as: 'admin' }
+                ]
+            });
             res.render('profile/edit', { user });
         } catch (err) {
             console.error(err);
@@ -31,9 +37,14 @@ module.exports = {
     },
 
     update: async (req, res) => {
-        const { username, full_name, email, phone, address } = req.body;
+        const { username, full_name, email, phone, address, store_name, bank_account } = req.body;
         try {
-            const user = await User.findByPk(req.session.user.id);
+            const user = await User.findByPk(req.session.user.id, {
+                include: [
+                    { model: Seller, as: 'seller' },
+                    { model: Buyer, as: 'buyer' }
+                ]
+            });
 
             // Check if username is being changed
             if (username && username !== user.username) {
@@ -45,6 +56,21 @@ module.exports = {
             }
 
             await user.update({ username, full_name, email, phone, address });
+
+            // Pumping relative details to dedicated polymorphic roles
+            if (user.role === 'buyer') {
+                if (user.buyer) {
+                    await user.buyer.update({ shipping_address: address });
+                } else {
+                    await Buyer.create({ user_id: user.id, shipping_address: address });
+                }
+            } else if (user.role === 'seller') {
+                if (user.seller) {
+                    await user.seller.update({ store_name, bank_account, store_address: address });
+                } else {
+                    await Seller.create({ user_id: user.id, store_name, bank_account, store_address: address });
+                }
+            }
 
             // Update session data
             req.session.user = user;

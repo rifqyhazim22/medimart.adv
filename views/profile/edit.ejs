@@ -24,44 +24,67 @@
                             </div>
                             <div class="form-group">
                                 <label
-                                    style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px;">
-                                    <%= user.role==='seller' ? 'Nama Toko' : 'Nama Lengkap' %>
-                                </label>
+                                    style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px;">Nama
+                                    Lengkap</label>
                                 <input type="text" name="full_name" value="<%= user.full_name %>" required
                                     style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
                             </div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                            <div class="form-group">
-                                <label
-                                    style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px;">Email</label>
-                                <input type="email" name="email" value="<%= user.email %>" required
-                                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
-                            </div>
-                            <div class="form-group">
-                                <label
-                                    style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px;">No.
-                                    Telepon</label>
-                                <input type="text" name="phone" value="<%= user.phone %>" placeholder="08..."
-                                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
-                            </div>
-                        </div>
-
-                        <% if (user.role !=='admin' ) { %>
-                            <div class="form-group" style="margin-bottom: 24px;">
-                                <label
-                                    style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px;">
-                                    <%= user.role==='seller' ? 'Alamat Toko' : 'Alamat Pengiriman Utama' %>
-                                </label>
-                                <textarea name="address" rows="3"
-                                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;"><%= user.address %></textarea>
+                        <% if (user.role==='seller' ) { %>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                                <div class="form-group">
+                                    <label
+                                        style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px;">Nama
+                                        Toko</label>
+                                    <input type="text" name="store_name"
+                                        value="<%= user.seller && user.seller.store_name ? user.seller.store_name : '' %>"
+                                        required
+                                        style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+                                </div>
+                                <div class="form-group">
+                                    <label
+                                        style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px;">Rekening
+                                        Bank (Opsional)</label>
+                                    <input type="text" name="bank_account"
+                                        value="<%= user.seller && user.seller.bank_account ? user.seller.bank_account : '' %>"
+                                        style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+                                </div>
                             </div>
                             <% } %>
 
-                                <div style="text-align: right;">
-                                    <button type="submit" class="btn-primary">Simpan Perubahan</button>
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                                    <div class="form-group">
+                                        <label
+                                            style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px;">Email</label>
+                                        <input type="email" name="email" value="<%= user.email %>" required
+                                            style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px;">No.
+                                            Telepon</label>
+                                        <input type="text" name="phone" value="<%= user.phone %>" placeholder="08..."
+                                            style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+                                    </div>
                                 </div>
+
+                                <% if (user.role !=='admin' ) { %>
+                                    <div class="form-group" style="margin-bottom: 24px;">
+                                        <label
+                                            style="display: block; font-size: 14px; font-weight: 500; color: #374151; margin-bottom: 6px;">
+                                            <%= user.role==='seller' ? 'Alamat Fisik Toko' : 'Alamat Pengiriman Utama'
+                                                %>
+                                        </label>
+                                        <textarea name="address" rows="3"
+                                            style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;"><%= user.role === 'buyer' && user.buyer && user.buyer.shipping_address ? user.buyer.shipping_address : (user.role === 'seller' && user.seller && user.seller.store_address ? user.seller.store_address : user.address) %></textarea>
+                                    </div>
+                                    <% } %>
+
+                                        <div style="text-align: right;">
+                                            <button type="submit" class="btn-primary">Simpan Perubahan</button>
+                                        </div>
                     </form>
 
                     <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 30px 0;">
