@@ -13,9 +13,23 @@ const updateOrderStatus = async (orderId, transaction = null) => {
     const updatePayload = { total_price: recalculatedTotal };
 
     if (activeItems.length === 0) {
-        // Distinguish between purely rejected (by seller) vs cancelled (by user/mixed)
-        const allRejected = items.every(i => i.status === 'rejected');
-        updatePayload.status = allRejected ? 'rejected' : 'cancelled';
+        // Distinguish between purely rejected vs cancelled vs mixed
+        // If ALL items are inactive because of rejection, or any one item was rejected, we flag it.
+        // Usually, if a seller rejects at least one item and the buyer cancels the rest, it's safer to mark as 'cancelled' (Failed Order) or 'rejected'.
+        // Let's make "cancelled" the dominant status if buyer involved, otherwise "rejected" if purely seller's doing.
+        // Wait, the user's screenshot has 1 rejected and 1 cancelled, but status stood still.
+        // That means this block WASN'T executed or "cancelled" got overwritten!
+
+        const hasCancelled = items.some(i => i.status === 'cancelled');
+        const hasRejected = items.some(i => i.status === 'rejected');
+
+        if (hasCancelled) {
+            updatePayload.status = 'cancelled'; // If buyer cancelled at least one, it's a "Cancelled" Invoice
+        } else if (hasRejected) {
+            updatePayload.status = 'rejected'; // Purely rejected by seller
+        } else {
+            updatePayload.status = 'cancelled'; // Fallback
+        }
 
         await Order.update(updatePayload, { where: { id: orderId }, ...options });
         return;
