@@ -11,6 +11,14 @@
         rel="stylesheet">
     <!-- CSS -->
     <link rel="stylesheet" href="/css/login.css">
+    <!-- SweetAlert2 & Animate.css for psychological UI modals -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        .psych-modal {
+            border-radius: 20px !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -186,17 +194,21 @@
             document.getElementById('roleInput').value = role;
 
             // Visual feedback
-            document.querySelectorAll('.role-tab').forEach(tab => {
+            const tabs = document.querySelectorAll('.role-tab');
+            tabs.forEach(tab => {
                 tab.style.background = 'transparent';
                 tab.style.color = '#6b7280';
                 tab.style.boxShadow = 'none';
                 tab.classList.remove('active');
+
+                // Highlight exact tab based on its onclick signature
+                if (tab.getAttribute('onclick').includes(role)) {
+                    tab.style.background = 'white';
+                    tab.style.color = '#FF6B35';
+                    tab.style.boxShadow = '0 1px 2px rgba(0,0,0,0.1)';
+                    tab.classList.add('active');
+                }
             });
-            const activeTab = event.currentTarget; // Use currentTarget to ensure we get the button
-            activeTab.style.background = 'white';
-            activeTab.style.color = '#FF6B35';
-            activeTab.style.boxShadow = '0 1px 2px rgba(0,0,0,0.1)';
-            activeTab.classList.add('active');
 
             // Auto-fill credentials
             if (credentials[role]) {
@@ -208,14 +220,6 @@
         // Initialize with default (customer) on load
         document.addEventListener('DOMContentLoaded', () => {
             selectRole('customer');
-            // Manually trigger visual state for first tab since selectRole depends on event
-            const firstTab = document.querySelector('.role-tab');
-            if (firstTab) {
-                firstTab.style.background = 'white';
-                firstTab.style.color = '#FF6B35';
-                firstTab.style.boxShadow = '0 1px 2px rgba(0,0,0,0.1)';
-                firstTab.classList.add('active');
-            }
         });
 
         // 🧠 Intersepsi Login Ber-Psikologis (Meyakinkan pengguna saat masuk)
