@@ -1,18 +1,23 @@
 const { Order, OrderItem, Product, User, sequelize } = require('../models');
 const { Op } = require('sequelize');
 
-const updateOrderStatus = async (orderId) => {
-    const items = await OrderItem.findAll({ where: { order_id: orderId } });
+const updateOrderStatus = async (orderId, transaction = null) => {
+    const options = transaction ? { transaction } : {};
+    const items = await OrderItem.findAll({ where: { order_id: orderId }, ...options });
     if (items.length === 0) return;
 
     const activeItems = items.filter(i => i.status !== 'cancelled' && i.status !== 'rejected');
 
+    // Recalculate true Total Price left for the Invoice
+    const recalculatedTotal = activeItems.reduce((acc, i) => acc + (parseFloat(i.price_at_purchase) * i.quantity), 0);
+    const updatePayload = { total_price: recalculatedTotal };
+
     if (activeItems.length === 0) {
         // Distinguish between purely rejected (by seller) vs cancelled (by user/mixed)
         const allRejected = items.every(i => i.status === 'rejected');
-        const finalStatus = allRejected ? 'rejected' : 'cancelled';
+        updatePayload.status = allRejected ? 'rejected' : 'cancelled';
 
-        await Order.update({ status: finalStatus }, { where: { id: orderId } });
+        await Order.update(updatePayload, { where: { id: orderId }, ...options });
         return;
     }
 
@@ -25,7 +30,8 @@ const updateOrderStatus = async (orderId) => {
     else if (allActiveShipped) newStatus = 'shipped';
     else if (anyActiveProcessed) newStatus = 'processing';
 
-    await Order.update({ status: newStatus }, { where: { id: orderId } });
+    updatePayload.status = newStatus;
+    await Order.update(updatePayload, { where: { id: orderId }, ...options });
 };
 
 module.exports = {
@@ -167,6 +173,7 @@ module.exports = {
                 }
             }
 
+            await updateOrderStatus(order.id, t);
             await t.commit();
             req.session.save(() => {
                 req.flash('success_msg', 'Pesanan dibatalkan.');
@@ -241,8 +248,9 @@ module.exports = {
             await item.update({ status: 'processed' }, { transaction: t });
             await t.commit();
 
-            // updateOrderStatus reads from DB, so it must happen AFTER commit
-            await updateOrderStatus(item.order_id);
+            // updateOrderStatus happens BEFORE commit to be atomic within transaction
+            await updateOrderStatus(item.order_id, t);
+            await t.commit();
 
             if (isAjax) {
                 return res.json({ success: true, message: 'Pesanan diproses', status: 'processed' });
@@ -326,8 +334,9 @@ module.exports = {
             }
 
             await t.commit();
-            // updateOrderStatus reads from DB, so it must happen AFTER commit
-            await updateOrderStatus(item.order_id);
+            // updateOrderStatus syncs invoice amount inside transaction
+            await updateOrderStatus(item.order_id, t);
+            await t.commit();
 
             if (isAjax) {
                 return res.json({ success: true, message: 'Pesanan ditolak', status: 'rejected' });

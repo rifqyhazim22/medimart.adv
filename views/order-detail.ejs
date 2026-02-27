@@ -226,26 +226,45 @@
             <div class="detail-section" style="background: #f9fafb;">
                 <div style="display: flex; justify-content: flex-end;">
                     <div style="width: 300px;">
-                        <% let actualTotal=0; items.forEach(item=> {
+                        <% let actualTotal=0; let originalTotal=0; let hasRefund=false; items.forEach(item=> {
+                            const itemTotal = (item.price_at_purchase * item.quantity);
+                            originalTotal += itemTotal;
+
                             if (item.status !== 'cancelled' && item.status !== 'rejected') {
-                            actualTotal += (item.price_at_purchase * item.quantity);
+                            actualTotal += itemTotal;
+                            } else {
+                            hasRefund = true;
                             }
                             });
                             %>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span style="color: #6b7280;">Subtotal</span>
-                                <span style="font-weight: 600;">Rp <%= actualTotal.toLocaleString('id-ID') %></span>
+                                <span style="color: #6b7280;">Subtotal Awal</span>
+                                <span
+                                    style="<%= hasRefund ? 'text-decoration: line-through; color: #9ca3af;' : 'font-weight: 600;' %>">
+                                    Rp <%= originalTotal.toLocaleString('id-ID') %>
+                                </span>
                             </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
-                                <span style="color: #6b7280;">Ongkos Kirim</span>
-                                <span style="color: #10b981; font-weight: 600;">GRATIS</span>
-                            </div>
-                            <div style="border-top: 1px solid #d1d5db; margin-bottom: 16px;"></div>
-                            <div
-                                style="display: flex; justify-content: space-between; font-size: 20px; font-weight: 700;">
-                                <span>Total Bayar</span>
-                                <span style="color: #FF6B35;">Rp <%= actualTotal.toLocaleString('id-ID') %></span>
-                            </div>
+
+                            <% if (hasRefund) { %>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="color: #dc2626; font-weight: 500;">Barang Dibatalkan (Refund)</span>
+                                    <span style="color: #dc2626; font-weight: 600;">- Rp <%= (originalTotal -
+                                            actualTotal).toLocaleString('id-ID') %></span>
+                                </div>
+                                <% } %>
+
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                                        <span style="color: #6b7280;">Ongkos Kirim</span>
+                                        <span style="color: #10b981; font-weight: 600;">GRATIS</span>
+                                    </div>
+                                    <div style="border-top: 1px solid #d1d5db; margin-bottom: 16px;"></div>
+                                    <div
+                                        style="display: flex; justify-content: space-between; font-size: 20px; font-weight: 700;">
+                                        <span>Total Bayar Akhir</span>
+                                        <span style="color: #FF6B35;">Rp <%= order.total_price ?
+                                                parseFloat(order.total_price).toLocaleString('id-ID') :
+                                                actualTotal.toLocaleString('id-ID') %></span>
+                                    </div>
                     </div>
                 </div>
 
