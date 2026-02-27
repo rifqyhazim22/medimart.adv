@@ -112,59 +112,91 @@
         display: <%= (typeof cartCount !== 'undefined' && cartCount > 0) ? 'flex' : 'none' %>;
         position: fixed; 
         bottom: 40px; 
-        right: 20px; 
-        left: auto;
-        transform: none; 
-        width: auto; 
-        min-width: 250px;
-        background: linear-gradient(135deg, #FF6B35, #FF5252, #E040FB); 
-        color: white;
-        backdrop-filter: blur(5px); 
-        padding: 8px 16px; 
-        border-radius: 8px; 
-        box-shadow: 0 8px 20px -5px rgba(255, 107, 53, 0.4); 
-        justify-content: space-between; 
+        right: 40px; 
+        z-index: 999; 
+        background: rgba(17, 24, 39, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 12px 24px 12px 16px; 
+        border-radius: 99px; 
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
         align-items: center; 
-        z-index: 900; 
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        animation: slideLeft 0.3s ease-out;
+        gap: 24px;
+        animation: floatUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        color: white;
     ">
-        <div style="display: flex; flex-direction: column; margin-right: 16px;">
-            <span style="font-size: 11px; opacity: 0.95; font-weight: 500; color: white;" id="stickyCount">
-                <%= typeof cartCount !=='undefined' ? cartCount : 0 %> Item
-            </span>
-            <span style="font-size: 14px; font-weight: 800; color: white;" id="stickyTotal">Rp <%= parseInt(typeof
-                    cartTotal !=='undefined' ? cartTotal : 0).toLocaleString('id-ID') %></span>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="
+                background: linear-gradient(135deg, #00B09B, #96C93D);
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 22px;
+                box-shadow: 0 4px 10px rgba(0, 176, 155, 0.4);
+            ">
+                🛍️
+            </div>
+            <div style="display: flex; flex-direction: column;">
+                <span
+                    style="font-size: 13px; color: #9ca3af; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase;">
+                    Keranjang Sehat
+                </span>
+                <div style="display: flex; align-items:baseline; gap: 8px;">
+                    <span style="font-size: 20px; font-weight: 800; color: #ffffff;" id="stickyTotal">Rp <%=
+                            parseInt(typeof cartTotal !=='undefined' ? cartTotal : 0).toLocaleString('id-ID') %></span>
+                    <span
+                        style="font-size: 13px; color: #34d399; font-weight: 600; background: rgba(52, 211, 153, 0.1); padding: 2px 8px; border-radius: 99px;"
+                        id="stickyCount">
+                        <%= typeof cartCount !=='undefined' ? cartCount : 0 %> Item
+                    </span>
+                </div>
+            </div>
         </div>
-        <button onclick="window.location.href='/cart'" style="
-        background: white; 
-        color: #FF5252; 
-        border: none; 
-        padding: 6px 12px; 
-        border-radius: 6px; 
-        font-size: 12px;
-        font-weight: 700; 
-        cursor: pointer; 
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-        transition: transform 0.2s;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            Lanjut ➔
+
+        <button onclick="window.location.href='/cart'" class="checkout-pulse-btn" style="
+            background: white; 
+            color: #111827; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 99px; 
+            font-size: 14px;
+            font-weight: 800; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        ">
+            Bungkus <span style="font-size: 16px;">✨</span>
         </button>
     </div>
 
     <style>
-        @keyframes slideLeft {
+        @keyframes floatUp {
             from {
-                transform: translateX(100%);
+                transform: translateY(100px) scale(0.9);
                 opacity: 0;
             }
 
             to {
-                transform: translateX(0);
+                transform: translateY(0) scale(1);
                 opacity: 1;
             }
+        }
+
+        .checkout-pulse-btn:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.3);
+            background: #f9fafb;
+        }
+
+        .checkout-pulse-btn:active {
+            transform: scale(0.95);
         }
     </style>
 
