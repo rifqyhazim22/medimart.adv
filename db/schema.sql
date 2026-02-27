@@ -77,6 +77,7 @@ CREATE TABLE orders (
     recipient_name VARCHAR(255),
     recipient_phone VARCHAR(50),
     shipping_address TEXT,
+    visible_to_customer BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -88,5 +89,6 @@ CREATE TABLE order_items (
     quantity INTEGER NOT NULL,
     price_at_purchase DECIMAL(15, 2) NOT NULL,
     seller_id INTEGER REFERENCES users(id),
-    status VARCHAR(50) DEFAULT 'pending' -- 'pending', 'accepted', 'rejected', 'cancelled'
+    status VARCHAR(50) DEFAULT 'pending', -- 'pending', 'accepted', 'rejected', 'cancelled'
+    visible_to_seller BOOLEAN DEFAULT true
 );

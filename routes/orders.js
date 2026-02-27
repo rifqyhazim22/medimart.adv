@@ -21,6 +21,7 @@ const ensureSeller = (req, res, next) => {
 router.post('/orders', ensureAuthenticated, orderController.create);
 router.get('/orders/:id', ensureAuthenticated, orderController.detail);
 router.post('/orders/:id/cancel', ensureAuthenticated, orderController.cancel);
+router.post('/orders/items/:id/cancel', ensureAuthenticated, orderController.cancelItem);
 router.post('/orders/items/:id/complete', ensureAuthenticated, orderController.completeItem);
 
 // Seller routes

@@ -190,6 +190,64 @@ module.exports = {
         }
     },
 
+    // Customer Cancel Single Item
+    cancelItem: async (req, res) => {
+        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const t = await sequelize.transaction();
+        try {
+            const item = await OrderItem.findOne({
+                where: { id: req.params.id },
+                include: [{
+                    model: Order,
+                    where: { user_id: req.session.user.id }
+                }],
+                transaction: t,
+                lock: true
+            });
+
+            if (!item) {
+                if (isAjax) return res.status(404).json({ success: false, message: 'Item tidak ditemukan' });
+                throw new Error('Item tidak ditemukan');
+            }
+
+            if (['cancelled', 'completed', 'rejected', 'shipped'].includes(item.status)) {
+                if (isAjax) return res.status(400).json({ success: false, message: 'Item tidak bisa dibatalkan' });
+                throw new Error('Item sudah diproses, dikirim, selesai, atau dibatalkan');
+            }
+
+            const previousStatus = item.status;
+            await item.update({ status: 'cancelled' }, { transaction: t });
+
+            if (previousStatus === 'processed' || previousStatus === 'shipped') {
+                await Product.increment('stock', {
+                    by: item.quantity,
+                    where: { id: item.product_id },
+                    transaction: t
+                });
+            }
+
+            await updateOrderStatus(item.order_id, t);
+            await t.commit();
+
+            if (isAjax) {
+                return res.json({ success: true, message: 'Satu barang berhasil dibatalkan.' });
+            }
+
+            req.session.save(() => {
+                req.flash('success_msg', 'Satu barang dari pesanan berhasil dibatalkan.');
+                res.redirect('/orders/' + item.order_id);
+            });
+        } catch (err) {
+            await t.rollback();
+            console.error(err);
+            if (isAjax) return res.status(500).json({ success: false, message: err.message });
+            req.session.save(() => {
+                req.flash('error', 'Gagal membatalkan barang: ' + err.message);
+                res.redirect('/user/dashboard');
+            });
+        }
+    },
+
     // Customer Complete (Item)
     completeItem: async (req, res) => {
         try {

@@ -217,6 +217,19 @@
                                     <% } else if (item.status==='processed' ) { %>
                                         <div style="margin-top: 4px; color: #3b82f6; font-size: 12px;">Diproses</div>
                                         <% } %>
+
+                                            <!-- Partial Cancel Button for Customer -->
+                                            <% if ((item.status==='pending' || item.status==='paid' ) && order.status
+                                                !=='cancelled' ) { %>
+                                                <form action="/orders/items/<%= item.id %>/cancel" method="POST"
+                                                    style="margin-top: 8px;"
+                                                    onsubmit="return confirmAction(event, 'Yakin ingin membatalkan barang ini secara spesifik? Dana akan di-refund.', 'Ya, Batalkan Barang', '#dc2626');">
+                                                    <button type="submit"
+                                                        style="background: none; border: 1px solid #dc2626; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s;">
+                                                        ❌ Batalkan
+                                                    </button>
+                                                </form>
+                                                <% } %>
                         </div>
                     </div>
                     <% }); %>
