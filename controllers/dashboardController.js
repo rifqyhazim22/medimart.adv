@@ -7,34 +7,40 @@ module.exports = {
         try {
             const user = req.session.user;
 
-            // Fetch Order Items instead of Orders to show granular list
-            const orderItems = await OrderItem.findAll({
+            // Fetch Orders instead of OrderItems to show grouped list
+            const orders = await Order.findAll({
+                where: { user_id: user.id, visible_to_customer: true },
                 include: [
                     {
-                        model: Order,
-                        where: { user_id: user.id, visible_to_customer: true },
-                        include: [{ model: User, as: 'user' }] // Buyer info (redundant but safe)
-                    },
-                    { model: Product },
-                    { model: User, as: 'seller' } // Seller info
+                        model: OrderItem,
+                        as: 'items',
+                        include: [
+                            { model: Product },
+                            { model: User, as: 'seller' }
+                        ]
+                    }
                 ],
                 order: [['id', 'DESC']]
             });
 
-            // Calculate Stats based exactly on the visible OrderItems table
+            // Calculate Stats based on OrderItems for accuracy
+            const allItems = await OrderItem.findAll({
+                include: [{ model: Order, where: { user_id: user.id, visible_to_customer: true } }]
+            });
+
             const activeStatuses = ['pending', 'paid', 'processed', 'shipped'];
             const spentStatuses = ['paid', 'processed', 'shipped', 'completed'];
 
-            const uniqueOrders = new Set(orderItems.map(item => item.order_id));
-            const activeUniqueOrders = new Set(orderItems.filter(item => activeStatuses.includes(item.status)).map(item => item.order_id));
+            const uniqueOrders = new Set(allItems.map(item => item.order_id));
+            const activeUniqueOrders = new Set(allItems.filter(item => activeStatuses.includes(item.status)).map(item => item.order_id));
 
             const stats = {
                 totalOrders: uniqueOrders.size,
                 activeOrders: activeUniqueOrders.size,
-                totalSpent: orderItems.filter(item => spentStatuses.includes(item.status)).reduce((sum, item) => sum + (parseFloat(item.price_at_purchase) * item.quantity), 0)
+                totalSpent: allItems.filter(item => spentStatuses.includes(item.status)).reduce((sum, item) => sum + (parseFloat(item.price_at_purchase) * item.quantity), 0)
             };
 
-            res.render('user/dashboard', { orderItems, stats });
+            res.render('user/dashboard', { orders, stats });
         } catch (err) {
             console.error(err);
             res.status(500).send('Server Error');

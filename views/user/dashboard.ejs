@@ -327,16 +327,14 @@
                     <thead>
                         <tr style="background: #f9fafb; text-align: left;">
                             <th style="padding: 16px; width: 120px;">Tanggal</th>
-                            <th style="padding: 16px;">Produk</th>
-                            <th style="padding: 16px;">Penjual</th>
-                            <th style="padding: 16px; text-align: center;">Qty</th>
-                            <th style="padding: 16px;">Total</th>
+                            <th colspan="3" style="padding: 16px;">Rincian Barang</th>
+                            <th style="padding: 16px;">Total Tagihan</th>
                             <th style="padding: 16px;">Status</th>
                             <th style="padding: 16px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% if (orderItems.length===0) { %>
+                        <% if (orders.length===0) { %>
                             <tr>
                                 <td colspan="7" style="padding: 40px; text-align: center;">
                                     <span style="font-size: 40px; display: block; margin-bottom: 10px;">🛍️</span>
@@ -346,105 +344,113 @@
                                 </td>
                             </tr>
                             <% } else { %>
-                                <% orderItems.forEach(item=> { %>
+                                <% orders.forEach(order=> { %>
                                     <tr>
                                         <!-- Tanggal -->
                                         <td
-                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; white-space: nowrap;">
+                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; white-space: nowrap; vertical-align: top;">
                                             <div style="font-weight: 500; color: #111827;">
-                                                <%= item.Order ? new
-                                                    Date(item.Order.createdAt).toLocaleDateString('id-ID', {
-                                                    day: 'numeric' , month: 'short' , year: 'numeric' }) : '-' %>
+                                                <%= new Date(order.createdAt).toLocaleDateString('id-ID', {
+                                                    day: 'numeric' , month: 'short' , year: 'numeric' }) %>
                                             </div>
                                             <div style="font-size: 12px; color: #6b7280;">
-                                                <%= item.Order ? new
-                                                    Date(item.Order.createdAt).toLocaleTimeString('id-ID', {
-                                                    hour: '2-digit' , minute: '2-digit' }) : '' %>
+                                                <%= new Date(order.createdAt).toLocaleTimeString('id-ID', {
+                                                    hour: '2-digit' , minute: '2-digit' }) %>
+                                            </div>
+                                            <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">
+                                                #ORD-<%= order.id %>
                                             </div>
                                         </td>
 
-                                        <!-- Produk -->
-                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
-                                            <div style="display: flex; align-items: center; gap: 12px;">
-                                                <img src="<%= item.Product ? item.Product.image_url : '/img/default-product.svg' %>"
-                                                    style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid #f3f4f6;">
-                                                <div>
-                                                    <div style="font-weight: 600; color: #111827; margin-bottom: 2px;">
-                                                        <%= item.Product ? item.Product.name : 'Produk Dihapus' %>
+                                        <!-- Produk & Penjual (Grouped) -->
+                                        <td colspan="3"
+                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; vertical-align: top;">
+                                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                                <% order.items.forEach(item=> { %>
+                                                    <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                                        <img src="<%= item.Product ? item.Product.image_url : '/img/default-product.svg' %>"
+                                                            style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid #f3f4f6; margin-top: 2px;">
+                                                        <div style="flex: 1;">
+                                                            <div
+                                                                style="font-weight: 600; color: #111827; font-size: 14px; margin-bottom: 2px;">
+                                                                <%= item.Product ? item.Product.name : 'Produk Dihapus'
+                                                                    %>
+                                                                    <span
+                                                                        style="font-weight: normal; color: #6b7280; font-size: 13px;">x
+                                                                        <%= item.quantity %>
+                                                                    </span>
+                                                            </div>
+                                                            <div
+                                                                style="font-size: 12px; color: #6b7280; display: flex; align-items: center; gap: 4px;">
+                                                                🏪 <%= item.seller ? (item.seller.full_name ||
+                                                                    item.seller.username) : 'Sistem' %>
+                                                                    <% if (item.status==='cancelled' ||
+                                                                        item.status==='rejected' ) { %>
+                                                                        <span
+                                                                            style="color: #dc2626; background: #fee2e2; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
+                                                                            <%= item.status==='rejected' ? 'Ditolak'
+                                                                                : 'Batal' %>
+                                                                        </span>
+                                                                        <% } else if (item.status==='shipped' ) { %>
+                                                                            <span
+                                                                                style="color: #1e40af; background: #dbeafe; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
+                                                                                Dikirim
+                                                                            </span>
+                                                                            <% } else if (item.status==='completed' ) {
+                                                                                %>
+                                                                                <span
+                                                                                    style="color: #065f46; background: #d1fae5; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
+                                                                                    Selesai
+                                                                                </span>
+                                                                                <% } %>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div style="font-size: 12px; color: #6b7280;">
-                                                        #ORD-<%= item.order_id %>
-                                                    </div>
-                                                </div>
+                                                    <% }) %>
                                             </div>
-                                        </td>
-
-                                        <!-- Penjual -->
-                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
-                                            <div style="display: flex; align-items: center; gap: 6px;">
-                                                <span style="font-size: 16px;">🏪</span>
-                                                <span style="font-weight: 500; color: #4b5563;">
-                                                    <%= item.seller ? (item.seller.full_name || item.seller.username)
-                                                        : 'Unknown Seller' %>
-                                                </span>
-                                            </div>
-                                        </td>
-
-                                        <!-- Qty -->
-                                        <td
-                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; text-align: center;">
-                                            <%= item.quantity %>
                                         </td>
 
                                         <!-- Total -->
                                         <td
-                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #111827;">
-                                            Rp <%= (item.price_at_purchase * item.quantity).toLocaleString('id-ID') %>
+                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #111827; vertical-align: top;">
+                                            Rp <%= parseFloat(order.total_price).toLocaleString('id-ID') %>
                                         </td>
 
-                                        <!-- Status -->
-                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                        <!-- Status Utama Order -->
+                                        <td
+                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; vertical-align: top;">
                                             <span class="status-badge <%= 
-                                                item.status === 'paid' ? 'paid' : 
-                                                item.status === 'processed' ? 'processing' : 
-                                                item.status === 'shipped' ? 'shipped' : 
-                                                item.status === 'completed' ? 'completed' : 
-                                                item.status === 'cancelled' ? 'cancelled' : 
-                                                item.status === 'rejected' ? 'rejected' : 'pending' 
+                                                order.status === 'paid' ? 'paid' : 
+                                                order.status === 'processing' ? 'processing' : 
+                                                order.status === 'shipped' ? 'shipped' : 
+                                                order.status === 'completed' ? 'completed' : 
+                                                order.status === 'cancelled' ? 'cancelled' : 
+                                                order.status === 'rejected' ? 'rejected' : 'pending' 
                                             %>">
-                                                <%= item.status.charAt(0).toUpperCase() + item.status.slice(1) %>
+                                                <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
                                             </span>
                                         </td>
 
                                         <!-- Aksi -->
-                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                        <td
+                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; vertical-align: top;">
                                             <div style="display: flex; gap: 8px; flex-direction: column;">
-                                                <a href="/orders/<%= item.order_id %>" class="btn-small btn-secondary"
+                                                <a href="/orders/<%= order.id %>" class="btn-small btn-secondary"
                                                     style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; padding: 6px 12px; font-size: 13px; border-radius: 6px; background: #f3f4f6; color: #374151; font-weight: 500;">
-                                                    Detail
+                                                    Detail Invoice
                                                 </a>
-                                                <% if (item.status==='shipped' ) { %>
-                                                    <form action="/orders/items/<%= item.id %>/complete" method="POST"
+
+                                                <% if (order.status==='completed' || order.status==='cancelled' ||
+                                                    order.status==='rejected' ) { %>
+                                                    <form action="/orders/<%= order.id %>/hide" method="POST"
+                                                        onsubmit="return confirmAction(event, 'Yakin ingin menyembunyikan riwayat pesanan ini?', 'Ya, Sembunyikan', '#EF4444');"
                                                         style="margin: 0;">
-                                                        <button type="submit" class="btn-small btn-success"
-                                                            style="width: 100%; border: none; padding: 6px 12px; font-size: 13px; border-radius: 6px; cursor: pointer;">
-                                                            ✅ Diterima
+                                                        <button type="submit" class="btn-small btn-delete"
+                                                            style="width: 100%; border: none; padding: 6px 12px; font-size: 13px; border-radius: 6px; cursor: pointer; background: #fee2e2; color: #b91c1c;">
+                                                            🗑️ Hapus
                                                         </button>
                                                     </form>
                                                     <% } %>
-                                                        <% if (item.Order && (item.Order.status==='completed' ||
-                                                            item.Order.status==='cancelled' ||
-                                                            item.Order.status==='rejected' )) { %>
-                                                            <form action="/orders/<%= item.order_id %>/hide"
-                                                                method="POST"
-                                                                onsubmit="return confirmAction(event, 'Yakin ingin menyembunyikan riwayat pesanan ini?', 'Ya, Sembunyikan', '#EF4444');"
-                                                                style="margin: 0;">
-                                                                <button type="submit" class="btn-small btn-delete"
-                                                                    style="width: 100%; border: none; padding: 6px 12px; font-size: 13px; border-radius: 6px; cursor: pointer; background: #fee2e2; color: #b91c1c;">
-                                                                    🗑️ Hapus
-                                                                </button>
-                                                            </form>
-                                                            <% } %>
                                             </div>
                                         </td>
                                     </tr>
