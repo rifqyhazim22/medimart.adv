@@ -431,7 +431,8 @@
                                         <!-- Status Utama Order -->
                                         <td
                                             style="padding: 16px; border-bottom: 1px solid #e5e7eb; vertical-align: top;">
-                                            <% let hasCancelled=order.items.some(i=> i.status === 'cancelled');
+                                            <% /* Dinamika Status Pembatalan Campuran (Refund Parsial/Gagal Bersama) */
+                                                let hasCancelled=order.items.some(i=> i.status === 'cancelled');
                                                 let hasRejected = order.items.some(i => i.status === 'rejected');
                                                 let hasActive = order.items.some(i => !['rejected',
                                                 'cancelled'].includes(i.status));
@@ -449,7 +450,7 @@
                                                 badgeClass = 'completed'; badgeText = '✅ Pesanan Selesai';
                                                 } else if (order.status === 'cancelled' || order.status === 'rejected')
                                                 {
-                                                // Jika keranjang mati total, periksa penyebab kematiannya
+                                                /* Jika keranjang mati total, periksa penyebab kematiannya */
                                                 if (hasCancelled && hasRejected) {
                                                 badgeText = '⛔ Batal (Pembeli & Penjual)';
                                                 badgeClass = 'cancelled';
@@ -460,8 +461,8 @@
                                                 }
                                                 }
 
-                                                // Sisipkan Tanda Parsial jika tagihan utama berjalan sukses tapi ada
-                                                sekelumit item yang gagal (Refund)
+                                                /* Sisipkan Tanda Parsial jika tagihan utama berjalan sukses tapi ada
+                                                sekelumit item yang gagal (Refund) */
                                                 if (hasActive && (hasCancelled || hasRejected)) {
                                                 badgeText += ' (Parsial)';
                                                 }
