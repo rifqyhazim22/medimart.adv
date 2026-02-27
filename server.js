@@ -23,7 +23,7 @@ const sessionStore = new SequelizeStore({
 });
 
 // Trust proxy for Vercel if using secure cookies
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
     app.set('trust proxy', 1);
 }
 
@@ -34,12 +34,14 @@ app.use(session({
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'production' || !!process.env.VERCEL,
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
 
-sessionStore.sync();
+sessionStore.sync().catch(err => {
+    console.error('Session Store Sync Error (Vercel):', err.message);
+});
 
 app.use(flash());
 app.set('view engine', 'ejs');
