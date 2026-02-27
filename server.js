@@ -15,13 +15,31 @@ app.use(express.json());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+const { sequelize } = require('./models');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
+
+const sessionStore = new SequelizeStore({
+    db: sequelize
+});
+
+// Trust proxy for Vercel if using secure cookies
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+}
+
 // Session Configuration
 app.use(session({
-    secret: 'medimart_secret_key',
+    secret: process.env.SESSION_SECRET || 'medimart_secret_key',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
+    store: sessionStore,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000
+    }
 }));
+
+sessionStore.sync();
 
 app.use(flash());
 app.set('view engine', 'ejs');
@@ -49,4 +67,8 @@ app.use((req, res) => {
     res.status(404).send('Page Not Found');
 });
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+}
+
+module.exports = app;

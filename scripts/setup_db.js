@@ -52,9 +52,52 @@ async function setupDatabase() {
                 id SERIAL PRIMARY KEY,
                 username VARCHAR(50) UNIQUE NOT NULL,
                 password VARCHAR(255) NOT NULL,
-                role VARCHAR(20) NOT NULL CHECK (role IN ('admin', 'seller', 'buyer')),
+                role VARCHAR(20) NOT NULL CHECK (role IN ('admin', 'seller', 'buyer', 'customer')),
                 full_name VARCHAR(100),
+                email VARCHAR(255),
+                address TEXT,
+                phone VARCHAR(50),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+
+        // Create Sellers Table
+        await newDbClient.query(`
+            CREATE TABLE sellers (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                store_name VARCHAR(255),
+                store_description TEXT,
+                store_address TEXT,
+                bank_account VARCHAR(255),
+                is_verified BOOLEAN DEFAULT false,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+
+        // Create Buyers Table
+        await newDbClient.query(`
+            CREATE TABLE buyers (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                shipping_address TEXT,
+                date_of_birth DATE,
+                loyalty_points INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+
+        // Create Admins Table
+        await newDbClient.query(`
+            CREATE TABLE admins (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                department VARCHAR(255),
+                job_title VARCHAR(255),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);
 
@@ -104,10 +147,16 @@ async function setupDatabase() {
         const hashedPassword = await bcrypt.hash('password123', 10);
 
         // Admin
-        await newDbClient.query(`
+        const adminRes = await newDbClient.query(`
             INSERT INTO users (username, password, role, full_name)
             VALUES ('admin', $1, 'admin', 'Administrator')
+            RETURNING id
         `, [hashedPassword]);
+        const adminId = adminRes.rows[0].id;
+        await newDbClient.query(`
+            INSERT INTO admins (user_id, department, job_title)
+            VALUES ($1, 'IT Support', 'System Administrator')
+        `, [adminId]);
 
         // Seller
         const sellerRes = await newDbClient.query(`
@@ -116,12 +165,22 @@ async function setupDatabase() {
             RETURNING id
         `, [hashedPassword]);
         const sellerId = sellerRes.rows[0].id;
+        await newDbClient.query(`
+            INSERT INTO sellers (user_id, store_name, is_verified)
+            VALUES ($1, 'Toko Sehat Selalu', true)
+        `, [sellerId]);
 
         // Buyer
-        await newDbClient.query(`
+        const buyerRes = await newDbClient.query(`
             INSERT INTO users (username, password, role, full_name)
             VALUES ('buyer1', $1, 'buyer', 'Budi Santoso')
+            RETURNING id
         `, [hashedPassword]);
+        const buyerId = buyerRes.rows[0].id;
+        await newDbClient.query(`
+            INSERT INTO buyers (user_id)
+            VALUES ($1)
+        `, [buyerId]);
 
         // Products
         await newDbClient.query(`

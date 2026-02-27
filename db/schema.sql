@@ -1,9 +1,11 @@
 -- Drop tables if they exist to start fresh
-DROP TABLE IF EXISTS order_items;
-DROP TABLE IF EXISTS orders;
-DROP TABLE IF EXISTS products;
-DROP TABLE IF EXISTS users;
-
+DROP TABLE IF EXISTS order_items CASCADE;
+DROP TABLE IF EXISTS orders CASCADE;
+DROP TABLE IF EXISTS products CASCADE;
+DROP TABLE IF EXISTS admins CASCADE;
+DROP TABLE IF EXISTS sellers CASCADE;
+DROP TABLE IF EXISTS buyers CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 -- Users Table
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -11,8 +13,44 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     full_name VARCHAR(255),
     email VARCHAR(255),
+    address TEXT,
+    phone VARCHAR(50),
     role VARCHAR(50) CHECK (role IN ('admin', 'seller', 'customer')) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Buyers Table
+CREATE TABLE buyers (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    shipping_address TEXT,
+    date_of_birth DATE,
+    loyalty_points INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Sellers Table
+CREATE TABLE sellers (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    store_name VARCHAR(255),
+    store_description TEXT,
+    store_address TEXT,
+    bank_account VARCHAR(255),
+    is_verified BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Admins Table
+CREATE TABLE admins (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    department VARCHAR(255),
+    job_title VARCHAR(255),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
 -- Products Table

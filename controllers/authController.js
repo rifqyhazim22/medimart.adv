@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Buyer, Seller, Admin } = require('../models');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { Op } = require('sequelize');
@@ -15,7 +15,14 @@ module.exports = {
     login: async (req, res) => {
         const { username, password } = req.body;
         try {
-            const user = await User.findOne({ where: { username } });
+            const user = await User.findOne({
+                where: { username },
+                include: [
+                    { model: Seller, as: 'seller' },
+                    { model: Buyer, as: 'buyer' },
+                    { model: Admin, as: 'admin' }
+                ]
+            });
             if (user) {
                 const isMatch = await bcrypt.compare(password, user.password);
                 if (isMatch) {
@@ -75,13 +82,30 @@ module.exports = {
             }
 
             const hashedPassword = await bcrypt.hash(password, 10);
-            await User.create({
+            const newUser = await User.create({
                 username,
                 password: hashedPassword,
                 full_name,
                 email,
                 role
             });
+
+            if (role === 'seller') {
+                await Seller.create({
+                    user_id: newUser.id,
+                    store_name: full_name || username
+                });
+            } else if (role === 'customer' || role === 'buyer') {
+                await Buyer.create({
+                    user_id: newUser.id
+                });
+            } else if (role === 'admin') {
+                await Admin.create({
+                    user_id: newUser.id,
+                    department: 'General',
+                    job_title: 'Administrator'
+                });
+            }
 
             req.session.save(() => {
                 req.flash('success_msg', 'Registrasi berhasil!');

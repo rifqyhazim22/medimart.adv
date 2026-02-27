@@ -81,8 +81,20 @@ async function runSchemaAndSeed() {
 
         const users = usersRes.rows;
         const seller = users.find(u => u.role === 'seller');
+        const buyer = users.find(u => u.role === 'customer');
+        const admin = users.find(u => u.role === 'admin');
 
-        console.log('✅ Users seeded');
+        if (seller) {
+            await client.query(`INSERT INTO sellers (user_id, store_name, is_verified) VALUES ($1, $2, $3)`, [seller.id, 'Toko Apotek Sehat', true]);
+        }
+        if (buyer) {
+            await client.query(`INSERT INTO buyers (user_id) VALUES ($1)`, [buyer.id]);
+        }
+        if (admin) {
+            await client.query(`INSERT INTO admins (user_id, department, job_title) VALUES ($1, $2, $3)`, [admin.id, 'General Staff', 'Superadmin']);
+        }
+
+        console.log('✅ Users, Sellers, Buyers, and Admins seeded');
 
         // Products
         if (seller) {

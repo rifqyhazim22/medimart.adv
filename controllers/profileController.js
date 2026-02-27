@@ -1,10 +1,16 @@
-const { User, Order } = require('../models');
+const { User, Order, Buyer, Seller, Admin } = require('../models');
 const bcrypt = require('bcryptjs');
 
 module.exports = {
     index: async (req, res) => {
         try {
-            const user = await User.findByPk(req.session.user.id);
+            const user = await User.findByPk(req.session.user.id, {
+                include: [
+                    { model: Seller, as: 'seller' },
+                    { model: Buyer, as: 'buyer' },
+                    { model: Admin, as: 'admin' }
+                ]
+            });
             res.render('profile/index', { user });
         } catch (err) {
             console.error(err);
