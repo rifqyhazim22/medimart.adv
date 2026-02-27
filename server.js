@@ -39,9 +39,13 @@ app.use(session({
     }
 }));
 
-sessionStore.sync().catch(err => {
-    console.error('Session Store Sync Error (Vercel):', err.message);
-});
+// IMPORTANT VERCEL FIX: Do not run .sync() on every serverless function cold-start!
+// We already ran migration/creation for the Sessions table locally or via CLI.
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    sessionStore.sync().catch(err => {
+        console.error('Session Store Sync Error:', err.message);
+    });
+}
 
 app.use(flash());
 app.set('view engine', 'ejs');
