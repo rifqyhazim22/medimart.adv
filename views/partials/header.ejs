@@ -342,9 +342,13 @@
         <% if (success_msg && success_msg.length > 0) { %>
             window.showToast('<%= success_msg %>', 'success');
 
-            // 🔥 Cemicu Perayaan Confetti Jika Pembeli Baru Checkout
-            <% if (success_msg.includes('Transaksi berhasil')) { %>
-                let duration = 2.5 * 1000;
+            // 🔥 Pemicu Perayaan Confetti Universal (Selamat, Sukses, Berjalan Lancar)
+            <% 
+            const confettiKeywords = ['berhasil', 'selamat', 'sukses', 'disimpan', 'ditambahkan', 'diproses'];
+            const shouldConfetti = confettiKeywords.some(keyword => success_msg.toLowerCase().includes(keyword));
+            if (shouldConfetti) { 
+            %>
+                    let duration = 2.5 * 1000;
                 let end = Date.now() + duration;
 
                 (function frame() {

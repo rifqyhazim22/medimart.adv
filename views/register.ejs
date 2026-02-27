@@ -63,7 +63,7 @@
                     </div>
                     <% } %>
 
-                        <form action="/auth/register" method="POST" class="login-form">
+                        <form id="registerForm" action="/auth/register" method="POST" class="login-form">
                             <div class="form-group" style="margin-bottom: 24px;">
                                 <label style="margin-bottom: 8px; display: block; font-weight: 600;">Saya ingin
                                     mendaftar sebagai:</label>
@@ -172,6 +172,25 @@
 
         // Run on load
         updateRoleStyles();
+
+        // 🧠 Intersepsi Pendaftaran Eksklusif (Efek Kehebatan IT)
+        const regForm = document.getElementById('registerForm');
+        if (regForm) {
+            regForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Menciptakan Akun Anda..',
+                    html: '<span style="color:#4b5563; font-size:15px;">Mengenkripsi kata sandi dan mendaftarkan entitas Anda 🛡️</span>',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => Swal.showLoading(),
+                    showClass: { popup: 'animate__animated animate__zoomIn animate__faster' },
+                    customClass: { popup: 'psych-modal' }
+                });
+
+                setTimeout(() => this.submit(), 1500);
+            });
+        }
     </script>
 </body>
 

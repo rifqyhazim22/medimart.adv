@@ -217,6 +217,29 @@
                 firstTab.classList.add('active');
             }
         });
+
+        // 🧠 Intersepsi Login Ber-Psikologis (Meyakinkan pengguna saat masuk)
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const role = document.getElementById('roleInput').value;
+                const roleNames = { customer: 'Pelanggan', seller: 'Seller', admin: 'Instansi Admin' };
+
+                Swal.fire({
+                    title: 'Memverifikasi Kredensial..',
+                    html: `<span style="color:#4b5563; font-size:15px;">Menyiapkan Dasbor ${roleNames[role]} Anda 🔒</span>`,
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => Swal.showLoading(),
+                    showClass: { popup: 'animate__animated animate__fadeIn animate__faster' },
+                    customClass: { popup: 'psych-modal' }
+                });
+
+                // Tahan selama 1.2 detik
+                setTimeout(() => this.submit(), 1200);
+            });
+        }
     </script>
 </body>
 

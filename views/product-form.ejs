@@ -248,62 +248,52 @@
 
             // --- 4. Form Submission ---
             productForm.addEventListener('submit', function (e) {
-                // Logic:
-                // 1. If 'croppedBlob' exists:
-                //    - Intercept submit.
-                //    - Create FormData.
-                //    - If mode == 'upload': APPEND 'image' (file input) AND 'croppedImage' (blob).
-                //    - If mode == 'recrop': APPEND 'croppedImage' (blob) only. 'image' input is empty/ignored.
-                // 2. If NO 'croppedBlob':
-                //    - If file input has file (User selected but cancelled crop?? Logic above prevents this, 
-                //      as selecting file triggers crop immediately. But if they cancel crop, input is cleared).
-                //    - So if no croppedBlob, standard submit works (will send nothing for file, preserving existing).
+                e.preventDefault();
 
-                if (croppedBlob) {
-                    e.preventDefault();
+                const originalBtnText = btnSubmit.innerText;
+                btnSubmit.innerText = 'Menyimpan...';
+                btnSubmit.disabled = true;
 
-                    // Disable button
-                    const originalBtnText = btnSubmit.innerText;
-                    btnSubmit.innerText = 'Menyimpan...';
-                    btnSubmit.disabled = true;
+                // 🧠 Modal Penenang IT
+                Swal.fire({
+                    title: 'Menyimpan Produk..',
+                    html: '<span style="color:#4b5563; font-size:15px;">Mengamankan data dan meregistrasi katalog ke rak toko Anda 📦</span>',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => Swal.showLoading(),
+                    showClass: { popup: 'animate__animated animate__fadeInUp animate__faster' },
+                    customClass: { popup: 'psych-modal' }
+                });
 
-                    const formData = new FormData(productForm);
+                setTimeout(() => {
+                    if (croppedBlob) {
+                        const formData = new FormData(productForm);
+                        if (mode === 'upload') {
+                            formData.append('croppedImage', croppedBlob, 'cropped.jpg');
+                        } else if (mode === 'recrop') {
+                            formData.append('croppedImage', croppedBlob, 'recrop.jpg');
+                        }
 
-                    // We need to manage what we send
-                    if (mode === 'upload') {
-                        // 'image' input is already in formData because it has name="image" and has a file selected.
-                        // We just need to add the crop.
-                        formData.append('croppedImage', croppedBlob, 'cropped.jpg');
-                    } else if (mode === 'recrop') {
-                        // 'image' input is empty (value=''). 
-                        // So formData has 'image' as empty file or nothing.
-                        // We append croppedBlob.
-                        formData.append('croppedImage', croppedBlob, 'recrop.jpg');
-                    }
-
-                    // Submit via fetch to handle the blob correctly
-                    // (Actually standard XHR/Fetch is needed for Blob)
-                    fetch(productForm.action, {
-                        method: 'POST', // Form handles method logic, but for standard we might need to respect action
-                        body: formData
-                    })
-                        .then(response => {
-                            if (response.redirected) {
-                                window.location.href = response.url;
-                            } else if (response.ok) {
-                                window.location.href = '/seller/dashboard';
-                            } else {
-                                throw new Error('Upload failed');
-                            }
+                        fetch(productForm.action, {
+                            method: 'POST',
+                            body: formData
                         })
-                        .catch(err => {
-                            console.error(err);
-                            window.showToast('Gagal menyimpan produk.', 'error');
-                            btnSubmit.innerText = originalBtnText;
-                            btnSubmit.disabled = false;
-                        });
-                }
-                // Else standard submit
+                            .then(response => {
+                                if (response.redirected) window.location.href = response.url;
+                                else if (response.ok) window.location.href = '/seller/dashboard';
+                                else throw new Error('Upload failed');
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                window.showToast('Gagal menyimpan produk.', 'error');
+                                btnSubmit.innerText = originalBtnText;
+                                btnSubmit.disabled = false;
+                            });
+                    } else {
+                        // Standard submit
+                        productForm.submit();
+                    }
+                }, 1200);
             });
         });
     </script>
