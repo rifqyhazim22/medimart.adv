@@ -123,7 +123,10 @@ module.exports = {
             await t.commit();
             req.session.cart = [];
             req.session.save(() => {
-                req.flash('success_msg', `Transaksi berhasil! Dipecah menjadi ${createdOrderIds.length} pesanan terpisah untuk mempercepat proses tiap toko.`);
+                const flashMsg = createdOrderIds.length > 1
+                    ? `Transaksi berhasil! Pesanan Anda dipecah menjadi ${createdOrderIds.length} tagihan terpisah berdasarkan masing-masing toko.`
+                    : 'Transaksi berhasil! Pesanan Anda sedang diteruskan ke Penjual.';
+                req.flash('success_msg', flashMsg);
                 res.redirect('/user/dashboard');
             });
 
