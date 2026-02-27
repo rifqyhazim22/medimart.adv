@@ -162,6 +162,23 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <style>
+        /* Global Page Transition (Smooth UX) */
+        body {
+            animation: fadeInPage 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInPage {
+            0% {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Psychological Toast Styling */
         .psych-toast {
             border-radius: 16px !important;
@@ -317,10 +334,40 @@
         };
     </script>
 
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <!-- Handle Server-Side Flash Messages -->
     <script>
         <% if (success_msg && success_msg.length > 0) { %>
             window.showToast('<%= success_msg %>', 'success');
+
+            // 🔥 Cemicu Perayaan Confetti Jika Pembeli Baru Checkout
+            <% if (success_msg.includes('Transaksi berhasil')) { %>
+                let duration = 2.5 * 1000;
+                let end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({
+                        particleCount: 5,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#FF6B35', '#22c55e', '#E040FB']
+                    });
+                    confetti({
+                        particleCount: 5,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: ['#FF6B35', '#22c55e', '#E040FB']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            <% } %>
         <% } %>
         
         <% if (error_msg && error_msg.length > 0) { %>

@@ -239,11 +239,37 @@
     </div>
 
     <script>
+        // Logika Pilihan Metode Pembayaran
         function selectPayment(label) {
             document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
             label.classList.add('selected');
             label.querySelector('input').checked = true;
         }
+
+        // Intersepsi Psikologis Pembayaran
+        document.getElementById('checkoutForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Tahan pengiriman aslinya
+
+            // Tampilkan Modal Penenang
+            Swal.fire({
+                title: 'Mengamankan Transaksi..',
+                html: '<span style="color:#4b5563; font-size:15px;">Mohon tunggu, kami sedang menyandikan pesanan Anda 🔒</span>',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                },
+                showClass: {
+                    popup: 'animate__animated animate__fadeIn animate__faster'
+                },
+                customClass: { popup: 'psych-modal' }
+            });
+
+            // Tahan secara virtual selama 1.5 detik agar terbentuk esensi "Sistem Sedang Kerja Keras" (Anticipation UX)
+            setTimeout(() => {
+                this.submit();
+            }, 1500);
+        });
     </script>
 
     <%- include('partials/footer') %>
