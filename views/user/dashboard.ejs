@@ -431,30 +431,44 @@
                                         <!-- Status Utama Order -->
                                         <td
                                             style="padding: 16px; border-bottom: 1px solid #e5e7eb; vertical-align: top;">
-                                            <span class="status-badge <%= 
-                                                order.status === 'paid' ? 'pending' : 
-                                                order.status === 'processing' ? 'processing' : 
-                                                order.status === 'shipped' ? 'shipped' : 
-                                                order.status === 'completed' ? 'completed' : 
-                                                order.status === 'cancelled' ? 'cancelled' : 
-                                                order.status === 'rejected' ? 'rejected' : 'pending' 
-                                            %>">
-                                                <% if (order.status==='paid' || order.status==='pending' ) { %>
-                                                    🟡 Menunggu Konfirmasi
-                                                    <% } else if (order.status==='processing' ) { %>
-                                                        🔵 Sedang Diproses
-                                                        <% } else if (order.status==='shipped' ) { %>
-                                                            🚚 Sedang Dikirim
-                                                            <% } else if (order.status==='completed' ) { %>
-                                                                ✅ Pesanan Selesai
-                                                                <% } else if (order.status==='cancelled' ) { %>
-                                                                    ❌ Dibatalkan Pembeli
-                                                                    <% } else if (order.status==='rejected' ) { %>
-                                                                        ⛔ Ditolak Keseluruhan
-                                                                        <% } else { %>
-                                                                            <%= order.status %>
-                                                                                <% } %>
-                                            </span>
+                                            <% let hasCancelled=order.items.some(i=> i.status === 'cancelled');
+                                                let hasRejected = order.items.some(i => i.status === 'rejected');
+                                                let hasActive = order.items.some(i => !['rejected',
+                                                'cancelled'].includes(i.status));
+
+                                                let badgeClass = order.status;
+                                                let badgeText = '';
+
+                                                if (order.status === 'paid' || order.status === 'pending') {
+                                                badgeClass = 'pending'; badgeText = '🟡 Menunggu Konfirmasi';
+                                                } else if (order.status === 'processing') {
+                                                badgeClass = 'processing'; badgeText = '🔵 Sedang Diproses';
+                                                } else if (order.status === 'shipped') {
+                                                badgeClass = 'shipped'; badgeText = '🚚 Sedang Dikirim';
+                                                } else if (order.status === 'completed') {
+                                                badgeClass = 'completed'; badgeText = '✅ Pesanan Selesai';
+                                                } else if (order.status === 'cancelled' || order.status === 'rejected')
+                                                {
+                                                // Jika keranjang mati total, periksa penyebab kematiannya
+                                                if (hasCancelled && hasRejected) {
+                                                badgeText = '⛔ Batal (Pembeli & Penjual)';
+                                                badgeClass = 'cancelled';
+                                                } else if (order.status === 'cancelled') {
+                                                badgeText = '❌ Dibatalkan Pembeli';
+                                                } else {
+                                                badgeText = '⛔ Ditolak Penjual';
+                                                }
+                                                }
+
+                                                // Sisipkan Tanda Parsial jika tagihan utama berjalan sukses tapi ada
+                                                sekelumit item yang gagal (Refund)
+                                                if (hasActive && (hasCancelled || hasRejected)) {
+                                                badgeText += ' (Parsial)';
+                                                }
+                                                %>
+                                                <span class="status-badge <%= badgeClass %>">
+                                                    <%= badgeText %>
+                                                </span>
                                         </td>
 
                                         <!-- Aksi -->
