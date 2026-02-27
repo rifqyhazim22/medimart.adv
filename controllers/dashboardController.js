@@ -23,21 +23,27 @@ module.exports = {
                 order: [['id', 'DESC']]
             });
 
-            // Calculate Stats based on OrderItems for accuracy
-            const allItems = await OrderItem.findAll({
-                include: [{ model: Order, where: { user_id: user.id, visible_to_customer: true } }]
+            // Calculate Stats accurately based on authentic Order counts
+            const totalOrders = await Order.count({ where: { user_id: user.id, visible_to_customer: true } });
+            const activeOrders = await Order.count({
+                where: {
+                    user_id: user.id,
+                    visible_to_customer: true,
+                    status: { [Op.notIn]: ['completed', 'cancelled', 'rejected'] }
+                }
             });
 
-            const activeStatuses = ['pending', 'paid', 'processed', 'shipped'];
-            const spentStatuses = ['paid', 'processed', 'shipped', 'completed'];
-
-            const uniqueOrders = new Set(allItems.map(item => item.order_id));
-            const activeUniqueOrders = new Set(allItems.filter(item => activeStatuses.includes(item.status)).map(item => item.order_id));
+            // Total spent is the summation of valid OrderItem prices
+            const validItems = await OrderItem.findAll({
+                include: [{ model: Order, where: { user_id: user.id, visible_to_customer: true } }],
+                where: { status: { [Op.in]: ['paid', 'processed', 'shipped', 'completed'] } }
+            });
+            const totalSpent = validItems.reduce((sum, item) => sum + (parseFloat(item.price_at_purchase) * item.quantity), 0);
 
             const stats = {
-                totalOrders: uniqueOrders.size,
-                activeOrders: activeUniqueOrders.size,
-                totalSpent: allItems.filter(item => spentStatuses.includes(item.status)).reduce((sum, item) => sum + (parseFloat(item.price_at_purchase) * item.quantity), 0)
+                totalOrders,
+                activeOrders,
+                totalSpent
             };
 
             res.render('user/dashboard', { orders, stats });

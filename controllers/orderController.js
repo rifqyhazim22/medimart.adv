@@ -48,45 +48,68 @@ module.exports = {
         const t = await sequelize.transaction();
 
         try {
-            const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-
-            const order = await Order.create({
-                user_id: req.session.user.id,
-                total_price: total,
-                status: 'paid',
-                payment_method,
-                recipient_name,
-                recipient_phone,
-                shipping_address
-            }, { transaction: t });
-
+            // Group items by seller_id
+            const ordersBySeller = {};
             for (const item of cart) {
-                // Check Stock
-                const product = await Product.findByPk(item.id, {
-                    transaction: t,
-                    lock: true // Prevent race conditions
-                });
-                if (product.stock < item.quantity) {
-                    throw new Error(`Stok tidak cukup untuk produk: ${product.name}`);
+                if (!ordersBySeller[item.seller_id]) {
+                    ordersBySeller[item.seller_id] = {
+                        items: [],
+                        total: 0
+                    };
                 }
+                ordersBySeller[item.seller_id].items.push(item);
+                ordersBySeller[item.seller_id].total += (item.price * item.quantity);
+            }
 
-                await OrderItem.create({
-                    order_id: order.id,
-                    product_id: item.id,
-                    quantity: item.quantity,
-                    price_at_purchase: item.price,
-                    seller_id: item.seller_id,
-                    status: 'pending'
+            const createdOrderIds = [];
+
+            // Iterate over each seller group to create separate Orders (Split Checkout)
+            for (const sellerId in ordersBySeller) {
+                const group = ordersBySeller[sellerId];
+
+                // Create individual Invoice for this specific Seller
+                const order = await Order.create({
+                    user_id: req.session.user.id,
+                    total_price: group.total,
+                    status: 'paid',
+                    payment_method,
+                    recipient_name,
+                    recipient_phone,
+                    shipping_address
                 }, { transaction: t });
 
-                // Stock is intentionally NOT decremented during checkout to prevent hoarding.
-                // Stock will be decremented when the seller accepts (processes) the order.
+                createdOrderIds.push(order.id);
+
+                // Insert Items for this specific Invoice
+                for (const item of group.items) {
+                    // Check Stock sequentially to prevent overselling
+                    const product = await Product.findByPk(item.id, {
+                        transaction: t,
+                        lock: true // Prevent race conditions
+                    });
+
+                    if (product.stock < item.quantity) {
+                        throw new Error(`Stok tidak cukup untuk produk: ${product.name}`);
+                    }
+
+                    await OrderItem.create({
+                        order_id: order.id,
+                        product_id: item.id,
+                        quantity: item.quantity,
+                        price_at_purchase: item.price,
+                        seller_id: item.seller_id,
+                        status: 'pending'
+                    }, { transaction: t });
+
+                    // Stock is intentionally NOT decremented during checkout to prevent hoarding.
+                    // Stock will be decremented when the seller accepts (processes) the order.
+                }
             }
 
             await t.commit();
             req.session.cart = [];
             req.session.save(() => {
-                req.flash('success_msg', 'Transaksi berhasil! Pesanan #' + order.id + ' telah dibuat.');
+                req.flash('success_msg', `Transaksi berhasil! Dipecah menjadi ${createdOrderIds.length} pesanan terpisah untuk mempercepat proses tiap toko.`);
                 res.redirect('/user/dashboard');
             });
 
