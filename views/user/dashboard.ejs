@@ -388,21 +388,33 @@
                                                                         item.status==='rejected' ) { %>
                                                                         <span
                                                                             style="color: #dc2626; background: #fee2e2; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
-                                                                            <%= item.status==='rejected' ? 'Ditolak'
-                                                                                : 'Batal' %>
+                                                                            <%= item.status==='rejected'
+                                                                                ? '⛔ Ditolak Penjual' : '❌ Dibatalkan'
+                                                                                %>
                                                                         </span>
                                                                         <% } else if (item.status==='shipped' ) { %>
                                                                             <span
                                                                                 style="color: #1e40af; background: #dbeafe; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
-                                                                                Dikirim
+                                                                                🚚 Dalam Perjalanan Kurir
                                                                             </span>
                                                                             <% } else if (item.status==='completed' ) {
                                                                                 %>
                                                                                 <span
                                                                                     style="color: #065f46; background: #d1fae5; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
-                                                                                    Selesai
+                                                                                    ✅ Barang Diterima
                                                                                 </span>
-                                                                                <% } %>
+                                                                                <% } else if (item.status==='processed'
+                                                                                    ) { %>
+                                                                                    <span
+                                                                                        style="color: #0d9488; background: #ccfbf1; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
+                                                                                        🔵 Sedang Dikemas Penjual
+                                                                                    </span>
+                                                                                    <% } else { %>
+                                                                                        <span
+                                                                                            style="color: #92400e; background: #fef3c7; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
+                                                                                            🟡 Menunggu Lapak Diproses
+                                                                                        </span>
+                                                                                        <% } %>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -420,14 +432,28 @@
                                         <td
                                             style="padding: 16px; border-bottom: 1px solid #e5e7eb; vertical-align: top;">
                                             <span class="status-badge <%= 
-                                                order.status === 'paid' ? 'paid' : 
+                                                order.status === 'paid' ? 'pending' : 
                                                 order.status === 'processing' ? 'processing' : 
                                                 order.status === 'shipped' ? 'shipped' : 
                                                 order.status === 'completed' ? 'completed' : 
                                                 order.status === 'cancelled' ? 'cancelled' : 
                                                 order.status === 'rejected' ? 'rejected' : 'pending' 
                                             %>">
-                                                <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                                                <% if (order.status==='paid' || order.status==='pending' ) { %>
+                                                    🟡 Menunggu Konfirmasi
+                                                    <% } else if (order.status==='processing' ) { %>
+                                                        🔵 Sedang Diproses
+                                                        <% } else if (order.status==='shipped' ) { %>
+                                                            🚚 Sedang Dikirim
+                                                            <% } else if (order.status==='completed' ) { %>
+                                                                ✅ Pesanan Selesai
+                                                                <% } else if (order.status==='cancelled' ) { %>
+                                                                    ❌ Dibatalkan Pembeli
+                                                                    <% } else if (order.status==='rejected' ) { %>
+                                                                        ⛔ Ditolak Keseluruhan
+                                                                        <% } else { %>
+                                                                            <%= order.status %>
+                                                                                <% } %>
                                             </span>
                                         </td>
 

@@ -355,7 +355,22 @@
                                                 (order.status==='completed' ) statusClass='success' ; if
                                                 (order.status==='cancelled' ) statusClass='danger' ; %>
                                                 <span class="badge badge-<%= statusClass %>">
-                                                    <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                                                    <% if (order.status==='paid' || order.status==='pending' ) { %>
+                                                        Menunggu Proses
+                                                        <% } else if (order.status==='processing' ) { %>
+                                                            Sedang Diproses
+                                                            <% } else if (order.status==='shipped' ) { %>
+                                                                Sedang Dikirim
+                                                                <% } else if (order.status==='completed' ) { %>
+                                                                    Selesai
+                                                                    <% } else if (order.status==='cancelled' ) { %>
+                                                                        Dibatalkan Pembeli
+                                                                        <% } else if (order.status==='rejected' ) { %>
+                                                                            Ditolak Penjual
+                                                                            <% } else { %>
+                                                                                <%= order.status.charAt(0).toUpperCase()
+                                                                                    + order.status.slice(1) %>
+                                                                                    <% } %>
                                                 </span>
                                         </td>
                                         <td>

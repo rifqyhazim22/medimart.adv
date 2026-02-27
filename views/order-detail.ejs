@@ -116,10 +116,26 @@
                 </div>
                 <div>
                     <span class="status-badge <%= 
-                    order.status === 'paid' || order.status === 'completed' ? 'status-paid' : 
-                    order.status === 'cancelled' ? 'status-cancelled' : 'status-pending' 
+                    order.status === 'paid' ? 'status-pending' : 
+                    order.status === 'completed' ? 'status-paid' : 
+                    order.status === 'shipped' || order.status === 'processing' ? 'status-paid' :
+                    order.status === 'cancelled' || order.status === 'rejected' ? 'status-cancelled' : 'status-pending' 
                 %>">
-                        <%= order.status.toUpperCase() %>
+                        <% if (order.status==='paid' || order.status==='pending' ) { %>
+                            🟡 Menunggu Konfirmasi
+                            <% } else if (order.status==='processing' ) { %>
+                                🔵 Sedang Diproses
+                                <% } else if (order.status==='shipped' ) { %>
+                                    🚚 Sedang Dikirim
+                                    <% } else if (order.status==='completed' ) { %>
+                                        ✅ Pesanan Selesai
+                                        <% } else if (order.status==='cancelled' ) { %>
+                                            ❌ Dibatalkan Pembeli
+                                            <% } else if (order.status==='rejected' ) { %>
+                                                ⛔ Ditolak Keseluruhan
+                                                <% } else { %>
+                                                    <%= order.status.toUpperCase() %>
+                                                        <% } %>
                     </span>
                 </div>
             </div>
@@ -175,7 +191,7 @@
                 <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 18px;">📦 Rincian Produk</h3>
                 <% items.forEach(item=> { %>
                     <div class="item-row"
-                        style="<%= item.status === 'cancelled' || item.status === 'rejected' ? 'opacity: 0.5; background: #f9fafb;' : '' %>">
+                        style="transition: all 0.3s; <%= item.status === 'cancelled' || item.status === 'rejected' ? 'opacity: 0.5; background: #f9fafb;' : 'opacity: 1;' %>">
                         <img src="<%= item.image_url || '/img/default-product.svg' %>"
                             style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; margin-right: 16px;">
 
@@ -184,10 +200,30 @@
                                 <%= item.product_name %>
                                     <% if (item.status==='cancelled' || item.status==='rejected' ) { %>
                                         <span
-                                            style="font-size: 12px; color: #dc2626; background: #fee2e2; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">
-                                            <%= item.status==='rejected' ? 'Ditolak Penjual' : 'Dibatalkan' %>
+                                            style="font-size: 10px; color: #dc2626; background: #fee2e2; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">
+                                            <%= item.status==='rejected' ? '⛔ Ditolak Penjual' : '❌ Dibatalkan' %>
                                         </span>
-                                        <% } %>
+                                        <% } else if (item.status==='shipped' ) { %>
+                                            <span
+                                                style="font-size: 10px; color: #1e40af; background: #dbeafe; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">
+                                                🚚 Dalam Perjalanan Kurir
+                                            </span>
+                                            <% } else if (item.status==='completed' ) { %>
+                                                <span
+                                                    style="font-size: 10px; color: #065f46; background: #d1fae5; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">
+                                                    ✅ Barang Diterima
+                                                </span>
+                                                <% } else if (item.status==='processed' ) { %>
+                                                    <span
+                                                        style="font-size: 10px; color: #0d9488; background: #ccfbf1; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">
+                                                        🔵 Sedang Dikemas Penjual
+                                                    </span>
+                                                    <% } else { %>
+                                                        <span
+                                                            style="font-size: 10px; color: #92400e; background: #fef3c7; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">
+                                                            🟡 Menunggu Lapak Diproses
+                                                        </span>
+                                                        <% } %>
                             </div>
                             <div style="font-size: 14px; color: #6b7280;">
                                 <%= item.quantity %> x Rp <%= parseFloat(item.price_at_purchase).toLocaleString('id-ID')

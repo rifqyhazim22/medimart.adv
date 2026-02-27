@@ -243,10 +243,39 @@
                                             Rp <%= (item.price_at_purchase * item.quantity).toLocaleString('id-ID') %>
                                         </td>
                                         <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
-                                            <span
-                                                style="padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500; <%= item.status === 'processed' || item.status === 'completed' ? 'background: #d1fae5; color: #065f46;' : item.status === 'rejected' || item.status === 'cancelled' ? 'background: #fee2e2; color: #b91c1c;' : 'background: #fef3c7; color: #92400e;' %>">
-                                                <%= item.status.charAt(0).toUpperCase() + item.status.slice(1) %>
-                                            </span>
+                                            <% if (item.status==='paid' || item.status==='pending' ) { %>
+                                                <span
+                                                    style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #fef3c7; color: #92400e;">
+                                                    🟡 Menunggu Diproses
+                                                </span>
+                                                <% } else if (item.status==='processed' ) { %>
+                                                    <span
+                                                        style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #ccfbf1; color: #0d9488;">
+                                                        🔵 Sedang Dikemas
+                                                    </span>
+                                                    <% } else if (item.status==='shipped' ) { %>
+                                                        <span
+                                                            style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #dbeafe; color: #1e40af;">
+                                                            🚚 Dalam Pengiriman
+                                                        </span>
+                                                        <% } else if (item.status==='completed' ) { %>
+                                                            <span
+                                                                style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #d1fae5; color: #065f46;">
+                                                                ✅ Selesai Diterima
+                                                            </span>
+                                                            <% } else if (item.status==='rejected' ||
+                                                                item.status==='cancelled' ) { %>
+                                                                <span
+                                                                    style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #b91c1c;">
+                                                                    <%= item.status==='rejected' ? '⛔ Saya Tolak'
+                                                                        : '❌ Dibatalkan Pembeli' %>
+                                                                </span>
+                                                                <% } else { %>
+                                                                    <span
+                                                                        style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #f3f4f6; color: #374151;">
+                                                                        <%= item.status %>
+                                                                    </span>
+                                                                    <% } %>
                                         </td>
                                         <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
                                             <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
