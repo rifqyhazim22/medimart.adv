@@ -160,57 +160,156 @@
     </header>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        /* Psychological Toast Styling */
+        .psych-toast {
+            border-radius: 16px !important;
+            padding: 16px 20px !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+            color: #1f2937 !important;
+        }
+
+        .psych-success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%) !important;
+            border-left: 6px solid #22c55e !important;
+        }
+
+        .psych-error {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+            border-left: 6px solid #ef4444 !important;
+        }
+
+        .psych-warning {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+            border-left: 6px solid #f59e0b !important;
+        }
+
+        .psych-title {
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 16px !important;
+            font-weight: 800 !important;
+            color: #111827 !important;
+            margin-bottom: 4px !important;
+        }
+
+        .psych-text {
+            font-family: 'DM Sans', sans-serif !important;
+            font-size: 14px !important;
+            color: #4b5563 !important;
+            line-height: 1.5 !important;
+        }
+
+        .toast-below-header {
+            margin-top: 80px !important;
+        }
+
+        /* Modal Override */
+        .swal2-popup.psych-modal {
+            border-radius: 24px !important;
+        }
+    </style>
+
     <script>
-        // Global Toast Configuration
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            customClass: {
-                container: 'toast-below-header'
-            },
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
+        // Psychological Affirmations Toolkit
+        const psychTitles = {
+            success: [
+                "Langkah yang Tepat! 🚀",
+                "Yes, Berhasil! 🎉",
+                "Kerja Bagus! ✨",
+                "Mantap Sekali! 🏆",
+                "Wah, Sukses! 🎯"
+            ],
+            error: [
+                "Yaaah, Maaf Ya.. 🥺",
+                "Oops, Ada Kendala 🛠️",
+                "Tunggu Sebentar ✋",
+                "Ups, Gagal Nih 💔",
+                "Sayang Sekali.. 🌧️"
+            ],
+            warning: [
+                "Perhatian Sebentar 💡",
+                "Hati-hati Ya 🚦",
+                "Cek Sekali Lagi 👀"
+            ]
+        };
 
-        // Add CSS to push toast below the header
-        const style = document.createElement('style');
-        style.innerHTML = `
-            .toast-below-header {
-                margin-top: 80px !important;
-            }
-        `;
-        document.head.appendChild(style);
+        const getRandomTitle = (type) => {
+            const arr = psychTitles[type] || ["Notifikasi"];
+            return arr[Math.floor(Math.random() * arr.length)];
+        };
 
-        // Wrapper function to be used anywhere
+        // Advanced Psychological Toast Function
         window.showToast = function (message, type = 'success') {
-            Toast.fire({
+            const isError = type === 'error';
+
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
                 icon: type,
-                title: message
+                title: getRandomTitle(type),
+                text: message,
+                showConfirmButton: false,
+                timer: isError ? 5000 : 4000, // Error messages need more reading context time
+                timerProgressBar: true,
+                showClass: {
+                    popup: `animate__animated ${isError ? 'animate__shakeX' : 'animate__bounceInRight'} animate__faster`
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__zoomOutUp animate__faster'
+                },
+                customClass: {
+                    container: 'toast-below-header',
+                    popup: `psych-toast psych-${type}`,
+                    title: 'psych-title',
+                    htmlContainer: 'psych-text'
+                },
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
             });
         };
 
-        // Global confirmation wrapper for forms
+        // Global confirmation wrapper for forms (Psychologically driven)
         window.confirmAction = function (event, message, actionBtnText = 'Ya, Lanjutkan', confirmColor = '#FF6B35') {
-            event.preventDefault(); // Stop default form submit
+            event.preventDefault();
             const form = event.target.closest('form') || event.target;
 
+            // Detect if this is a dangerous action
+            const isDanger = confirmColor.toLowerCase().includes('ef4444') || confirmColor.toLowerCase().includes('fee2e2');
+
             Swal.fire({
-                title: 'Konfirmasi',
-                text: message,
-                icon: 'warning',
+                title: isDanger ? 'Anda Yakin?' : 'Tunggu Sebentar..',
+                html: `<span style="font-size: 15px; color: #4b5563;">${message}</span>`,
+                icon: isDanger ? 'warning' : 'question',
                 showCancelButton: true,
                 confirmButtonColor: confirmColor,
-                cancelButtonColor: '#9ca3af',
-                confirmButtonText: actionBtnText,
-                cancelButtonText: 'Batal',
-                reverseButtons: true
+                cancelButtonColor: '#e5e7eb',
+                confirmButtonText: `${actionBtnText}`,
+                cancelButtonText: '<span style="color: #4b5563;">Kembali</span>',
+                reverseButtons: true, // Psychological trick: Action button on the left grabs second-thought attention
+                showClass: {
+                    popup: 'animate__animated animate__fadeInUp animate__faster'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutDown animate__faster'
+                },
+                customClass: {
+                    popup: 'psych-modal'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // Small loading animation to reduce anxiety
+                    Swal.fire({
+                        title: 'Memproses...',
+                        text: 'Meneruskan instruksi Anda, mohon tunggu sebentar.',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: () => Swal.showLoading(),
+                        customClass: { popup: 'psych-modal' }
+                    });
+
                     form.submit();
                 }
             });
