@@ -111,46 +111,46 @@
     <div id="stickyCheckoutBar" style="
         display: <%= (typeof cartCount !== 'undefined' && cartCount > 0) ? 'flex' : 'none' %>;
         position: fixed; 
-        bottom: 40px; 
-        right: 40px; 
+        bottom: 24px; 
+        right: 24px; 
         z-index: 999; 
-        background: rgba(17, 24, 39, 0.95);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        padding: 12px 24px 12px 16px; 
+        background: linear-gradient(135deg, #FF6B35, #FF5252, #E040FB);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        padding: 8px 16px 8px 16px; 
         border-radius: 99px; 
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        box-shadow: 0 10px 25px -5px rgba(224, 64, 251, 0.4);
         align-items: center; 
-        gap: 24px;
+        gap: 16px;
         animation: floatUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         color: white;
     ">
-        <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
             <div style="
-                background: linear-gradient(135deg, #00B09B, #96C93D);
-                width: 48px;
-                height: 48px;
+                background: rgba(255,255,255,0.25);
+                width: 38px;
+                height: 38px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 22px;
-                box-shadow: 0 4px 10px rgba(0, 176, 155, 0.4);
+                font-size: 18px;
+                box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);
             ">
                 🛍️
             </div>
             <div style="display: flex; flex-direction: column;">
                 <span
-                    style="font-size: 13px; color: #9ca3af; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase;">
-                    Keranjang Sehat
+                    style="font-size: 11px; color: rgba(255,255,255,0.95); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase;">
+                    Total Belanja
                 </span>
-                <div style="display: flex; align-items:baseline; gap: 8px;">
-                    <span style="font-size: 20px; font-weight: 800; color: #ffffff;" id="stickyTotal">Rp <%=
+                <div style="display: flex; align-items:baseline; gap: 6px;">
+                    <span style="font-size: 16px; font-weight: 800; color: #ffffff;" id="stickyTotal">Rp <%=
                             parseInt(typeof cartTotal !=='undefined' ? cartTotal : 0).toLocaleString('id-ID') %></span>
                     <span
-                        style="font-size: 13px; color: #34d399; font-weight: 600; background: rgba(52, 211, 153, 0.1); padding: 2px 8px; border-radius: 99px;"
+                        style="font-size: 11px; color: #FF5252; font-weight: 700; background: white; padding: 2px 6px; border-radius: 99px;"
                         id="stickyCount">
-                        <%= typeof cartCount !=='undefined' ? cartCount : 0 %> Item
+                        <%= typeof cartCount !=='undefined' ? cartCount : 0 %> x
                     </span>
                 </div>
             </div>
@@ -158,21 +158,22 @@
 
         <button onclick="window.location.href='/cart'" class="checkout-pulse-btn" style="
             background: white; 
-            color: #111827; 
+            color: #FF5252; 
             border: none; 
-            padding: 12px 24px; 
+            padding: 8px 16px; 
             border-radius: 99px; 
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 800; 
             cursor: pointer; 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         ">
-            Bungkus <span style="font-size: 16px;">✨</span>
+            Lanjut <span style="font-size: 14px;">➔</span>
         </button>
     </div>
 
