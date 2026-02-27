@@ -345,7 +345,8 @@
             // 🔥 Pemicu Perayaan Confetti Universal (Selamat, Sukses, Berjalan Lancar)
             <% 
             const confettiKeywords = ['berhasil', 'selamat', 'sukses', 'disimpan', 'ditambahkan', 'diproses'];
-            const shouldConfetti = confettiKeywords.some(keyword => success_msg.toLowerCase().includes(keyword));
+            const msgStr = Array.isArray(success_msg) ? success_msg.join(' ') : String(success_msg);
+            const shouldConfetti = confettiKeywords.some(keyword => msgStr.toLowerCase().includes(keyword));
             if (shouldConfetti) { 
             %>
                     let duration = 2.5 * 1000;
