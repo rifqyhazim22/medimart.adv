@@ -62,6 +62,7 @@ CREATE TABLE products (
     stock INTEGER NOT NULL DEFAULT 0,
     category VARCHAR(100),
     image_url VARCHAR(255),
+    original_image_url VARCHAR(255),
     seller_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT NOW()
 );
