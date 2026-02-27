@@ -327,7 +327,6 @@ module.exports = {
             }
 
             await item.update({ status: 'processed' }, { transaction: t });
-            await t.commit();
 
             // updateOrderStatus happens BEFORE commit to be atomic within transaction
             await updateOrderStatus(item.order_id, t);
@@ -414,7 +413,6 @@ module.exports = {
                 });
             }
 
-            await t.commit();
             // updateOrderStatus syncs invoice amount inside transaction
             await updateOrderStatus(item.order_id, t);
             await t.commit();
