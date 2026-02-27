@@ -33,7 +33,7 @@ module.exports = {
 
             if (req.session.user && product.seller_id === req.session.user.id) {
                 if (isAjax) return res.status(403).json({ success: false, message: 'Anda tidak dapat membeli produk Anda sendiri' });
-                req.flash('error', 'Anda tidak dapat membeli produk Anda sendiri');
+                req.flash('error', 'Wah, Anda tidak dapat memborong produk dari lapak Anda sendiri ya 😅');
                 return res.redirect(req.get('Referer') || '/');
             }
 
@@ -161,7 +161,7 @@ module.exports = {
             return res.json({ success: true, message: 'Keranjang dikosongkan' });
         }
 
-        req.flash('success_msg', 'Keranjang dikosongkan.');
+        req.flash('success_msg', 'Keranjang sudah dibersihkan. Yuk mulai berburu barang baru! ✨');
         res.redirect('/cart');
     },
 
@@ -201,7 +201,7 @@ module.exports = {
             }
 
             req.session.save(() => {
-                req.flash('success_msg', 'Item dihapus dari keranjang.');
+                req.flash('success_msg', 'Sip, barang telah dikeluarkan dari keranjang belanja.');
                 res.redirect('/cart');
             });
         } catch (err) {

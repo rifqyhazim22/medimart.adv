@@ -35,7 +35,7 @@ module.exports = {
                     if (user.role !== selectedRole) {
                         // Allow 'customer' to also match 'user' if legacy
                         if (!(selectedRole === 'customer' && (user.role === 'user' || user.role === 'customer'))) {
-                            req.flash('error', `Login gagal. Akun ini bukan akun ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}.`);
+                            req.flash('error', `Akses ditolak. Coba periksa lagi, karena sepertinya ini bukan akun ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}.`);
                             return res.redirect('/login');
                         }
                     }
@@ -52,7 +52,7 @@ module.exports = {
                     }
 
                     return req.session.save(() => {
-                        req.flash('success_msg', 'Login berhasil!');
+                        req.flash('success_msg', `Selamat datang kembali, ${user.full_name}! Senang melihat Anda bertransaksi lagi.`);
                         if (user.role === 'admin') {
                             return res.redirect('/admin/dashboard');
                         }
@@ -63,7 +63,7 @@ module.exports = {
                     });
                 }
             }
-            req.flash('error', 'Username atau password salah.');
+            req.flash('error', 'Hmm, sepertinya Username atau Password Anda kurang tepat. Coba lagi ya!');
             res.redirect('/login');
         } catch (err) {
             console.error(err);
@@ -77,7 +77,7 @@ module.exports = {
         try {
             const existingUser = await User.findOne({ where: { username } });
             if (existingUser) {
-                req.flash('error', 'Username sudah digunakan.');
+                req.flash('error', 'Maaf, Username tersebut sudah ada yang punya. Coba variasi nama lain?');
                 return res.redirect('/register');
             }
 
@@ -108,13 +108,13 @@ module.exports = {
             }
 
             req.session.save(() => {
-                req.flash('success_msg', 'Registrasi berhasil!');
+                req.flash('success_msg', `Selamat bergabung, ${full_name}! Akun Anda telah berhasil diciptakan. Silakan masuk untuk mulai penjelajahan.`);
                 res.redirect('/login');
             });
         } catch (err) {
             console.error(err);
             req.session.save(() => {
-                req.flash('error', 'Gagal registrasi.');
+                req.flash('error', 'Aduh, ada sedikit kendala saat mendaftarkan Anda. Mohon coba beberapa saat lagi.');
                 res.redirect('/register');
             });
         }

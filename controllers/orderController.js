@@ -55,7 +55,7 @@ module.exports = {
         const cart = req.session.cart || [];
 
         if (cart.length === 0) {
-            req.flash('error', 'Keranjang kosong');
+            req.flash('error', 'Keranjang belanja Anda masih kosong nih. Yuk tambah barang dulu!');
             return res.redirect('/cart');
         }
 
@@ -133,7 +133,7 @@ module.exports = {
         } catch (err) {
             await t.rollback();
             console.error(err);
-            req.flash('error', 'Transaksi gagal: ' + err.message);
+            req.flash('error', 'Yah, transaksi gagal diproses, pastikan saldo atau koneksi aman: ' + err.message);
             res.redirect('/cart');
         }
     },
@@ -146,7 +146,7 @@ module.exports = {
             });
 
             if (!order) {
-                req.flash('error', 'Pesanan tidak ditemukan.');
+                req.flash('error', 'Waduh, pesanan yang Anda cari tidak dapat ditemukan di catatan kami.');
                 return res.redirect('/user/dashboard');
             }
 
@@ -216,7 +216,7 @@ module.exports = {
             await updateOrderStatus(order.id, t);
             await t.commit();
             req.session.save(() => {
-                req.flash('success_msg', 'Pesanan dibatalkan.');
+                req.flash('success_msg', 'Pesanan utuh berhasil dibatalkan. Jangan khawatir, sistem telah mencatatnya.');
                 res.redirect('/orders/' + req.params.id);
             });
 
@@ -224,7 +224,7 @@ module.exports = {
             await t.rollback();
             console.error(err);
             req.session.save(() => {
-                req.flash('error', 'Gagal batal: ' + err.message);
+                req.flash('error', 'Gagal membatalkan pesanan. Coba lagi nanti: ' + err.message);
                 res.redirect('/user/dashboard');
             });
         }
@@ -274,7 +274,7 @@ module.exports = {
             }
 
             req.session.save(() => {
-                req.flash('success_msg', 'Satu barang dari pesanan berhasil dibatalkan.');
+                req.flash('success_msg', 'Satu barang dari pesanan berhasil dibatalkan. Sisa barang akan tetap dikirim.');
                 res.redirect('/orders/' + item.order_id);
             });
         } catch (err) {
@@ -282,7 +282,7 @@ module.exports = {
             console.error(err);
             if (isAjax) return res.status(500).json({ success: false, message: err.message });
             req.session.save(() => {
-                req.flash('error', 'Gagal membatalkan barang: ' + err.message);
+                req.flash('error', 'Terjadi sedikit kendala saat membatalkan barang: ' + err.message);
                 res.redirect('/user/dashboard');
             });
         }
@@ -302,7 +302,7 @@ module.exports = {
             await updateOrderStatus(item.order_id);
 
             req.session.save(() => {
-                req.flash('success_msg', 'Pesanan diterima.');
+                req.flash('success_msg', 'Hore! Pesanan telah Anda terima. Semoga produknya bermanfaat ya! 🎉');
                 res.redirect('/orders/' + item.order_id);
             });
         } catch (err) {
