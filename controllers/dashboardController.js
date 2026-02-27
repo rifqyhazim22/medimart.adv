@@ -23,11 +23,14 @@ module.exports = {
 
             // Calculate Stats based exactly on the visible OrderItems table
             const activeStatuses = ['pending', 'paid', 'processed', 'shipped'];
-            const spentStatuses = ['paid', 'processed', 'shipped', 'completed'];
+            const spentStatuses = ['pending', 'paid', 'processed', 'shipped', 'completed'];
+
+            const uniqueOrders = new Set(orderItems.map(item => item.order_id));
+            const activeUniqueOrders = new Set(orderItems.filter(item => activeStatuses.includes(item.status)).map(item => item.order_id));
 
             const stats = {
-                totalOrders: orderItems.length,
-                activeOrders: orderItems.filter(item => activeStatuses.includes(item.status)).length,
+                totalOrders: uniqueOrders.size,
+                activeOrders: activeUniqueOrders.size,
                 totalSpent: orderItems.filter(item => spentStatuses.includes(item.status)).reduce((sum, item) => sum + (parseFloat(item.price_at_purchase) * item.quantity), 0)
             };
 
@@ -94,7 +97,7 @@ module.exports = {
             const validOrderItems = await OrderItem.findAll({
                 where: {
                     status: {
-                        [Op.in]: ['paid', 'processed', 'shipped', 'completed']
+                        [Op.in]: ['pending', 'paid', 'processed', 'shipped', 'completed']
                     }
                 }
             });
