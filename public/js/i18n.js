@@ -245,10 +245,77 @@ const translations = {
     'toast.connection_error': { id: 'Terjadi kesalahan koneksi', en: 'Connection error occurred' },
     'toast.update_failed': { id: 'Gagal update keranjang', en: 'Failed to update cart' },
     'toast.promo_unavailable': { id: 'Fitur promo belum tersedia saat ini.', en: 'Promo feature is not available yet.' },
+    'toast.clear_failed': { id: 'Gagal mengosongkan keranjang', en: 'Failed to clear cart' },
+    'toast.error_generic': { id: 'Terjadi kesalahan', en: 'An error occurred' },
+
+    // ========== SWAL CONFIRM/DIALOG ==========
+    'swal.are_you_sure': { id: 'Anda Yakin?', en: 'Are You Sure?' },
+    'swal.wait': { id: 'Tunggu Sebentar..', en: 'Wait a Moment..' },
+    'swal.confirm': { id: 'Konfirmasi', en: 'Confirm' },
+    'swal.yes_continue': { id: 'Ya, Lanjutkan', en: 'Yes, Continue' },
+    'swal.back': { id: 'Kembali', en: 'Go Back' },
+    'swal.processing': { id: 'Memproses...', en: 'Processing...' },
+    'swal.processing_desc': { id: 'Meneruskan instruksi Anda, mohon tunggu sebentar.', en: 'Forwarding your instructions, please wait a moment.' },
+
+    // Login Swal
+    'swal.verifying': { id: 'Memverifikasi Kredensial..', en: 'Verifying Credentials..' },
+    'swal.verifying_customer': { id: 'Menyiapkan Dasbor Pelanggan Anda 🔒', en: 'Preparing your Customer Dashboard 🔒' },
+    'swal.verifying_seller': { id: 'Menyiapkan Dasbor Seller Anda 🔒', en: 'Preparing your Seller Dashboard 🔒' },
+    'swal.verifying_admin': { id: 'Menyiapkan Dasbor Instansi Admin Anda 🔒', en: 'Preparing your Admin Dashboard 🔒' },
+
+    // Register Swal
+    'swal.creating_account': { id: 'Menciptakan Akun Anda..', en: 'Creating Your Account..' },
+    'swal.creating_account_desc': { id: 'Mengenkripsi kata sandi dan mendaftarkan entitas Anda 🛡️', en: 'Encrypting password and registering your entity 🛡️' },
+
+    // Checkout Swal
+    'swal.securing': { id: 'Mengamankan Transaksi..', en: 'Securing Transaction..' },
+    'swal.securing_desc': { id: 'Mohon tunggu, kami sedang menyandikan pesanan Anda 🔒', en: 'Please wait, we are encrypting your order 🔒' },
+
+    // Cart Swal
+    'swal.clear_cart': { id: 'Yakin ingin mengosongkan keranjang?', en: 'Are you sure you want to clear the cart?' },
+    'swal.yes_clear': { id: 'Ya, Kosongkan', en: 'Yes, Clear' },
+    'swal.cancel': { id: 'Batal', en: 'Cancel' },
+    'swal.remove_item': { id: 'Hapus item ini dari keranjang?', en: 'Remove this item from cart?' },
+    'swal.yes_remove': { id: 'Ya, Hapus', en: 'Yes, Remove' },
+
+    // Toast random titles
+    'toast.success_1': { id: 'Langkah yang Tepat! 🚀', en: 'Great Move! 🚀' },
+    'toast.success_2': { id: 'Yes, Berhasil! 🎉', en: 'Yes, Success! 🎉' },
+    'toast.success_3': { id: 'Kerja Bagus! ✨', en: 'Nice Work! ✨' },
+    'toast.success_4': { id: 'Mantap Sekali! 🏆', en: 'Awesome! 🏆' },
+    'toast.success_5': { id: 'Wah, Sukses! 🎯', en: 'Wow, Done! 🎯' },
+    'toast.error_1': { id: 'Yaaah, Maaf Ya.. 🥺', en: 'Oh No, Sorry.. 🥺' },
+    'toast.error_2': { id: 'Oops, Ada Kendala 🛠️', en: 'Oops, Something Went Wrong 🛠️' },
+    'toast.error_3': { id: 'Tunggu Sebentar ✋', en: 'Hold On ✋' },
+    'toast.error_4': { id: 'Ups, Gagal Nih 💔', en: 'Oops, Failed 💔' },
+    'toast.error_5': { id: 'Sayang Sekali.. 🌧️', en: 'Too Bad.. 🌧️' },
+    'toast.warning_1': { id: 'Perhatian Sebentar 💡', en: 'Heads Up 💡' },
+    'toast.warning_2': { id: 'Hati-hati Ya 🚦', en: 'Be Careful 🚦' },
+    'toast.warning_3': { id: 'Cek Sekali Lagi 👀', en: 'Double Check 👀' },
+
+    // ========== INDEX CARD LABELS ==========
+    'index.remaining_prefix': { id: 'Sisa:', en: 'Left:' },
+    'index.stock_prefix': { id: 'Stok:', en: 'Stock:' },
+    'index.btn_out_of_stock': { id: 'Habis', en: 'Sold Out' },
+    'index.btn_add_cart': { id: '+ Keranjang', en: '+ Cart' },
+    'index.item_suffix': { id: 'Item', en: 'Item' },
+
+    // ========== CHECKOUT PAYMENT LABELS ==========
+    'checkout.bank_label': { id: '🏦 Transfer Bank (BCA/Mandiri)', en: '🏦 Bank Transfer (BCA/Mandiri)' },
+    'checkout.ewallet_label': { id: '📱 E-Wallet (GoPay/OVO/Dana)', en: '📱 E-Wallet (GoPay/OVO/Dana)' },
+    'checkout.cod_label': { id: '💰 Bayar di Tempat (COD)', en: '💰 Cash on Delivery (COD)' },
+
+    // ========== LOGIN DIVIDER ==========
+    'login.divider_or': { id: 'atau', en: 'or' },
 
     // ========== MISC ==========
     'misc.loading': { id: 'Memuat...', en: 'Loading...' },
     'misc.item': { id: 'Item', en: 'Item' },
+    'misc.hide_confirm': { id: 'Yakin ingin menyembunyikan riwayat pesanan ini?', en: 'Are you sure you want to hide this order history?' },
+    'misc.yes_hide': { id: 'Ya, Sembunyikan', en: 'Yes, Hide' },
+    'misc.shop_again': { id: '🛍️ Belanja Lagi', en: '🛍️ Shop Again' },
+    'misc.detail_invoice': { id: 'Detail Invoice', en: 'Invoice Detail' },
+    'misc.delete': { id: '🗑️ Hapus', en: '🗑️ Delete' },
 };
 
 /**

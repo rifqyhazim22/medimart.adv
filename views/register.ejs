@@ -230,8 +230,8 @@
             regForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 Swal.fire({
-                    title: 'Menciptakan Akun Anda..',
-                    html: '<span style="color: var(--text-gray); font-size:15px;">Mengenkripsi kata sandi dan mendaftarkan entitas Anda 🛡️</span>',
+                    title: t('swal.creating_account'),
+                    html: `<span style="color: var(--text-gray); font-size:15px;">${t('swal.creating_account_desc')}</span>`,
                     allowOutsideClick: false,
                     showConfirmButton: false,
                     willOpen: () => Swal.showLoading(),

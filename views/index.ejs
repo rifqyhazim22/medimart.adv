@@ -136,12 +136,14 @@
                                                         data-i18n="index.out_of_stock">Habis</span></span>
                                                 <% } else if (product.stock <=5) { %>
                                                     <span class="stock-badge warning"
-                                                        style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Sisa:
+                                                        style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;"><span
+                                                            data-i18n="index.remaining_prefix">Sisa:</span>
                                                         <%= product.stock %>
                                                     </span>
                                                     <% } else { %>
                                                         <span class="stock-badge"
-                                                            style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Stok:
+                                                            style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;"><span
+                                                                data-i18n="index.stock_prefix">Stok:</span>
                                                             <%= product.stock %>
                                                         </span>
                                                         <% } %>
@@ -171,7 +173,11 @@
                                                 <input type="hidden" name="productId" value="<%= product.id %>">
                                                 <button type="submit" class="btn-add-cart" <%=product.stock===0
                                                     ? 'disabled' : '' %>>
-                                                    <%= product.stock===0 ? 'Habis' : '+ Keranjang' %>
+                                                    <% if (product.stock===0) { %>
+                                                        <span data-i18n="index.btn_out_of_stock">Habis</span>
+                                                        <% } else { %>
+                                                            <span data-i18n="index.btn_add_cart">+ Keranjang</span>
+                                                            <% } %>
                                                 </button>
                                             </form>
                                         </div>
@@ -324,16 +330,16 @@
 
                     if (data.success) {
                         // Show Toast
-                        window.showToast(data.message || 'Berhasil masuk keranjang!', 'success');
+                        window.showToast(data.message || t('toast.add_success'), 'success');
 
                         // Update Sticky Bar
                         updateStickyBar(data.cartCount, data.cartTotal);
                     } else {
-                        window.showToast(data.message || 'Gagal menambahkan', 'error');
+                        window.showToast(data.message || t('toast.add_failed'), 'error');
                     }
                 } catch (err) {
                     console.error(err);
-                    window.showToast('Terjadi kesalahan koneksi', 'error');
+                    window.showToast(t('toast.connection_error'), 'error');
                 } finally {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
@@ -347,7 +353,7 @@
             if (bar) {
                 if (count > 0) {
                     bar.style.display = 'flex';
-                    document.getElementById('stickyCount').textContent = count + ' Item';
+                    document.getElementById('stickyCount').textContent = count + ' ' + t('index.item_suffix');
                     document.getElementById('stickyTotal').textContent = 'Rp ' + parseInt(total).toLocaleString('id-ID');
                 } else {
                     bar.style.display = 'none';

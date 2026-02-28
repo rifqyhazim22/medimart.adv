@@ -390,29 +390,30 @@
         // Psychological Affirmations Toolkit
         const psychTitles = {
             success: [
-                "Langkah yang Tepat! 🚀",
-                "Yes, Berhasil! 🎉",
-                "Kerja Bagus! ✨",
-                "Mantap Sekali! 🏆",
-                "Wah, Sukses! 🎯"
+                'toast.success_1',
+                'toast.success_2',
+                'toast.success_3',
+                'toast.success_4',
+                'toast.success_5'
             ],
             error: [
-                "Yaaah, Maaf Ya.. 🥺",
-                "Oops, Ada Kendala 🛠️",
-                "Tunggu Sebentar ✋",
-                "Ups, Gagal Nih 💔",
-                "Sayang Sekali.. 🌧️"
+                'toast.error_1',
+                'toast.error_2',
+                'toast.error_3',
+                'toast.error_4',
+                'toast.error_5'
             ],
             warning: [
-                "Perhatian Sebentar 💡",
-                "Hati-hati Ya 🚦",
-                "Cek Sekali Lagi 👀"
+                'toast.warning_1',
+                'toast.warning_2',
+                'toast.warning_3'
             ]
         };
 
         const getRandomTitle = (type) => {
-            const arr = psychTitles[type] || ["Notifikasi"];
-            return arr[Math.floor(Math.random() * arr.length)];
+            const arr = psychTitles[type] || psychTitles.success;
+            const key = arr[Math.floor(Math.random() * arr.length)];
+            return t(key);
         };
 
         // Advanced Psychological Toast Function
@@ -448,22 +449,23 @@
         };
 
         // Global confirmation wrapper for forms (Psychologically driven)
-        window.confirmAction = function (event, message, actionBtnText = 'Ya, Lanjutkan', confirmColor = '#FF6B35') {
+        window.confirmAction = function (event, message, actionBtnText = null, confirmColor = '#FF6B35') {
             event.preventDefault();
             const form = event.target.closest('form') || event.target;
+            actionBtnText = actionBtnText || t('swal.yes_continue');
 
             // Detect if this is a dangerous action
             const isDanger = confirmColor.toLowerCase().includes('ef4444') || confirmColor.toLowerCase().includes('fee2e2');
 
             Swal.fire({
-                title: isDanger ? 'Anda Yakin?' : 'Tunggu Sebentar..',
+                title: isDanger ? t('swal.are_you_sure') : t('swal.wait'),
                 html: `<span style="font-size: 15px; color: var(--text-gray);">${message}</span>`,
                 icon: isDanger ? 'warning' : 'question',
                 showCancelButton: true,
                 confirmButtonColor: confirmColor,
                 cancelButtonColor: 'var(--border)',
                 confirmButtonText: `${actionBtnText}`,
-                cancelButtonText: '<span style="color: var(--text-gray);">Kembali</span>',
+                cancelButtonText: `<span style="color: var(--text-gray);">${t('swal.back')}</span>`,
                 reverseButtons: true, // Psychological trick: Action button on the left grabs second-thought attention
                 showClass: {
                     popup: 'animate__animated animate__fadeInUp animate__faster'
@@ -478,8 +480,8 @@
                 if (result.isConfirmed) {
                     // Small loading animation to reduce anxiety
                     Swal.fire({
-                        title: 'Memproses...',
-                        text: 'Meneruskan instruksi Anda, mohon tunggu sebentar.',
+                        title: t('swal.processing'),
+                        text: t('swal.processing_desc'),
                         allowOutsideClick: false,
                         showConfirmButton: false,
                         willOpen: () => Swal.showLoading(),

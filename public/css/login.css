@@ -53,6 +53,7 @@
     border-radius: 50%;
     border: 1px solid var(--border);
     background: var(--bg-white);
+    color: var(--text-dark);
     display: flex;
     align-items: center;
     justify-content: center;

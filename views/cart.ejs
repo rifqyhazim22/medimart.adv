@@ -299,14 +299,14 @@
                 clearForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const result = await Swal.fire({
-                        title: 'Konfirmasi',
-                        text: 'Yakin ingin mengosongkan keranjang?',
+                        title: t('swal.confirm'),
+                        text: t('swal.clear_cart'),
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#EF4444',
                         cancelButtonColor: '#9ca3af',
-                        confirmButtonText: 'Ya, Kosongkan',
-                        cancelButtonText: 'Batal',
+                        confirmButtonText: t('swal.yes_clear'),
+                        cancelButtonText: t('swal.cancel'),
                         reverseButtons: true
                     });
                     if (!result.isConfirmed) return;
@@ -329,12 +329,12 @@
                             // Reload to show empty state (simplest way to clear complex DOM)
                             window.location.reload();
                         } else {
-                            window.showToast('Gagal mengosongkan keranjang', 'error');
+                            window.showToast(t('toast.clear_failed'), 'error');
                             window.location.reload();
                         }
                     } catch (err) {
                         console.error(err);
-                        window.showToast('Terjadi kesalahan', 'error');
+                        window.showToast(t('toast.error_generic'), 'error');
                         window.location.reload();
                     }
                 });
@@ -345,14 +345,14 @@
                 form.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const result = await Swal.fire({
-                        title: 'Konfirmasi',
-                        text: 'Hapus item ini dari keranjang?',
+                        title: t('swal.confirm'),
+                        text: t('swal.remove_item'),
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#EF4444',
                         cancelButtonColor: '#9ca3af',
-                        confirmButtonText: 'Ya, Hapus',
-                        cancelButtonText: 'Batal',
+                        confirmButtonText: t('swal.yes_remove'),
+                        cancelButtonText: t('swal.cancel'),
                         reverseButtons: true
                     });
                     if (!result.isConfirmed) return;

@@ -166,17 +166,17 @@
                                 <label class="payment-option selected" onclick="selectPayment(this)">
                                     <input type="radio" name="payment_method" class="payment-radio" checked
                                         value="Transfer Bank (BCA/Mandiri)">
-                                    <span>🏦 Transfer Bank (BCA/Mandiri)</span>
+                                    <span data-i18n="checkout.bank_label">🏦 Transfer Bank (BCA/Mandiri)</span>
                                 </label>
                                 <label class="payment-option" onclick="selectPayment(this)">
                                     <input type="radio" name="payment_method" class="payment-radio"
                                         value="E-Wallet (GoPay/OVO/Dana)">
-                                    <span>📱 E-Wallet (GoPay/OVO/Dana)</span>
+                                    <span data-i18n="checkout.ewallet_label">📱 E-Wallet (GoPay/OVO/Dana)</span>
                                 </label>
                                 <label class="payment-option" onclick="selectPayment(this)">
                                     <input type="radio" name="payment_method" class="payment-radio"
                                         value="COD (Bayar di Tempat)">
-                                    <span>💰 Bayar di Tempat (COD)</span>
+                                    <span data-i18n="checkout.cod_label">💰 Bayar di Tempat (COD)</span>
                                 </label>
                             </div>
                         </div>
@@ -255,8 +255,8 @@
 
             // Tampilkan Modal Penenang
             Swal.fire({
-                title: 'Mengamankan Transaksi..',
-                html: '<span style="color: var(--text-gray); font-size:15px;">Mohon tunggu, kami sedang menyandikan pesanan Anda 🔒</span>',
+                title: t('swal.securing'),
+                html: `<span style="color: var(--text-gray); font-size:15px;">${t('swal.securing_desc')}</span>`,
                 allowOutsideClick: false,
                 showConfirmButton: false,
                 willOpen: () => {
