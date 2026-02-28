@@ -172,20 +172,14 @@
                     </div>
                 </div>
 
-                <!-- Advanced Analytics Widgets -->
-                <div style="display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 40px;">
-                    @media(min-width: 1024px) {
-                    /* Injected grid layout for desktop manually via inline style doesn't support @media, using simple
-                    flex fallback if possible or 2-col CSS grid. I'll stick to a responsive grid for the parent via
-                    style tag earlier, but here let's just use CSS flex wrap for compatibility */
-                    }
-                </div>
 
+                <!-- Advanced Analytics Widgets -->
                 <div style="display: flex; flex-wrap: wrap; gap: 24px; margin-top: 40px;">
                     <!-- Chart.js Graph -->
                     <div
                         style="flex: 1 1 600px; background: var(--bg-white); padding: 24px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-                        <h3 style="margin: 0 0 20px 0; color: var(--text-dark); font-size: 18px;">Tren Laba Bersih Lapak Tahun
+                        <h3 style="margin: 0 0 20px 0; color: var(--text-dark); font-size: 18px;">Tren Laba Bersih Lapak
+                            Tahun
                             Ini (IDR)</h3>
                         <div style="position: relative; height: 300px; width: 100%;">
                             <canvas id="revenueChart"></canvas>
@@ -195,7 +189,8 @@
                     <!-- Top Selling Products -->
                     <div
                         style="flex: 1 1 300px; background: var(--bg-white); padding: 24px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-                        <h3 style="margin: 0 0 20px 0; color: var(--text-dark); font-size: 18px;">Top 5 Produk Terlaris 🏆</h3>
+                        <h3 style="margin: 0 0 20px 0; color: var(--text-dark); font-size: 18px;">Top 5 Produk Terlaris
+                            🏆</h3>
                         <div style="display: flex; flex-direction: column; gap: 16px;">
                             <% if(topProducts && topProducts.length> 0) { %>
                                 <% topProducts.forEach(tp=> { %>
@@ -240,7 +235,8 @@
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
                             <thead>
-                                <tr style="border-bottom: 2px solid var(--border); text-align: left; background: var(--bg-light);">
+                                <tr
+                                    style="border-bottom: 2px solid var(--border); text-align: left; background: var(--bg-light);">
                                     <th
                                         style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
                                         Pembeli</th>
