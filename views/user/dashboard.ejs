@@ -13,21 +13,21 @@
             background: transparent;
             padding: 0;
             box-shadow: none;
-            color: #1f2937;
+            color: var(--text-dark);
             margin-bottom: 40px;
         }
 
         .dashboard-header h1 {
             font-size: 32px;
             font-weight: 800;
-            color: #111827;
+            color: var(--text-dark);
             margin-bottom: 8px;
             background: none;
             -webkit-text-fill-color: initial;
         }
 
         .dashboard-header p {
-            color: #6b7280;
+            color: var(--text-gray);
             font-size: 16px;
         }
 
@@ -39,10 +39,10 @@
         }
 
         .stat-card {
-            background: white;
+            background: var(--bg-white);
             padding: 24px;
             border-radius: 16px;
-            border: 1px solid #f3f4f6;
+            border: 1px solid var(--border);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             display: flex;
             align-items: center;
@@ -82,7 +82,7 @@
 
         .stat-content h3 {
             margin: 0;
-            color: #6b7280;
+            color: var(--text-gray);
             font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
@@ -93,7 +93,7 @@
         .stat-value {
             font-size: 28px;
             font-weight: 700;
-            color: #111827;
+            color: var(--text-dark);
             margin: 0;
         }
 
@@ -101,15 +101,15 @@
         .section-title {
             font-size: 20px;
             font-weight: 700;
-            color: #111827;
+            color: var(--text-dark);
             margin-bottom: 24px;
             padding-bottom: 16px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--border);
         }
 
         .order-card {
-            background: white;
-            border: 1px solid #f3f4f6;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
             border-radius: 16px;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
             padding: 24px;
@@ -119,7 +119,7 @@
 
         .order-card:hover {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border-color: #e5e7eb;
+            border-color: var(--border);
         }
 
         .order-header {
@@ -140,7 +140,7 @@
         .order-icon-box {
             width: 48px;
             height: 48px;
-            background: #f3f4f6;
+            background: var(--border);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -152,12 +152,12 @@
             margin: 0;
             font-size: 16px;
             font-weight: 700;
-            color: #111827;
+            color: var(--text-dark);
         }
 
         .order-date {
             margin: 4px 0 0;
-            color: #6b7280;
+            color: var(--text-gray);
             font-size: 13px;
         }
 
@@ -202,7 +202,7 @@
 
         .total-label {
             font-size: 13px;
-            color: #6b7280;
+            color: var(--text-gray);
             margin-bottom: 4px;
             display: block;
         }
@@ -210,7 +210,7 @@
         .total-amount {
             font-size: 20px;
             font-weight: 700;
-            color: #111827;
+            color: var(--text-dark);
         }
 
         .action-buttons {
@@ -262,9 +262,9 @@
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            background: white;
+            background: var(--bg-white);
             border-radius: 16px;
-            border: 1px dashed #e5e7eb;
+            border: 1px dashed var(--border);
             margin-top: 40px;
         }
 
@@ -322,10 +322,10 @@
             </div>
 
             <div class="table-container"
-                style="background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden; margin-bottom: 40px;">
+                style="background: var(--bg-white); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden; margin-bottom: 40px;">
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
-                        <tr style="background: #f9fafb; text-align: left;">
+                        <tr style="background: var(--bg-light); text-align: left;">
                             <th style="padding: 16px; width: 120px;">Tanggal</th>
                             <th colspan="3" style="padding: 16px;">Rincian Barang</th>
                             <th style="padding: 16px;">Total Tagihan</th>
@@ -338,8 +338,8 @@
                             <tr>
                                 <td colspan="7" style="padding: 40px; text-align: center;">
                                     <span style="font-size: 40px; display: block; margin-bottom: 10px;">🛍️</span>
-                                    <h3 style="color: #374151; margin: 0 0 8px 0;">Belum ada pesanan</h3>
-                                    <p style="color: #6b7280; margin: 0;">Yuk, mulai belanja kebutuhan kesehatanmu
+                                    <h3 style="color: var(--text-dark); margin: 0 0 8px 0;">Belum ada pesanan</h3>
+                                    <p style="color: var(--text-gray); margin: 0;">Yuk, mulai belanja kebutuhan kesehatanmu
                                         sekarang!</p>
                                 </td>
                             </tr>
@@ -348,40 +348,40 @@
                                     <tr>
                                         <!-- Tanggal -->
                                         <td
-                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; white-space: nowrap; vertical-align: top;">
-                                            <div style="font-weight: 500; color: #111827;">
+                                            style="padding: 16px; border-bottom: 1px solid var(--border); white-space: nowrap; vertical-align: top;">
+                                            <div style="font-weight: 500; color: var(--text-dark);">
                                                 <%= new Date(order.createdAt).toLocaleDateString('id-ID', {
                                                     day: 'numeric' , month: 'short' , year: 'numeric' }) %>
                                             </div>
-                                            <div style="font-size: 12px; color: #6b7280;">
+                                            <div style="font-size: 12px; color: var(--text-gray);">
                                                 <%= new Date(order.createdAt).toLocaleTimeString('id-ID', {
                                                     hour: '2-digit' , minute: '2-digit' }) %>
                                             </div>
-                                            <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;">
+                                            <div style="font-size: 11px; color: var(--text-gray); margin-top: 4px;">
                                                 #ORD-<%= order.id %>
                                             </div>
                                         </td>
 
                                         <!-- Produk & Penjual (Grouped) -->
                                         <td colspan="3"
-                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; vertical-align: top;">
+                                            style="padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top;">
                                             <div style="display: flex; flex-direction: column; gap: 12px;">
                                                 <% order.items.forEach(item=> { %>
                                                     <div style="display: flex; align-items: flex-start; gap: 12px;">
                                                         <img src="<%= item.Product ? item.Product.image_url : '/img/default-product.svg' %>"
-                                                            style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid #f3f4f6; margin-top: 2px;">
+                                                            style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); margin-top: 2px;">
                                                         <div style="flex: 1;">
                                                             <div
-                                                                style="font-weight: 600; color: #111827; font-size: 14px; margin-bottom: 2px;">
+                                                                style="font-weight: 600; color: var(--text-dark); font-size: 14px; margin-bottom: 2px;">
                                                                 <%= item.Product ? item.Product.name : 'Produk Dihapus'
                                                                     %>
                                                                     <span
-                                                                        style="font-weight: normal; color: #6b7280; font-size: 13px;">x
+                                                                        style="font-weight: normal; color: var(--text-gray); font-size: 13px;">x
                                                                         <%= item.quantity %>
                                                                     </span>
                                                             </div>
                                                             <div
-                                                                style="font-size: 12px; color: #6b7280; display: flex; align-items: center; gap: 4px;">
+                                                                style="font-size: 12px; color: var(--text-gray); display: flex; align-items: center; gap: 4px;">
                                                                 🏪 <%= item.seller ? (item.seller.full_name ||
                                                                     item.seller.username) : 'Sistem' %>
                                                                     <% if (item.status==='cancelled' ||
@@ -424,13 +424,13 @@
 
                                         <!-- Total -->
                                         <td
-                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #111827; vertical-align: top;">
+                                            style="padding: 16px; border-bottom: 1px solid var(--border); font-weight: 600; color: var(--text-dark); vertical-align: top;">
                                             Rp <%= parseFloat(order.total_price).toLocaleString('id-ID') %>
                                         </td>
 
                                         <!-- Status Utama Order -->
                                         <td
-                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; vertical-align: top;">
+                                            style="padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top;">
                                             <% /* Dinamika Status Pembatalan Campuran (Refund Parsial/Gagal Bersama) */
                                                 let hasCancelled=order.items.some(i=> i.status === 'cancelled');
                                                 let hasRejected = order.items.some(i => i.status === 'rejected');
@@ -474,10 +474,10 @@
 
                                         <!-- Aksi -->
                                         <td
-                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; vertical-align: top;">
+                                            style="padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top;">
                                             <div style="display: flex; gap: 8px; flex-direction: column;">
                                                 <a href="/orders/<%= order.id %>" class="btn-small btn-secondary"
-                                                    style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; padding: 6px 12px; font-size: 13px; border-radius: 6px; background: #f3f4f6; color: #374151; font-weight: 500;">
+                                                    style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; padding: 6px 12px; font-size: 13px; border-radius: 6px; background: var(--border); color: var(--text-dark); font-weight: 500;">
                                                     Detail Invoice
                                                 </a>
 

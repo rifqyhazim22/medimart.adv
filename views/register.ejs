@@ -9,6 +9,11 @@
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Outfit:wght@300;400;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/css/login.css">
+    <!-- Theme Initialization (Prevent FOUC) -->
+    <script>
+        const savedTheme = localStorage.getItem('medimart_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
     <!-- SweetAlert2 & Animate.css for psychological UI modals -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
@@ -20,6 +25,9 @@
 </head>
 
 <body>
+    <!-- Floating Theme Toggle -->
+    <button class="theme-toggle-float" id="themeToggleBtn" onclick="toggleTheme()" title="Ganti Siang/Malam">🌙</button>
+
     <div class="login-container">
         <!-- Left Side: Branding -->
         <div class="login-left">
@@ -77,14 +85,14 @@
                                     mendaftar sebagai:</label>
                                 <div style="display: flex; gap: 12px; margin-bottom: 16px;">
                                     <label class="role-option"
-                                        style="flex: 1; cursor: pointer; border: 2px solid #e5e7eb; padding: 12px; border-radius: 10px; text-align: center; font-weight: 500; transition: all 0.2s; position: relative;"
+                                        style="flex: 1; cursor: pointer; border: 2px solid var(--border); padding: 12px; border-radius: 10px; text-align: center; font-weight: 500; transition: all 0.2s; position: relative;"
                                         onclick="selectRegRole(this)">
                                         <input type="radio" name="role" value="customer" checked
                                             style="margin-right: 6px;">
                                         Pelanggan
                                     </label>
                                     <label class="role-option"
-                                        style="flex: 1; cursor: pointer; border: 2px solid #e5e7eb; padding: 12px; border-radius: 10px; text-align: center; font-weight: 500; transition: all 0.2s;"
+                                        style="flex: 1; cursor: pointer; border: 2px solid var(--border); padding: 12px; border-radius: 10px; text-align: center; font-weight: 500; transition: all 0.2s;"
                                         onclick="selectRegRole(this)">
                                         <input type="radio" name="role" value="seller" style="margin-right: 6px;">
                                         Seller
@@ -137,7 +145,8 @@
                             <p>Sudah punya akun? <a href="/login" class="link-register">Login disini</a></p>
                             <br>
                             <a href="/" class="link-register"
-                                style="color: #6b7280; font-weight: normal; font-size: 14px;">← Kembali ke Beranda</a>
+                                style="color: var(--text-gray); font-weight: normal; font-size: 14px;">← Kembali ke
+                                Beranda</a>
                         </div>
             </div>
         </div>
@@ -162,12 +171,12 @@
                 const radio = label.querySelector('input');
                 if (radio.checked) {
                     label.style.borderColor = '#FF6B35';
-                    label.style.backgroundColor = '#fff7ed';
-                    label.style.color = '#c2410c';
+                    label.style.backgroundColor = 'rgba(255, 107, 53, 0.08)';
+                    label.style.color = '#FF6B35';
                 } else {
-                    label.style.borderColor = '#e5e7eb';
+                    label.style.borderColor = 'var(--border)';
                     label.style.backgroundColor = 'transparent';
-                    label.style.color = '#374151';
+                    label.style.color = 'var(--text-dark)';
                 }
             });
         }
@@ -181,6 +190,22 @@
         // Run on load
         updateRoleStyles();
 
+        // Theme Toggle Function
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', target);
+            localStorage.setItem('medimart_theme', target);
+            document.getElementById('themeToggleBtn').innerHTML = target === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Set correct toggle icon on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) btn.innerHTML = current === 'dark' ? '☀️' : '🌙';
+        });
+
         // 🧠 Intersepsi Pendaftaran Eksklusif (Efek Kehebatan IT)
         const regForm = document.getElementById('registerForm');
         if (regForm) {
@@ -188,7 +213,7 @@
                 e.preventDefault();
                 Swal.fire({
                     title: 'Menciptakan Akun Anda..',
-                    html: '<span style="color:#4b5563; font-size:15px;">Mengenkripsi kata sandi dan mendaftarkan entitas Anda 🛡️</span>',
+                    html: '<span style="color: var(--text-gray); font-size:15px;">Mengenkripsi kata sandi dan mendaftarkan entitas Anda 🛡️</span>',
                     allowOutsideClick: false,
                     showConfirmButton: false,
                     willOpen: () => Swal.showLoading(),

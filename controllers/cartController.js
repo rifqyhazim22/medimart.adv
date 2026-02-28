@@ -1,22 +1,47 @@
-const { Product, sequelize } = require('../models');
+const { Product, Cart, CartItem, sequelize } = require('../models');
+
+// Helper function to get cart regardless of guest or user
+async function getCartData(req) {
+    if (req.session.user) {
+        const userCart = await Cart.findOne({
+            where: { user_id: req.session.user.id },
+            include: [{ model: CartItem, as: 'items', include: ['product'] }]
+        });
+        if (!userCart) return { cartItems: [], subtotal: 0, dbCartId: null };
+
+        const cartItems = userCart.items.map(item => ({
+            id: item.product.id,
+            cartItemId: item.id,
+            name: item.product.name,
+            price: parseFloat(item.product.price),
+            image_url: item.product.image_url,
+            seller_id: item.product.seller_id,
+            quantity: item.quantity,
+            stock: item.product.stock
+        }));
+        const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+        return { cartItems, subtotal, dbCartId: userCart.id };
+    } else {
+        const cartItems = req.session.cart || [];
+        const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+        return { cartItems, subtotal, dbCartId: null };
+    }
+}
 
 module.exports = {
     index: async (req, res) => {
         try {
-            const cart = req.session.cart || [];
-            const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            const { cartItems, subtotal } = await getCartData(req);
 
-            // Fetch Recommended Products (Random 3) - Postgres Specific 'RANDOM()'
             const recommendedProducts = await Product.findAll({
                 order: sequelize.random(),
                 limit: 3
             });
 
-            res.render('cart', { cart, subtotal, recommendedProducts });
+            res.render('cart', { cart: cartItems, subtotal, recommendedProducts });
         } catch (err) {
             console.error(err);
-            const cart = req.session.cart || [];
-            res.render('cart', { cart, subtotal: 0, recommendedProducts: [] });
+            res.render('cart', { cart: [], subtotal: 0, recommendedProducts: [] });
         }
     },
 
@@ -37,53 +62,76 @@ module.exports = {
                 return res.redirect(req.get('Referer') || '/');
             }
 
-            if (!req.session.cart) req.session.cart = [];
-            const cart = req.session.cart;
-            const existingItem = cart.find(item => item.id === product.id);
             let message = '';
             let success = true;
 
-            if (existingItem) {
-                if (existingItem.quantity < product.stock) {
-                    existingItem.quantity++;
-                    message = 'Jumlah produk ditambahkan';
+            if (req.session.user) {
+                // Persistent Cart Logic
+                const [cart, created] = await Cart.findOrCreate({ where: { user_id: req.session.user.id } });
+                const existingItem = await CartItem.findOne({ where: { cart_id: cart.id, product_id: product.id } });
+
+                if (existingItem) {
+                    if (existingItem.quantity < product.stock) {
+                        existingItem.quantity++;
+                        await existingItem.save();
+                        message = 'Jumlah produk ditambahkan';
+                    } else {
+                        success = false;
+                        message = 'Stok tidak mencukupi';
+                    }
                 } else {
-                    success = false;
-                    message = 'Stok tidak mencukupi';
+                    if (product.stock > 0) {
+                        await CartItem.create({ cart_id: cart.id, product_id: product.id, quantity: 1 });
+                        message = 'Produk masuk keranjang';
+                    } else {
+                        success = false;
+                        message = 'Stok habis';
+                    }
                 }
             } else {
-                if (product.stock > 0) {
-                    cart.push({
-                        id: product.id,
-                        name: product.name,
-                        price: parseFloat(product.price),
-                        image_url: product.image_url,
-                        seller_id: product.seller_id,
-                        quantity: 1
-                    });
-                    message = 'Produk masuk keranjang';
+                // Guest Session Cart Logic
+                if (!req.session.cart) req.session.cart = [];
+                const cart = req.session.cart;
+                const existingItem = cart.find(item => item.id === product.id);
+
+                if (existingItem) {
+                    if (existingItem.quantity < product.stock) {
+                        existingItem.quantity++;
+                        message = 'Jumlah produk ditambahkan';
+                    } else {
+                        success = false;
+                        message = 'Stok tidak mencukupi';
+                    }
                 } else {
-                    success = false;
-                    message = 'Stok habis';
+                    if (product.stock > 0) {
+                        cart.push({
+                            id: product.id,
+                            name: product.name,
+                            price: parseFloat(product.price),
+                            image_url: product.image_url,
+                            seller_id: product.seller_id,
+                            quantity: 1
+                        });
+                        message = 'Produk masuk keranjang';
+                    } else {
+                        success = false;
+                        message = 'Stok habis';
+                    }
                 }
+                req.session.cart = cart;
             }
-            req.session.cart = cart; // Save session logic object
+
+            // After add, get fresh cart summary
+            const { cartItems, subtotal } = await getCartData(req);
 
             if (isAjax) {
-                const cartCount = cart.reduce((a, b) => a + b.quantity, 0);
-                const cartTotal = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
-
-                return req.session.save(err => {
-                    if (err) console.error(err);
-                    res.json({ success, message, cartCount, cartTotal });
-                });
+                const cartCount = cartItems.reduce((a, b) => a + b.quantity, 0);
+                return res.json({ success, message, cartCount, cartTotal: subtotal });
             }
 
-            req.session.save(() => {
-                if (success) req.flash('success_msg', message);
-                else req.flash('error', message);
-                res.redirect(req.get('Referer') || '/');
-            });
+            if (success) req.flash('success_msg', message);
+            else req.flash('error', message);
+            res.redirect(req.get('Referer') || '/');
         } catch (err) {
             console.error(err);
             if (isAjax) return res.status(500).json({ success: false, message: 'Server Error' });
@@ -96,41 +144,65 @@ module.exports = {
         const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
 
         try {
-            const cart = req.session.cart || [];
-            const itemIndex = cart.findIndex(item => String(item.id) === String(productId));
+            const product = await Product.findByPk(productId);
+            if (!product) {
+                if (isAjax) return res.json({ success: false, message: 'Produk tidak ditemukan' });
+                return res.redirect('/cart');
+            }
 
-            if (itemIndex > -1) {
-                if (action === 'increase') {
-                    // Check stock
-                    const product = await Product.findByPk(productId);
-                    if (product && cart[itemIndex].quantity < product.stock) {
-                        cart[itemIndex].quantity++;
-                    } else {
-                        if (isAjax) return res.json({ success: false, message: 'Stok makasimal tercapai' });
-                    }
-                } else if (action === 'decrease') {
-                    if (cart[itemIndex].quantity > 1) {
-                        cart[itemIndex].quantity--;
-                    } else {
-                        // Prevent decreasing below 1 via AJAX for now, to avoid accidental removal
-                        // User should use 'Remove' button (trash icon) if they want to delete.
-                        // But wait, the previous logic removed it. 
-                        // Plan said: "Ensure quantity never goes below 1 in Cart."
-                        if (isAjax) return res.json({ success: false, message: 'Minimal 1 barang' });
-
-                        // Fallback for non-ajax: remove item
-                        cart.splice(itemIndex, 1);
+            if (req.session.user) {
+                // Persistent Cart
+                const cart = await Cart.findOne({ where: { user_id: req.session.user.id } });
+                if (cart) {
+                    const item = await CartItem.findOne({ where: { cart_id: cart.id, product_id: productId } });
+                    if (item) {
+                        if (action === 'increase') {
+                            if (item.quantity < product.stock) {
+                                item.quantity++;
+                                await item.save();
+                            } else {
+                                if (isAjax) return res.json({ success: false, message: 'Stok makasimal tercapai' });
+                            }
+                        } else if (action === 'decrease') {
+                            if (item.quantity > 1) {
+                                item.quantity--;
+                                await item.save();
+                            } else {
+                                if (isAjax) return res.json({ success: false, message: 'Minimal 1 barang' });
+                                await item.destroy();
+                            }
+                        }
                     }
                 }
+            } else {
+                // Guest Session Cart
+                const cart = req.session.cart || [];
+                const itemIndex = cart.findIndex(item => String(item.id) === String(productId));
+                if (itemIndex > -1) {
+                    if (action === 'increase') {
+                        if (cart[itemIndex].quantity < product.stock) {
+                            cart[itemIndex].quantity++;
+                        } else {
+                            if (isAjax) return res.json({ success: false, message: 'Stok makasimal tercapai' });
+                        }
+                    } else if (action === 'decrease') {
+                        if (cart[itemIndex].quantity > 1) {
+                            cart[itemIndex].quantity--;
+                        } else {
+                            if (isAjax) return res.json({ success: false, message: 'Minimal 1 barang' });
+                            cart.splice(itemIndex, 1);
+                        }
+                    }
+                    req.session.cart = cart;
+                }
             }
-            req.session.cart = cart;
 
             if (isAjax) {
-                const item = cart[itemIndex];
-                const itemQuantity = item ? item.quantity : 0;
-                const itemTotal = item ? item.price * item.quantity : 0;
-                const subtotal = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
-                const cartCount = cart.reduce((a, b) => a + b.quantity, 0);
+                const { cartItems, subtotal } = await getCartData(req);
+                const updatedItem = cartItems.find(item => String(item.id) === String(productId));
+                const itemQuantity = updatedItem ? updatedItem.quantity : 0;
+                const itemTotal = updatedItem ? updatedItem.price * itemQuantity : 0;
+                const cartCount = cartItems.reduce((a, b) => a + b.quantity, 0);
 
                 return req.session.save(err => {
                     if (err) console.error(err);
@@ -145,7 +217,7 @@ module.exports = {
                 });
             }
 
-            req.session.save(() => res.redirect('/cart'));
+            res.redirect('/cart');
         } catch (err) {
             console.error(err);
             if (isAjax) return res.status(500).json({ success: false, message: 'Server Error' });
@@ -153,43 +225,27 @@ module.exports = {
         }
     },
 
-    clear: (req, res) => {
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
-        req.session.cart = [];
-
-        if (isAjax) {
-            return res.json({ success: true, message: 'Keranjang dikosongkan' });
-        }
-
-        req.flash('success_msg', 'Keranjang sudah dibersihkan. Yuk mulai berburu barang baru! ✨');
-        res.redirect('/cart');
-    },
-
-    checkoutPage: (req, res) => {
-        const cart = req.session.cart || [];
-        if (cart.length === 0) return res.redirect('/cart');
-        const cartTotal = cart.reduce((acc, item) => acc + ((parseFloat(item.price) || 0) * (parseInt(item.quantity) || 0)), 0);
-        res.render('checkout', { cart, cartTotal });
-    },
-
-    remove: (req, res) => {
+    remove: async (req, res) => {
         const { productId } = req.body;
         const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
 
         try {
-            const cart = req.session.cart || [];
-            const newCart = cart.filter(item => String(item.id) !== String(productId));
-            req.session.cart = newCart;
+            if (req.session.user) {
+                const cart = await Cart.findOne({ where: { user_id: req.session.user.id } });
+                if (cart) {
+                    await CartItem.destroy({ where: { cart_id: cart.id, product_id: productId } });
+                }
+            } else {
+                const cart = req.session.cart || [];
+                req.session.cart = cart.filter(item => String(item.id) !== String(productId));
+            }
 
             if (isAjax) {
-                const subtotal = newCart.reduce((a, b) => a + (b.price * b.quantity), 0);
-                const cartCount = newCart.reduce((a, b) => a + b.quantity, 0);
+                const { cartItems, subtotal } = await getCartData(req);
+                const cartCount = cartItems.reduce((a, b) => a + b.quantity, 0);
 
                 return req.session.save(err => {
-                    if (err) {
-                        console.error('Session save error:', err);
-                        return res.status(500).json({ success: false, message: 'Session Error' });
-                    }
+                    if (err) console.error(err);
                     res.json({
                         success: true,
                         message: 'Item dihapus',
@@ -200,13 +256,47 @@ module.exports = {
                 });
             }
 
-            req.session.save(() => {
-                req.flash('success_msg', 'Sip, barang telah dikeluarkan dari keranjang belanja.');
-                res.redirect('/cart');
-            });
+            req.flash('success_msg', 'Sip, barang telah dikeluarkan dari keranjang belanja.');
+            res.redirect('/cart');
         } catch (err) {
             console.error(err);
             if (isAjax) return res.status(500).json({ success: false, message: 'Server Error' });
+            res.redirect('/cart');
+        }
+    },
+
+    clear: async (req, res) => {
+        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+
+        try {
+            if (req.session.user) {
+                const cart = await Cart.findOne({ where: { user_id: req.session.user.id } });
+                if (cart) {
+                    await CartItem.destroy({ where: { cart_id: cart.id } });
+                }
+            } else {
+                req.session.cart = [];
+            }
+
+            if (isAjax) {
+                return res.json({ success: true, message: 'Keranjang dikosongkan' });
+            }
+
+            req.flash('success_msg', 'Keranjang sudah dibersihkan. Yuk mulai berburu barang baru! ✨');
+            res.redirect('/cart');
+        } catch (err) {
+            console.error(err);
+            res.redirect('/cart');
+        }
+    },
+
+    checkoutPage: async (req, res) => {
+        try {
+            const { cartItems, subtotal } = await getCartData(req);
+            if (cartItems.length === 0) return res.redirect('/cart');
+            res.render('checkout', { cart: cartItems, cartTotal: subtotal });
+        } catch (err) {
+            console.error(err);
             res.redirect('/cart');
         }
     }

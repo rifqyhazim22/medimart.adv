@@ -15,14 +15,13 @@ router.use('/', cartRoutes);
 router.use('/', dashboardRoutes);
 
 const profileController = require('../controllers/profileController');
+const upload = require('../middlewares/upload');
 
 // ... existing routes ...
 
 // Profile Routes
 router.get('/profile', isAuthenticated, profileController.index);
-router.get('/profile/edit', isAuthenticated, profileController.edit);
-router.post('/profile/update', isAuthenticated, profileController.update);
-router.post('/profile/change-password', isAuthenticated, profileController.changePassword);
+router.post('/profile/edit', isAuthenticated, upload.single('profile_image'), profileController.editPost);
 router.post('/profile/delete', isAuthenticated, profileController.deleteAccount);
 
 module.exports = router;

@@ -1,110 +1,184 @@
 <%- include('partials/header', { activeTab: 'marketplace' }) %>
 
     <div id="marketplaceView">
-        <div class="section-header">
-            <h2 class="section-title">Semua Produk</h2>
-        </div>
 
-        <!-- Category Filters - Simplified as links for now, or keep as buttons for client-side filter if we want -->
-        <div class="category-filters">
-            <a href="/" class="filter-btn <%= (!category || category === 'all') ? 'active' : '' %>"
-                style="text-decoration: none;">
-                <span class="filter-icon">🏥</span> Semua
-            </a>
-            <a href="/?category=Obat Bebas" class="filter-btn <%= (category === 'Obat Bebas') ? 'active' : '' %>"
-                style="text-decoration: none;">
-                <span class="filter-icon">💊</span> Obat Bebas
-            </a>
-            <a href="/?category=Obat Keras" class="filter-btn <%= (category === 'Obat Keras') ? 'active' : '' %>"
-                style="text-decoration: none;">
-                <span class="filter-icon">💉</span> Obat Keras
-            </a>
-            <a href="/?category=Obat Nyeri" class="filter-btn <%= (category === 'Obat Nyeri') ? 'active' : '' %>"
-                style="text-decoration: none;">
-                <span class="filter-icon">🩺</span> Obat Nyeri
-            </a>
-            <a href="/?category=Vitamin" class="filter-btn <%= (category === 'Vitamin') ? 'active' : '' %>"
-                style="text-decoration: none;">
-                <span class="filter-icon">🍊</span> Vitamin
-            </a>
-            <a href="/?category=Alat Kesehatan"
-                class="filter-btn <%= (category === 'Alat Kesehatan') ? 'active' : '' %>"
-                style="text-decoration: none;">
-                <span class="filter-icon">🩹</span> Alkes
-            </a>
-            <a href="/?category=Herbal" class="filter-btn <%= (category === 'Herbal') ? 'active' : '' %>"
-                style="text-decoration: none;">
-                <span class="filter-icon">🌿</span> Herbal
-            </a>
-        </div>
-
-        <div class="products-grid" id="marketplaceProducts">
-            <% if (products.length===0) { %>
-                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #6b7280;">
-                    <p>Belum ada produk yang tersedia.</p>
+        <!-- Recommendation Section -->
+        <% if (typeof recommendedProducts !=='undefined' && recommendedProducts.length> 0 && (!searchQuery) &&
+            (!category || category === 'all')) { %>
+            <div
+                style="margin: 20px 24px; padding: 24px; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-radius: 24px; color: white; box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4); position: relative; overflow: hidden;">
+                <!-- Decorative Elements -->
+                <div
+                    style="position: absolute; top: -20px; right: -20px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; blur(10px);">
                 </div>
-                <% } else { %>
-                    <% products.forEach(product=> { %>
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="<%= product.image_url || '/img/default-product.svg' %>"
-                                    alt="<%= product.name %>" style="width: 100%; height: 100%; object-fit: cover;">
-                            </div>
-                            <div class="product-info">
+                <div
+                    style="position: absolute; bottom: -30px; left: 10%; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;">
+                </div>
+
+                <div style="position: relative; z-index: 2;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                        <span style="font-size: 24px;">✨</span>
+                        <h2 style="font-size: 22px; font-weight: 800; margin: 0; letter-spacing: 0.5px;">
+                            <%= recoTitle %>
+                        </h2>
+                    </div>
+
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px;">
+                        <% recommendedProducts.forEach(product=> { %>
+                            <div style="background: var(--bg-white); border-radius: 16px; padding: 12px; color: var(--text-dark); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; position: relative;"
+                                onclick="if(event.target.tagName !== 'BUTTON') window.location.href='/product/<%= product.id %>'"
+                                onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.2)';"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+
                                 <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                    <div class="product-category" style="margin-bottom: 0;">
-                                        <% const icons={ 'Obat Bebas' : '💊' , 'Obat Keras' : '💉' , 'Vitamin' : '🍊'
-                                            , 'Alat Kesehatan' : '🩹' , 'Herbal' : '🌿' }; const
-                                            icon=icons[product.category] || '💊' ; %>
-                                            <%= icon %>
-                                                <%= product.category %>
-                                    </div>
-                                    <% if (product.stock===0) { %>
-                                        <span class="stock-badge error"
-                                            style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Habis</span>
-                                        <% } else if (product.stock <=5) { %>
-                                            <span class="stock-badge warning"
-                                                style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Sisa:
-                                                <%= product.stock %>
-                                            </span>
-                                            <% } else { %>
-                                                <span class="stock-badge"
-                                                    style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Stok:
-                                                    <%= product.stock %>
-                                                </span>
-                                                <% } %>
+                                    style="height: 140px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; background: var(--border);">
+                                    <img src="<%= product.image_url || '/img/default-product.svg' %>"
+                                        alt="<%= product.name %>" style="width: 100%; height: 100%; object-fit: cover;">
                                 </div>
-                                <h3 class="product-title">
+                                <div
+                                    style="font-size: 11px; font-weight: 700; color: #3b82f6; margin-bottom: 4px; text-transform: uppercase;">
+                                    <%= product.category %>
+                                </div>
+                                <h3
+                                    style="font-size: 14px; font-weight: 700; margin: 0 0 8px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     <%= product.name %>
                                 </h3>
-
-                                <!-- Seller Info -->
-                                <div
-                                    style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 12px; color: #6b7280;">
-                                    <span>🏪</span>
-                                    <span>
-                                        <%= product.seller ? (product.seller.full_name || product.seller.username)
-                                            : 'Official Store' %>
-                                    </span>
-                                </div>
-
-                                <div class="product-footer">
-                                    <div class="product-price">Rp <%= parseInt(product.price).toLocaleString('id-ID') %>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-size: 15px; font-weight: 900; color: #FF6B35;">Rp <%=
+                                            parseInt(product.price).toLocaleString('id-ID') %>
                                     </div>
-                                    <form action="/cart/add" method="POST">
+                                    <form action="/cart/add" method="POST" style="margin:0;">
                                         <input type="hidden" name="productId" value="<%= product.id %>">
-                                        <button type="submit" class="btn-add-cart" <%=product.stock===0 ? 'disabled'
-                                            : '' %>>
-                                            <%= product.stock===0 ? 'Habis' : '+ Keranjang' %>
+                                        <button type="submit"
+                                            style="background: #eef2ff; color: #3b82f6; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; transition: all 0.2s;"
+                                            onmouseover="this.style.background='#3b82f6'; this.style.color='white';"
+                                            onmouseout="this.style.background='#eef2ff'; this.style.color='#3b82f6';"
+                                            <%=product.stock===0 ? 'disabled' : '' %> title="Tambah ke Keranjang">
+                                            <%= product.stock===0 ? '❌' : '➕' %>
                                         </button>
                                     </form>
                                 </div>
                             </div>
+                            <% }); %>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+
+                <div class="section-header">
+                    <h2 class="section-title">Eksplorasi Katalog</h2>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="category-filters">
+                    <a href="/" class="filter-btn <%= (!category || category === 'all') ? 'active' : '' %>"
+                        style="text-decoration: none;">
+                        <span class="filter-icon">🏥</span> Semua
+                    </a>
+                    <a href="/?category=Obat Bebas"
+                        class="filter-btn <%= (category === 'Obat Bebas') ? 'active' : '' %>"
+                        style="text-decoration: none;">
+                        <span class="filter-icon">💊</span> Obat Bebas
+                    </a>
+                    <a href="/?category=Obat Keras"
+                        class="filter-btn <%= (category === 'Obat Keras') ? 'active' : '' %>"
+                        style="text-decoration: none;">
+                        <span class="filter-icon">💉</span> Obat Keras
+                    </a>
+                    <a href="/?category=Obat Nyeri"
+                        class="filter-btn <%= (category === 'Obat Nyeri') ? 'active' : '' %>"
+                        style="text-decoration: none;">
+                        <span class="filter-icon">🩺</span> Obat Nyeri
+                    </a>
+                    <a href="/?category=Vitamin" class="filter-btn <%= (category === 'Vitamin') ? 'active' : '' %>"
+                        style="text-decoration: none;">
+                        <span class="filter-icon">🍊</span> Vitamin
+                    </a>
+                    <a href="/?category=Alat Kesehatan"
+                        class="filter-btn <%= (category === 'Alat Kesehatan') ? 'active' : '' %>"
+                        style="text-decoration: none;">
+                        <span class="filter-icon">🩹</span> Alkes
+                    </a>
+                    <a href="/?category=Herbal" class="filter-btn <%= (category === 'Herbal') ? 'active' : '' %>"
+                        style="text-decoration: none;">
+                        <span class="filter-icon">🌿</span> Herbal
+                    </a>
+                </div>
+
+                <div class="products-grid" id="marketplaceProducts">
+                    <% if (products.length===0) { %>
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-gray);">
+                            <p>Belum ada produk yang tersedia.</p>
                         </div>
-                        <% }); %>
-                            <% } %>
-        </div>
+                        <% } else { %>
+                            <% products.forEach(product=> { %>
+                                <div class="product-card" style="cursor: pointer; position: relative;"
+                                    onclick="if(event.target.tagName !== 'BUTTON' && event.target.tagName !== 'A') window.location.href='/product/<%= product.id %>'">
+                                    <div class="product-image">
+                                        <img src="<%= product.image_url || '/img/default-product.svg' %>"
+                                            alt="<%= product.name %>"
+                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                    <div class="product-info">
+                                        <div
+                                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                            <div class="product-category" style="margin-bottom: 0;">
+                                                <% const icons={ 'Obat Bebas' : '💊' , 'Obat Keras' : '💉' , 'Vitamin'
+                                                    : '🍊' , 'Alat Kesehatan' : '🩹' , 'Herbal' : '🌿' }; const
+                                                    icon=icons[product.category] || '💊' ; %>
+                                                    <%= icon %>
+                                                        <%= product.category %>
+                                            </div>
+                                            <% if (product.stock===0) { %>
+                                                <span class="stock-badge error"
+                                                    style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Habis</span>
+                                                <% } else if (product.stock <=5) { %>
+                                                    <span class="stock-badge warning"
+                                                        style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Sisa:
+                                                        <%= product.stock %>
+                                                    </span>
+                                                    <% } else { %>
+                                                        <span class="stock-badge"
+                                                            style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Stok:
+                                                            <%= product.stock %>
+                                                        </span>
+                                                        <% } %>
+                                        </div>
+                                        <h3 class="product-title">
+                                            <%= product.name %>
+                                        </h3>
+
+                                        <!-- Seller Info -->
+                                        <div
+                                            style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 12px; color: var(--text-gray);">
+                                            <span>🏪</span>
+                                            <a href="/store/<%= product.seller_id %>"
+                                                style="color: var(--text-gray); text-decoration: none; font-weight: 600; cursor: pointer; transition: color 0.2s;"
+                                                onmouseover="this.style.color='#3b82f6'"
+                                                onmouseout="this.style.color='#6b7280'">
+                                                <%= product.seller ? (product.seller.full_name ||
+                                                    product.seller.username) : 'Official Store' %>
+                                            </a>
+                                        </div>
+
+                                        <div class="product-footer">
+                                            <div class="product-price">Rp <%=
+                                                    parseInt(product.price).toLocaleString('id-ID') %>
+                                            </div>
+                                            <form action="/cart/add" method="POST">
+                                                <input type="hidden" name="productId" value="<%= product.id %>">
+                                                <button type="submit" class="btn-add-cart" <%=product.stock===0
+                                                    ? 'disabled' : '' %>>
+                                                    <%= product.stock===0 ? 'Habis' : '+ Keranjang' %>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }); %>
+                                    <% } %>
+                </div>
     </div>
 
     <!-- Sticky Checkout Bar (Always rendered but toggled via display) -->
@@ -148,7 +222,7 @@
                     <span style="font-size: 16px; font-weight: 800; color: #ffffff;" id="stickyTotal">Rp <%=
                             parseInt(typeof cartTotal !=='undefined' ? cartTotal : 0).toLocaleString('id-ID') %></span>
                     <span
-                        style="font-size: 11px; color: #FF5252; font-weight: 700; background: white; padding: 2px 6px; border-radius: 99px;"
+                        style="font-size: 11px; color: #FF5252; font-weight: 700; background: var(--bg-white); padding: 2px 6px; border-radius: 99px;"
                         id="stickyCount">
                         <%= typeof cartCount !=='undefined' ? cartCount : 0 %> x
                     </span>
@@ -157,7 +231,7 @@
         </div>
 
         <button onclick="window.location.href='/cart'" class="checkout-pulse-btn" style="
-            background: white; 
+            background: var(--bg-white); 
             color: #FF5252; 
             border: none; 
             padding: 8px 16px; 
@@ -193,7 +267,7 @@
         .checkout-pulse-btn:hover {
             transform: scale(1.05) translateY(-2px);
             box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.3);
-            background: #f9fafb;
+            background: var(--bg-light);
         }
 
         .checkout-pulse-btn:active {

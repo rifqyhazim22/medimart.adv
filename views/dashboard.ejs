@@ -70,7 +70,7 @@
                                         <h3 class="product-title">
                                             <%= product.name %>
                                         </h3>
-                                        <p style="color: #6b7280; font-size: 14px;">Stok: <%= product.stock %>
+                                        <p style="color: var(--text-gray); font-size: 14px;">Stok: <%= product.stock %>
                                         </p>
                                         <div class="product-footer">
                                             <div class="product-price">Rp <%=
@@ -78,7 +78,7 @@
                                             </div>
                                             <div style="display: flex; gap: 8px;">
                                                 <a href="/products/<%= product.id %>/edit" class="btn-small"
-                                                    style="background: #f3f4f6; color: #374151; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 12px;">Edit</a>
+                                                    style="background: var(--border); color: var(--text-dark); text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 12px;">Edit</a>
                                                 <form action="/products/<%= product.id %>?_method=DELETE" method="POST"
                                                     onsubmit="return confirmAction(event, 'Yakin ingin menghapus produk ini?', 'Ya, Hapus', '#EF4444');">
                                                     <button type="submit" class="btn-small"
@@ -97,10 +97,10 @@
                                 <h2 class="section-title">Pesanan Masuk</h2>
                             </div>
                             <div class="table-container"
-                                style="background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden; margin-bottom: 40px;">
+                                style="background: var(--bg-white); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden; margin-bottom: 40px;">
                                 <table style="width: 100%; border-collapse: collapse;">
                                     <thead>
-                                        <tr style="background: #f9fafb; text-align: left;">
+                                        <tr style="background: var(--bg-light); text-align: left;">
                                             <th style="padding: 16px;">Tanggal</th>
                                             <th style="padding: 16px;">Produk</th>
                                             <th style="padding: 16px;">Pembeli</th>
@@ -119,10 +119,10 @@
                                             <% } else { %>
                                                 <% orders.forEach(item=> { %>
                                                     <tr>
-                                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                                        <td style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                             <%= new Date(item.created_at).toLocaleDateString('id-ID') %>
                                                         </td>
-                                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                                        <td style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                             <div style="display: flex; align-items: center; gap: 10px;">
                                                                 <img src="<%= item.image_url || '/img/default-product.svg' %>"
                                                                     style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">
@@ -131,18 +131,18 @@
                                                                 </span>
                                                             </div>
                                                         </td>
-                                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                                        <td style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                             <%= item.buyer_name %>
                                                         </td>
-                                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                                        <td style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                             <%= item.quantity %>
                                                         </td>
                                                         <td
-                                                            style="padding: 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600;">
+                                                            style="padding: 16px; border-bottom: 1px solid var(--border); font-weight: 600;">
                                                             Rp <%= (item.price_at_purchase *
                                                                 item.quantity).toLocaleString('id-ID') %>
                                                         </td>
-                                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                                        <td style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                             <span style="padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500; 
                                             <%= item.status === 'processed' || item.status === 'completed' ? 'background: #d1fae5; color: #065f46;' : 
                                                item.status === 'rejected' || item.status === 'cancelled' ? 'background: #fee2e2; color: #b91c1c;' : 
@@ -151,7 +151,7 @@
                                                                     item.status.slice(1) %>
                                                             </span>
                                                         </td>
-                                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                                        <td style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                             <% if (item.status==='pending' ) { %>
                                                                 <div style="display: flex; gap: 6px;">
                                                                     <form action="/orders/items/<%= item.id %>/accept"
@@ -168,7 +168,7 @@
                                                                 </div>
                                                                 <% } else { %>
                                                                     <span
-                                                                        style="color: #9ca3af; font-size: 12px;">Selesai</span>
+                                                                        style="color: var(--text-gray); font-size: 12px;">Selesai</span>
                                                                     <% } %>
                                                         </td>
                                                     </tr>
@@ -213,25 +213,25 @@
                                 </div>
 
                                 <div class="table-container"
-                                    style="background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden;">
+                                    style="background: var(--bg-white); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden;">
                                     <table style="width: 100%; border-collapse: collapse;">
                                         <thead>
-                                            <tr style="background: #f9fafb; text-align: left;">
-                                                <th style="padding: 16px; border-bottom: 1px solid #e5e7eb;">ID Pesanan
+                                            <tr style="background: var(--bg-light); text-align: left;">
+                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">ID Pesanan
                                                 </th>
-                                                <th style="padding: 16px; border-bottom: 1px solid #e5e7eb;">Tanggal
+                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">Tanggal
                                                 </th>
-                                                <th style="padding: 16px; border-bottom: 1px solid #e5e7eb;">Total
+                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">Total
                                                     Belanja</th>
-                                                <th style="padding: 16px; border-bottom: 1px solid #e5e7eb;">Status</th>
-                                                <th style="padding: 16px; border-bottom: 1px solid #e5e7eb;">Aksi</th>
+                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">Status</th>
+                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <% if (orders.length===0) { %>
                                                 <tr>
                                                     <td colspan="5"
-                                                        style="padding: 24px; text-align: center; color: #6b7280;">Belum
+                                                        style="padding: 24px; text-align: center; color: var(--text-gray);">Belum
                                                         ada
                                                         pesanan.</td>
                                                 </tr>
@@ -239,23 +239,23 @@
                                                     <% orders.forEach(order=> { %>
                                                         <tr>
                                                             <td
-                                                                style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                                                style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                                 #ORD-<%= order.id %>
                                                             </td>
                                                             <td
-                                                                style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                                                style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                                 <%= new
                                                                     Date(order.created_at).toLocaleDateString('id-ID')
                                                                     %>
                                                             </td>
                                                             <td
-                                                                style="padding: 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600;">
+                                                                style="padding: 16px; border-bottom: 1px solid var(--border); font-weight: 600;">
                                                                 Rp <%=
                                                                     parseInt(order.total_price).toLocaleString('id-ID')
                                                                     %>
                                                             </td>
                                                             <td
-                                                                style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                                                style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                                 <span style="padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500; 
                                         <%= order.status === 'completed' ? 'background: #d1fae5; color: #065f46;' : 
                                            order.status === 'cancelled' ? 'background: #fee2e2; color: #b91c1c;' : 
@@ -265,9 +265,9 @@
                                                                 </span>
                                                             </td>
                                                             <td
-                                                                style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                                                                style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                                 <a href="/orders/<%= order.id %>" class="btn-small"
-                                                                    style="text-decoration: none; border: 1px solid #d1d5db; color: #374151; padding: 6px 12px; border-radius: 6px; font-size: 12px; display: inline-block;">
+                                                                    style="text-decoration: none; border: 1px solid var(--border); color: var(--text-dark); padding: 6px 12px; border-radius: 6px; font-size: 12px; display: inline-block;">
                                                                     Lihat Detail
                                                                 </a>
                                                             </td>

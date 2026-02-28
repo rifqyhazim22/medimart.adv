@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const { sequelize } = require('./models');
+const { sequelize, Cart, CartItem, Product } = require('./models');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const sessionStore = new SequelizeStore({
@@ -52,15 +52,34 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Global Variables
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
     res.locals.currentUser = req.session.user || null;
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
     res.locals.error = req.flash('error');
 
-    const cart = req.session.cart || [];
-    res.locals.cartCount = cart.reduce((acc, item) => acc + (parseInt(item.quantity) || 0), 0);
-    res.locals.cartTotal = cart.reduce((acc, item) => acc + ((parseFloat(item.price) || 0) * (parseInt(item.quantity) || 0)), 0);
+    res.locals.cartCount = 0;
+    res.locals.cartTotal = 0;
+
+    // Persistent Cart Integration for Global Header Badges
+    if (req.session.user) {
+        try {
+            const userCart = await Cart.findOne({
+                where: { user_id: req.session.user.id },
+                include: [{ model: CartItem, as: 'items', include: ['product'] }]
+            });
+            if (userCart && userCart.items) {
+                res.locals.cartCount = userCart.items.reduce((acc, item) => acc + item.quantity, 0);
+                res.locals.cartTotal = userCart.items.reduce((acc, item) => acc + ((parseFloat(item.product?.price) || 0) * item.quantity), 0);
+            }
+        } catch (err) {
+            console.error('Error fetching global cart:', err);
+        }
+    } else {
+        const cart = req.session.cart || [];
+        res.locals.cartCount = cart.reduce((acc, item) => acc + (parseInt(item.quantity) || 0), 0);
+        res.locals.cartTotal = cart.reduce((acc, item) => acc + ((parseFloat(item.price) || 0) * (parseInt(item.quantity) || 0)), 0);
+    }
 
     next();
 });

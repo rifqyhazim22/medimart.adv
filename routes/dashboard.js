@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+console.log("-> Dashboard route di-reload!");
 const dashboardController = require('../controllers/dashboardController');
 
 // Middleware
@@ -34,9 +35,16 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
 
 router.get('/user/dashboard', ensureAuthenticated, dashboardController.userDashboard);
 router.get('/seller/dashboard', ensureSeller, dashboardController.sellerDashboard);
+router.get('/seller/products', ensureSeller, dashboardController.sellerProducts);
+router.get('/seller/orders', ensureSeller, dashboardController.sellerOrders);
 router.get('/admin/dashboard', ensureAdmin, dashboardController.adminDashboard);
 
 const userController = require('../controllers/userController');
+
+// Seller Settings (Store Identity)
+const upload = require('../middlewares/upload');
+router.get('/seller/settings', ensureSeller, dashboardController.sellerSettings);
+router.post('/seller/settings', ensureSeller, upload.single('store_banner'), dashboardController.sellerSettingsUpdate);
 
 // Admin Actions
 router.post('/admin/users/:id/delete', ensureAdmin, userController.delete);

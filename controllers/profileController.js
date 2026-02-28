@@ -1,5 +1,6 @@
 const { User, Order, Buyer, Seller, Admin } = require('../models');
 const bcrypt = require('bcryptjs');
+const { optimizeImage } = require('../utils/imageOptimizer');
 
 module.exports = {
     index: async (req, res) => {
@@ -36,8 +37,8 @@ module.exports = {
         }
     },
 
-    update: async (req, res) => {
-        const { username, full_name, email, phone, address, store_name, bank_account } = req.body;
+    editPost: async (req, res) => {
+        const { username, full_name, email, phone, address, new_password, confirm_password, bank_account } = req.body;
         try {
             const user = await User.findByPk(req.session.user.id, {
                 include: [
@@ -51,14 +52,30 @@ module.exports = {
                 const existingUser = await User.findOne({ where: { username } });
                 if (existingUser) {
                     req.flash('error', 'Username sudah digunakan oleh pengguna lain.');
-                    return res.redirect('/profile/edit');
+                    return res.redirect('/profile');
                 }
             }
 
-            await user.update({ username, full_name, email, phone, address });
+            // Ganti Sandi (Jika diisi)
+            if (new_password) {
+                if (new_password !== confirm_password) {
+                    req.flash('error', 'Konfirmasi kata sandi baru tidak cocok.');
+                    return res.redirect('/profile');
+                }
+                const hashedPassword = await bcrypt.hash(new_password, 10);
+                await user.update({ password: hashedPassword });
+            }
 
-            // Pumping relative details to dedicated polymorphic roles
-            if (user.role === 'buyer') {
+            // Ganti Avatar
+            let profile_image = user.profile_image;
+            if (req.file) {
+                profile_image = await optimizeImage(req.file, 400); // 400px width limit for avatars
+            }
+
+            await user.update({ username, full_name, email, phone, address, profile_image });
+
+            // Simpan alamat untuk pelanggan, atau spesifik bank rekening untuk seller
+            if (user.role === 'customer') {
                 if (user.buyer) {
                     await user.buyer.update({ shipping_address: address });
                 } else {
@@ -66,9 +83,9 @@ module.exports = {
                 }
             } else if (user.role === 'seller') {
                 if (user.seller) {
-                    await user.seller.update({ store_name, bank_account, store_address: address });
+                    await user.seller.update({ bank_account: bank_account || null });
                 } else {
-                    await Seller.create({ user_id: user.id, store_name, bank_account, store_address: address });
+                    await Seller.create({ user_id: user.id, bank_account: bank_account || null, store_name: user.username });
                 }
             }
 
@@ -76,46 +93,14 @@ module.exports = {
             req.session.user = user;
 
             req.session.save(() => {
-                req.flash('success_msg', 'Profil berhasil diperbarui.');
+                req.flash('success_msg', 'Profil berhasil diperbarui secara menyeluruh.');
                 res.redirect('/profile');
             });
         } catch (err) {
             console.error(err);
             req.session.save(() => {
                 req.flash('error', 'Gagal memperbarui profil.');
-                res.redirect('/profile/edit');
-            });
-        }
-    },
-
-    changePassword: async (req, res) => {
-        const { currentPassword, newPassword, confirmNewPassword } = req.body;
-        try {
-            if (newPassword !== confirmNewPassword) {
-                req.flash('error', 'Konfirmasi password baru tidak cocok.');
-                return res.redirect('/profile/edit');
-            }
-
-            const user = await User.findByPk(req.session.user.id);
-            const isMatch = await bcrypt.compare(currentPassword, user.password);
-
-            if (!isMatch) {
-                req.flash('error', 'Password saat ini salah.');
-                return res.redirect('/profile/edit');
-            }
-
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
-            await user.update({ password: hashedPassword });
-
-            req.session.save(() => {
-                req.flash('success_msg', 'Password berhasil diubah.');
                 res.redirect('/profile');
-            });
-        } catch (err) {
-            console.error(err);
-            req.session.save(() => {
-                req.flash('error', 'Gagal mengubah password.');
-                res.redirect('/profile/edit');
             });
         }
     },
@@ -139,7 +124,7 @@ module.exports = {
 
                 if (activeOrders > 0) {
                     req.flash('error', 'Tidak dapat menghapus akun karena masih ada pesanan yang aktif.');
-                    return res.redirect('/profile/edit');
+                    return res.redirect('/profile');
                 }
             } else if (user.role === 'seller') {
                 // Check for active items being sold
@@ -152,7 +137,7 @@ module.exports = {
 
                 if (activeItems > 0) {
                     req.flash('error', 'Tidak dapat menghapus akun karena masih ada pesanan masuk yang belum selesai.');
-                    return res.redirect('/profile/edit');
+                    return res.redirect('/profile');
                 }
             }
 
@@ -164,7 +149,7 @@ module.exports = {
             console.error(err);
             req.session.save(() => {
                 req.flash('error', 'Gagal menghapus akun: ' + err.message);
-                res.redirect('/profile/edit');
+                res.redirect('/profile');
             });
         }
     }

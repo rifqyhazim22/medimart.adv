@@ -31,7 +31,7 @@
 
                     <div id="cartItemsContainer">
                         <% if (cart.length===0) { %>
-                            <div style="text-align: center; padding: 40px; color: #6b7280;">
+                            <div style="text-align: center; padding: 40px; color: var(--text-gray);">
                                 <p>Keranjang belanja Anda kosong.</p>
                                 <a href="/" class="btn-primary"
                                     style="margin-top: 20px; text-decoration: none; display: inline-block;">Mulai
@@ -40,9 +40,9 @@
                             <% } else { %>
                                 <% cart.forEach(item=> { %>
                                     <div class="cart-item"
-                                        style="display: flex; gap: 20px; background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                        style="display: flex; gap: 20px; background: var(--bg-white); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                                         <div
-                                            style="width: 100px; height: 100px; border-radius: 8px; overflow: hidden; background: #f3f4f6;">
+                                            style="width: 100px; height: 100px; border-radius: 8px; overflow: hidden; background: var(--border);">
                                             <img src="<%= item.image_url || '/img/default-product.svg' %>"
                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                         </div>
@@ -60,19 +60,19 @@
                                                     </button>
                                                 </form>
                                             </div>
-                                            <div style="color: #6b7280; font-size: 14px; margin-bottom: 12px;">
+                                            <div style="color: var(--text-gray); font-size: 14px; margin-bottom: 12px;">
                                                 Rp <%= parseInt(item.price).toLocaleString('id-ID') %>
                                             </div>
 
                                             <div
                                                 style="display: flex; align-items: center; justify-content: space-between;">
                                                 <div
-                                                    style="display: flex; align-items: center; gap: 10px; border: 1px solid #e5e7eb; border-radius: 6px; padding: 4px;">
+                                                    style="display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); border-radius: 6px; padding: 4px;">
                                                     <form action="/cart/update" method="POST" style="margin:0;">
                                                         <input type="hidden" name="productId" value="<%= item.id %>">
                                                         <input type="hidden" name="action" value="decrease">
                                                         <button type="submit"
-                                                            style="width: 28px; height: 28px; border: none; background: white; cursor: pointer; border-radius: 4px; font-weight: bold;">-</button>
+                                                            style="width: 28px; height: 28px; border: none; background: var(--bg-white); cursor: pointer; border-radius: 4px; font-weight: bold;">-</button>
                                                     </form>
                                                     <span class="item-qty-display"
                                                         style="font-weight: 600; font-size: 14px; min-width: 20px; text-align: center;">
@@ -82,7 +82,7 @@
                                                         <input type="hidden" name="productId" value="<%= item.id %>">
                                                         <input type="hidden" name="action" value="increase">
                                                         <button type="submit"
-                                                            style="width: 28px; height: 28px; border: none; background: white; cursor: pointer; border-radius: 4px; font-weight: bold;">+</button>
+                                                            style="width: 28px; height: 28px; border: none; background: var(--bg-white); cursor: pointer; border-radius: 4px; font-weight: bold;">+</button>
                                                     </form>
                                                 </div>
                                                 <div class="item-total-display"
@@ -184,7 +184,7 @@
                     <% if (typeof recommendedProducts !=='undefined' && recommendedProducts.length> 0) { %>
                         <% recommendedProducts.forEach(product=> { %>
                             <div class="product-card"
-                                style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; background: white;">
+                                style="border: 1px solid var(--border); border-radius: 12px; padding: 16px; background: var(--bg-white);">
                                 <div>
                                     <img src="<%= product.image_url || '/img/default-product.svg' %>"
                                         style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;">
@@ -224,7 +224,7 @@
                             </div>
                             <% }); %>
                                 <% } else { %>
-                                    <p style="color: #6b7280;">Tidak ada rekomendasi saat ini.</p>
+                                    <p style="color: var(--text-gray);">Tidak ada rekomendasi saat ini.</p>
                                     <% } %>
                 </div>
             </div>

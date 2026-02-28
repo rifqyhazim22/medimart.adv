@@ -13,21 +13,21 @@
             background: transparent;
             padding: 0;
             box-shadow: none;
-            color: #1f2937;
+            color: var(--text-dark);
             margin-bottom: 40px;
         }
 
         .dashboard-header h1 {
             font-size: 32px;
             font-weight: 800;
-            color: #111827;
+            color: var(--text-dark);
             margin-bottom: 8px;
             background: none;
             -webkit-text-fill-color: initial;
         }
 
         .dashboard-header p {
-            color: #6b7280;
+            color: var(--text-gray);
             font-size: 16px;
         }
 
@@ -39,10 +39,10 @@
         }
 
         .stat-card {
-            background: white;
+            background: var(--bg-white);
             padding: 24px;
             border-radius: 16px;
-            border: 1px solid #f3f4f6;
+            border: 1px solid var(--border);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             display: flex;
             align-items: center;
@@ -82,7 +82,7 @@
 
         .stat-content h3 {
             margin: 0;
-            color: #6b7280;
+            color: var(--text-gray);
             font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
@@ -93,8 +93,37 @@
         .stat-value {
             font-size: 28px;
             font-weight: 700;
-            color: #111827;
+            color: var(--text-dark);
             margin: 0;
+        }
+
+        .seller-nav {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .seller-nav-item {
+            text-decoration: none;
+            color: var(--text-gray);
+            font-weight: 600;
+            font-size: 16px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .seller-nav-item:hover {
+            background: var(--border);
+            color: var(--text-dark);
+        }
+
+        .seller-nav-item.active {
+            background: #FF6B35;
+            color: white;
+            box-shadow: 0 4px 6px rgba(255, 107, 53, 0.2);
         }
     </style>
 
@@ -126,314 +155,243 @@
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon green">💰</div>
+                        <div class="stat-icon green">📦</div>
                         <div class="stat-content">
                             <h3>Nilai Inventory</h3>
                             <div class="stat-value">Rp <%= parseInt(stats.totalValue).toLocaleString('id-ID') %>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="section-header"
-                style="margin-top: 30px; display: flex; justify-content: space-between; align-items: center;">
-                <h2 class="section-title">Produk Saya</h2>
-                <a href="/products/new" class="btn-primary">
-                    <span>➕</span> Tambah Produk
-                </a>
-            </div>
-
-            <div class="products-grid">
-                <% if (products.length===0) { %>
-                    <p>Belum ada produk. Silakan tambah produk baru.</p>
-                    <% } else { %>
-                        <% products.forEach(product=> { %>
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="<%= product.image_url || '/img/default-product.svg' %>"
-                                        alt="<%= product.name %>" style="width: 100%; height: 100%; object-fit: cover;">
-                                </div>
-                                <div class="product-info">
-                                    <h3 class="product-title">
-                                        <%= product.name %>
-                                    </h3>
-                                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
-                                        <% if (product.stock===0) { %>
-                                            <span class="stock-badge error"
-                                                style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Habis</span>
-                                            <% } else if (product.stock <=5) { %>
-                                                <span class="stock-badge warning"
-                                                    style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Sisa:
-                                                    <%= product.stock %>
-                                                </span>
-                                                <% } else { %>
-                                                    <span class="stock-badge"
-                                                        style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Stok:
-                                                        <%= product.stock %>
-                                                    </span>
-                                                    <% } %>
-                                    </div>
-                                    <p style="color: #6b7280; font-size: 14px;">Stok: <%= product.stock %>
-                                    </p>
-                                    <div class="product-footer">
-                                        <div class="product-price">Rp <%=
-                                                parseInt(product.price).toLocaleString('id-ID') %>
-                                        </div>
-                                        <div style="display: flex; gap: 8px;">
-                                            <a href="/products/<%= product.id %>/edit"
-                                                class="btn-small btn-secondary">Edit</a>
-                                            <form action="/products/<%= product.id %>?_method=DELETE" method="POST"
-                                                onsubmit="return confirmAction(event, 'Yakin ingin menghapus produk ini?', 'Ya, Hapus', '#EF4444');">
-                                                <button type="submit" class="btn-small btn-delete">Hapus</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple" style="background: #f3e8ff; color: #a855f7;">💳</div>
+                        <div class="stat-content">
+                            <h3>Laba Bersih (90%)</h3>
+                            <div class="stat-value">Rp <%= parseInt(stats.netRevenue || 0).toLocaleString('id-ID') %>
                             </div>
-                            <% }); %>
-                                <% } %>
-            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- SELLER INCOMING ORDERS -->
-            <div class="section-header" style="margin-top: 30px;">
-                <h2 class="section-title">Pesanan Masuk</h2>
-            </div>
-            <div class="table-container"
-                style="background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden; margin-bottom: 40px;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="background: #f9fafb; text-align: left;">
-                            <th style="padding: 16px;">Tanggal</th>
-                            <th style="padding: 16px;">Produk</th>
-                            <th style="padding: 16px;">Pembeli</th>
-                            <th style="padding: 16px;">Qty</th>
-                            <th style="padding: 16px;">Total</th>
-                            <th style="padding: 16px;">Status</th>
-                            <th style="padding: 16px;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (orders.length===0) { %>
-                            <tr>
-                                <td colspan="7" style="padding: 24px; text-align: center;">Belum ada pesanan masuk.</td>
-                            </tr>
-                            <% } else { %>
-                                <% orders.forEach(item=> { %>
-                                    <tr>
-                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
-                                            <%= new Date(item.created_at).toLocaleDateString('id-ID') %>
-                                        </td>
-                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
-                                            <div style="display: flex; align-items: center; gap: 10px;">
-                                                <img src="<%= item.image_url || '/img/default-product.svg' %>"
-                                                    style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">
-                                                <span>
-                                                    <%= item.product_name %>
-                                                </span>
+                <!-- Advanced Analytics Widgets -->
+                <div style="display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 40px;">
+                    @media(min-width: 1024px) {
+                    /* Injected grid layout for desktop manually via inline style doesn't support @media, using simple
+                    flex fallback if possible or 2-col CSS grid. I'll stick to a responsive grid for the parent via
+                    style tag earlier, but here let's just use CSS flex wrap for compatibility */
+                    }
+                </div>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 24px; margin-top: 40px;">
+                    <!-- Chart.js Graph -->
+                    <div
+                        style="flex: 1 1 600px; background: var(--bg-white); padding: 24px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                        <h3 style="margin: 0 0 20px 0; color: var(--text-dark); font-size: 18px;">Tren Laba Bersih Lapak Tahun
+                            Ini (IDR)</h3>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Top Selling Products -->
+                    <div
+                        style="flex: 1 1 300px; background: var(--bg-white); padding: 24px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                        <h3 style="margin: 0 0 20px 0; color: var(--text-dark); font-size: 18px;">Top 5 Produk Terlaris 🏆</h3>
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <% if(topProducts && topProducts.length> 0) { %>
+                                <% topProducts.forEach(tp=> { %>
+                                    <div
+                                        style="display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                                        <img src="<%= tp.image || '/images/default-medicine.png' %>"
+                                            style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border);">
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 600; color: var(--text-dark); font-size: 14px;">
+                                                <%= tp.name %>
                                             </div>
-                                        </td>
-                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
-                                            <%= item.buyer_name %>
-                                        </td>
-                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
-                                            <%= item.quantity %>
-                                        </td>
-                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600;">
-                                            Rp <%= (item.price_at_purchase * item.quantity).toLocaleString('id-ID') %>
-                                        </td>
-                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
-                                            <% if (item.status==='paid' || item.status==='pending' ) { %>
-                                                <span
-                                                    style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #fef3c7; color: #92400e;">
-                                                    🟡 Menunggu Diproses
-                                                </span>
-                                                <% } else if (item.status==='processed' ) { %>
+                                            <div style="font-size: 12px; color: var(--text-gray); margin-top: 2px;">
+                                                <%= tp.qty %> barang terjual
+                                            </div>
+                                        </div>
+                                        <div
+                                            style="font-weight: 700; color: #10b981; font-size: 14px; text-align: right;">
+                                            +Rp <%= parseInt(tp.revenue).toLocaleString('id-ID') %>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <p
+                                                style="color: var(--text-gray); font-size: 14px; text-align: center; margin-top: 40px;">
+                                                Belum ada penjualan tercatat.</p>
+                                            <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div
+                    style="margin-top: 24px; background: var(--bg-white); padding: 24px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0; color: var(--text-dark); font-size: 18px;">Pesanan Masuk Terbaru 🛍️</h3>
+                        <a href="/seller/orders"
+                            style="color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 600; padding: 6px 12px; background: #eff6ff; border-radius: 8px; transition: background 0.2s;"
+                            onmouseover="this.style.background='#dbeafe'"
+                            onmouseout="this.style.background='#eff6ff'">Lihat Seluruhnya &rarr;</a>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid var(--border); text-align: left; background: var(--bg-light);">
+                                    <th
+                                        style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                        Pembeli</th>
+                                    <th
+                                        style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                        Produk (Kuantitas)</th>
+                                    <th
+                                        style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                        Nominal Resi</th>
+                                    <th
+                                        style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                        Status Order</th>
+                                    <th
+                                        style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                        Tanggal Berlangsung</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if(recentOrders && recentOrders.length> 0) { %>
+                                    <% recentOrders.forEach(order=> { %>
+                                        <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;"
+                                            onmouseover="this.style.background='#f9fafb'"
+                                            onmouseout="this.style.background='white'">
+                                            <td
+                                                style="padding: 16px; font-weight: 600; color: var(--text-dark); font-size: 14px;">
+                                                <%= order.buyer_name %>
+                                            </td>
+                                            <td style="padding: 16px; color: var(--text-gray); font-size: 14px;">
+                                                <%= order.product_name %> <span
+                                                        style="font-weight: 700; color: #3b82f6;">(x<%= order.quantity
+                                                            %>)</span>
+                                            </td>
+                                            <td
+                                                style="padding: 16px; font-weight: 700; color: var(--text-dark); font-size: 14px;">
+                                                Rp <%= parseInt(order.price * order.quantity).toLocaleString('id-ID') %>
+                                            </td>
+                                            <td style="padding: 16px;">
+                                                <% if (order.status==='pending' ) { %>
                                                     <span
-                                                        style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #ccfbf1; color: #0d9488;">
-                                                        🔵 Sedang Dikemas
-                                                    </span>
-                                                    <% } else if (item.status==='shipped' ) { %>
+                                                        style="background: #fef08a; color: #854d0e; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">⏳
+                                                        Menunggu Dibayar</span>
+                                                    <% } else if (order.status==='paid' ) { %>
                                                         <span
-                                                            style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #dbeafe; color: #1e40af;">
-                                                            🚚 Dalam Pengiriman
-                                                        </span>
-                                                        <% } else if (item.status==='completed' ) { %>
+                                                            style="background: #bfdbfe; color: #1e40af; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">⚠️
+                                                            Perlu Diproses</span>
+                                                        <% } else if (order.status==='processed' ) { %>
                                                             <span
-                                                                style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #d1fae5; color: #065f46;">
-                                                                ✅ Selesai Diterima
-                                                            </span>
-                                                            <% } else if (item.status==='rejected' ||
-                                                                item.status==='cancelled' ) { %>
+                                                                style="background: #fde047; color: #a16207; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">📦
+                                                                Sedang Dikemas</span>
+                                                            <% } else if (order.status==='shipped' ) { %>
                                                                 <span
-                                                                    style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #b91c1c;">
-                                                                    <%= item.status==='rejected' ? '⛔ Saya Tolak'
-                                                                        : '❌ Dibatalkan Pembeli' %>
-                                                                </span>
-                                                                <% } else { %>
+                                                                    style="background: #e9d5ff; color: #6b21a8; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">🚚
+                                                                    Meluncur Dikirim</span>
+                                                                <% } else if (order.status==='completed' ) { %>
                                                                     <span
-                                                                        style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #f3f4f6; color: #374151;">
-                                                                        <%= item.status %>
-                                                                    </span>
-                                                                    <% } %>
-                                        </td>
-                                        <td style="padding: 16px; border-bottom: 1px solid #e5e7eb;">
-                                            <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-                                                <% if (item.status==='paid' || item.status==='pending' ) { %>
-                                                    <form action="/orders/items/<%= item.id %>/accept" method="POST"
-                                                        style="margin: 0;">
-                                                        <button type="submit"
-                                                            class="btn-small btn-primary">Proses</button>
-                                                    </form>
-                                                    <form action="/orders/items/<%= item.id %>/reject" method="POST"
-                                                        style="margin: 0;"
-                                                        onsubmit="return confirmAction(event, 'Tolak pesanan ini dan kembalikan stok?', 'Ya, Tolak', '#EF4444');">
-                                                        <button type="submit"
-                                                            class="btn-small btn-delete">Tolak</button>
-                                                    </form>
-                                                    <a href="/orders/seller/<%= item.id %>"
-                                                        class="btn-small btn-secondary"
-                                                        style="text-decoration: none;">Detail</a>
-                                                    <% } else if (item.status==='processed' ) { %>
-                                                        <form action="/orders/items/<%= item.id %>/ship" method="POST"
-                                                            style="margin: 0;">
-                                                            <button type="submit" class="btn-small btn-purple">🚚
-                                                                Kirim</button>
-                                                        </form>
-                                                        <a href="/orders/seller/<%= item.id %>"
-                                                            class="btn-small btn-secondary"
-                                                            style="text-decoration: none;">Detail</a>
-                                                        <% } else if (item.status==='shipped' ) { %>
-                                                            <span
-                                                                style="color: #6366f1; font-weight: 600; font-size: 13px;">Sedang
-                                                                Dikirim...</span>
-                                                            <a href="/orders/seller/<%= item.id %>"
-                                                                class="btn-small btn-secondary"
-                                                                style="text-decoration: none;">Detail</a>
-                                                            <% } else if (item.status==='completed' ) { %>
-                                                                <span
-                                                                    style="color: #059669; font-weight: 600; font-size: 13px;">✅
-                                                                    Selesai</span>
-                                                                <a href="/orders/seller/<%= item.id %>"
-                                                                    class="btn-small btn-secondary"
-                                                                    style="text-decoration: none;">Detail</a>
-                                                                <form action="/orders/items/<%= item.id %>/hide"
-                                                                    method="POST"
-                                                                    onsubmit="return confirmAction(event, 'Hapus dari riwayat?', 'Ya, Hapus', '#EF4444')"
-                                                                    style="margin: 0;">
-                                                                    <button type="submit" class="btn-small"
-                                                                        style="background:#e5e7eb; color:#6b7280; font-size:11px; padding: 4px 8px;">Hapus</button>
-                                                                </form>
-                                                                <% } else if (item.status==='rejected' ||
-                                                                    item.status==='cancelled' ) { %>
-                                                                    <span
-                                                                        style="color: #ef4444; font-size: 12px; font-weight: 600; text-transform: capitalize;">
-                                                                        <%= item.status %>
-                                                                    </span>
-                                                                    <form action="/orders/items/<%= item.id %>/hide"
-                                                                        method="POST"
-                                                                        onsubmit="return confirmAction(event, 'Hapus dari riwayat?', 'Ya, Hapus', '#EF4444')"
-                                                                        style="margin: 0;">
-                                                                        <button type="submit" class="btn-small"
-                                                                            style="background:#e5e7eb; color:#6b7280; font-size:11px; padding: 4px 8px;">Hapus</button>
-                                                                    </form>
+                                                                        style="background: #bbf7d0; color: #166534; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">✅
+                                                                        Transaksi Selesai</span>
                                                                     <% } else { %>
                                                                         <span
-                                                                            style="color: #9ca3af; font-size: 12px; text-transform: capitalize;">
-                                                                            <%= item.status %>
+                                                                            style="background: #fecaca; color: #991b1b; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">
+                                                                            <%= order.status %>
                                                                         </span>
-                                                                        <a href="/orders/seller/<%= item.id %>"
-                                                                            class="btn-small btn-secondary"
-                                                                            style="text-decoration: none;">Detail</a>
                                                                         <% } %>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <% }); %>
-                                        <% } %>
-                    </tbody>
-                </table>
+                                            </td>
+                                            <td style="padding: 16px; color: var(--text-gray); font-size: 13px;">
+                                                <%= new Date(order.date).toLocaleDateString('id-ID', { year: 'numeric' ,
+                                                    month: 'long' , day: 'numeric' }) %>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="5"
+                                                        style="text-align: center; padding: 40px; color: var(--text-gray);">
+                                                        Hingga saat ini belum ada pesanan yang masuk. Perbanyak
+                                                        inventaris produk!</td>
+                                                </tr>
+                                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <%- include('../partials/footer') %>
-
-        <!-- Legacy showToast removed. Using window.showToast from header -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
-            // AJAX Seller Actions
-            document.addEventListener('DOMContentLoaded', () => {
-                const handleAction = async (e) => {
-                    const form = e.target.closest('form');
-                    if (!form) return;
+            document.addEventListener('DOMContentLoaded', function () {
+                const ctx = document.getElementById('revenueChart').getContext('2d');
 
-                    // Only hijack seller actions
-                    if (!form.action.includes('/accept') && !form.action.includes('/reject') && !form.action.includes('/ship'))
-                        return;
+                // Create Gradient
+                const gradientInfo = ctx.createLinearGradient(0, 0, 0, 300);
+                gradientInfo.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+                gradientInfo.addColorStop(1, 'rgba(59, 130, 246, 0.05)');
 
-                    // If user cancelled an inline confirm, default action is prevented
-                    if (e.defaultPrevented) return;
-                    e.preventDefault();
+                const monthlyRevenue = JSON.parse('<%- monthlyRevenue || "[]" %>');
+                const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
-                    const btn = form.querySelector('button');
-                    const originalText = btn.innerHTML;
-                    btn.innerHTML = '⏳';
-                    btn.disabled = true;
-
-                    try {
-                        const response = await fetch(form.action, {
-                            method: 'POST',
-                            headers: {
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        });
-                        const data = await response.json();
-
-                        if (data.success) {
-                            window.showToast(data.message, 'success');
-
-                            // Remove Row with animation if deleted
-                            const row = form.closest('tr');
-                            row.style.transition = 'all 0.5s';
-                            const statusBadge = row.querySelector('td:nth-child(5) span');
-                            const actionCell = row.querySelector('td:nth-child(6)');
-
-                            // Update Status Badge
-                            if (statusBadge) {
-                                statusBadge.textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
-                                if (data.status === 'processed') {
-                                    statusBadge.style.background = '#d1fae5';
-                                    statusBadge.style.color = '#065f46';
-                                } else if (data.status === 'shipped') {
-                                    statusBadge.style.background = '#d1fae5';
-                                    statusBadge.style.color = '#065f46';
-                                } else if (data.status === 'rejected') {
-                                    statusBadge.style.background = '#fee2e2';
-                                    statusBadge.style.color = '#b91c1c';
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Laba Bersih Lapak (Rp)',
+                            data: monthlyRevenue,
+                            borderColor: '#3b82f6',
+                            backgroundColor: gradientInfo,
+                            borderWidth: 3,
+                            pointBackgroundColor: '#ffffff',
+                            pointBorderColor: '#3b82f6',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#1f2937',
+                                padding: 12,
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 14 },
+                                callbacks: {
+                                    label: function (context) {
+                                        return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                                    }
                                 }
                             }
-
-                            // Reload to get fresh buttons based on new status
-                            setTimeout(() => location.reload(), 500);
-
-                        } else {
-                            window.showToast(data.message || 'Gagal', 'error');
-                            btn.innerHTML = originalText;
-                            btn.disabled = false;
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { borderDash: [4, 4], color: 'var(--border)' },
+                                ticks: {
+                                    color: '#6b7280',
+                                    callback: value => 'Rp ' + (value / 1000) + 'k'
+                                }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: '#6b7280', font: { weight: '600' } }
+                            }
                         }
-                    } catch (err) {
-                        console.error(err);
-                        window.showToast('Terjadi kesalahan', 'error');
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
                     }
-                };
-
-                // Delegate event to table (better performance)
-                const table = document.querySelector('table');
-                if (table) {
-                    table.addEventListener('submit', handleAction);
-                }
+                });
             });
         </script>
+
+        <%- include('../partials/footer') %>

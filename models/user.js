@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       User.hasOne(models.Buyer, { foreignKey: 'user_id', as: 'buyer' });
       User.hasOne(models.Seller, { foreignKey: 'user_id', as: 'seller' });
       User.hasOne(models.Admin, { foreignKey: 'user_id', as: 'admin' });
+      User.hasOne(models.Cart, { foreignKey: 'user_id', as: 'cart' });
     }
   }
   User.init({

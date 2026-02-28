@@ -1,4 +1,4 @@
-const { Order, OrderItem, Product, User, sequelize } = require('../models');
+const { Order, OrderItem, Product, User, Cart, CartItem, sequelize } = require('../models');
 const { Op } = require('sequelize');
 
 const updateOrderStatus = async (orderId, transaction = null) => {
@@ -52,7 +52,28 @@ module.exports = {
     // Create Order
     create: async (req, res) => {
         const { recipient_name, recipient_phone, shipping_address, payment_method } = req.body;
-        const cart = req.session.cart || [];
+        let cart = [];
+        let dbCartId = null;
+
+        if (req.session.user) {
+            const userCart = await Cart.findOne({
+                where: { user_id: req.session.user.id },
+                include: [{ model: CartItem, as: 'items', include: ['product'] }]
+            });
+            if (userCart && userCart.items) {
+                dbCartId = userCart.id;
+                cart = userCart.items.map(item => ({
+                    id: item.product.id,
+                    price: parseFloat(item.product.price),
+                    seller_id: item.product.seller_id,
+                    quantity: item.quantity,
+                    stock: item.product.stock,
+                    name: item.product.name
+                }));
+            }
+        } else {
+            cart = req.session.cart || [];
+        }
 
         if (cart.length === 0) {
             req.flash('error', 'Keranjang belanja Anda masih kosong nih. Yuk tambah barang dulu!');
@@ -121,7 +142,12 @@ module.exports = {
             }
 
             await t.commit();
-            req.session.cart = [];
+
+            if (dbCartId) {
+                await CartItem.destroy({ where: { cart_id: dbCartId } });
+            } else {
+                req.session.cart = [];
+            }
             req.session.save(() => {
                 const flashMsg = createdOrderIds.length > 1
                     ? `Transaksi berhasil! Pesanan Anda dipecah menjadi ${createdOrderIds.length} tagihan terpisah berdasarkan masing-masing toko.`

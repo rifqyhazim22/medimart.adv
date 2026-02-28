@@ -1,0 +1,195 @@
+<%- include('../partials/header', { activeTab: 'products' }) %>
+
+    <style>
+        /* Embedded Premium Dashboard Styles */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header & Stats */
+        .dashboard-header {
+            background: transparent;
+            padding: 0;
+            box-shadow: none;
+            color: var(--text-dark);
+            margin-bottom: 40px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            background: none;
+            -webkit-text-fill-color: initial;
+        }
+
+        .dashboard-header p {
+            color: var(--text-gray);
+            font-size: 16px;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-white);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.blue {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .stat-icon.orange {
+            background: #fff7ed;
+            color: #f97316;
+        }
+
+        .stat-icon.green {
+            background: #f0fdf4;
+            color: #22c55e;
+        }
+
+        .stat-content h3 {
+            margin: 0;
+            color: var(--text-gray);
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .seller-nav {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .seller-nav-item {
+            text-decoration: none;
+            color: var(--text-gray);
+            font-weight: 600;
+            font-size: 16px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .seller-nav-item:hover {
+            background: var(--border);
+            color: var(--text-dark);
+        }
+
+        .seller-nav-item.active {
+            background: #FF6B35;
+            color: white;
+            box-shadow: 0 4px 6px rgba(255, 107, 53, 0.2);
+        }
+    </style>
+
+    <div class="main-container">
+        <div class="dashboard-container">
+            <div class="section-header"
+                style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="section-title">Produk Saya</h2>
+                <a href="/products/new" class="btn-primary">
+                    <span>➕</span> Tambah Produk
+                </a>
+            </div>
+
+            <div class="products-grid">
+                <% if (products.length===0) { %>
+                    <p>Belum ada produk. Silakan tambah produk baru.</p>
+                    <% } else { %>
+                        <% products.forEach(product=> { %>
+                            <div class="product-card" style="cursor: pointer; position: relative;"
+                                onclick="if(event.target.tagName !== 'BUTTON' && event.target.tagName !== 'A' && !event.target.closest('form') && !event.target.closest('.btn-small')) window.location.href='/product/<%= product.id %>'">
+                                <div class="product-image">
+                                    <img src="<%= product.image_url || '/img/default-product.svg' %>"
+                                        alt="<%= product.name %>" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-title">
+                                        <%= product.name %>
+                                    </h3>
+                                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                                        <% if (product.stock===0) { %>
+                                            <span class="stock-badge error"
+                                                style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Habis</span>
+                                            <% } else if (product.stock <=5) { %>
+                                                <span class="stock-badge warning"
+                                                    style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Sisa:
+                                                    <%= product.stock %>
+                                                </span>
+                                                <% } else { %>
+                                                    <span class="stock-badge"
+                                                        style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Stok:
+                                                        <%= product.stock %>
+                                                    </span>
+                                                    <% } %>
+                                    </div>
+                                    <p style="color: var(--text-gray); font-size: 14px;">Stok: <%= product.stock %>
+                                    </p>
+                                    <div class="product-footer">
+                                        <div class="product-price">Rp <%=
+                                                parseInt(product.price).toLocaleString('id-ID') %>
+                                        </div>
+                                        <div style="display: flex; gap: 8px;">
+                                            <a href="/products/<%= product.id %>/edit"
+                                                class="btn-small btn-secondary">Edit</a>
+                                            <form action="/products/<%= product.id %>?_method=DELETE" method="POST"
+                                                onsubmit="return confirmAction(event, 'Yakin ingin menghapus produk ini?', 'Ya, Hapus', '#EF4444');">
+                                                <button type="submit" class="btn-small btn-delete">Hapus</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } %>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <%- include('../partials/footer') %>

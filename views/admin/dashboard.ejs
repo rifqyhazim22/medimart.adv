@@ -14,21 +14,21 @@
             background: transparent;
             padding: 0;
             box-shadow: none;
-            color: #1f2937;
+            color: var(--text-dark);
             margin-bottom: 40px;
         }
 
         .dashboard-header h1 {
             font-size: 32px;
             font-weight: 800;
-            color: #111827;
+            color: var(--text-dark);
             margin-bottom: 8px;
             background: none;
             -webkit-text-fill-color: initial;
         }
 
         .dashboard-header p {
-            color: #6b7280;
+            color: var(--text-gray);
             font-size: 16px;
         }
 
@@ -41,10 +41,10 @@
         }
 
         .stat-card {
-            background: white;
+            background: var(--bg-white);
             padding: 24px;
             border-radius: 16px;
-            border: 1px solid #f3f4f6;
+            border: 1px solid var(--border);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             display: flex;
             align-items: center;
@@ -90,7 +90,7 @@
 
         .stat-content h3 {
             margin: 0;
-            color: #6b7280;
+            color: var(--text-gray);
             font-size: 13px;
             font-weight: 600;
             text-transform: uppercase;
@@ -101,21 +101,21 @@
         .stat-value {
             font-size: 26px;
             font-weight: 700;
-            color: #111827;
+            color: var(--text-dark);
             margin: 0;
         }
 
         .stat-subtitle {
             font-size: 12px;
-            color: #9ca3af;
+            color: var(--text-gray);
             margin-top: 4px;
         }
 
         .dashboard-section {
-            background: white;
+            background: var(--bg-white);
             border-radius: 16px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f3f4f6;
+            border: 1px solid var(--border);
             padding: 24px;
             margin-bottom: 40px;
         }
@@ -123,10 +123,10 @@
         .dashboard-section h2 {
             font-size: 20px;
             font-weight: 700;
-            color: #111827;
+            color: var(--text-dark);
             margin-bottom: 24px;
             padding-bottom: 16px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--border);
         }
 
         .data-table {
@@ -138,19 +138,19 @@
         .data-table th {
             text-align: left;
             padding: 12px 16px;
-            color: #6b7280;
+            color: var(--text-gray);
             font-size: 13px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--border);
         }
 
         .data-table td {
             padding: 16px;
-            color: #374151;
+            color: var(--text-dark);
             font-size: 14px;
-            border-bottom: 1px solid #f3f4f6;
+            border-bottom: 1px solid var(--border);
         }
 
         .data-table tr:last-child td {
@@ -192,8 +192,8 @@
         }
 
         .badge-pending {
-            background: #f3f4f6;
-            color: #4b5563;
+            background: var(--border);
+            color: var(--text-gray);
         }
 
         .btn-icon-danger {
@@ -259,13 +259,95 @@
                 <div class="stat-card">
                     <div class="stat-icon green">💰</div>
                     <div class="stat-content">
-                        <h3>Total Pendapatan</h3>
-                        <div class="stat-value">Rp <%= stats.totalRevenue.toLocaleString('id-ID') %>
+                        <h3>Laba Bersih Admin</h3>
+                        <div class="stat-value">Rp <%= (stats.adminRevenue || 0).toLocaleString('id-ID') %>
                         </div>
-                        <div class="stat-subtitle">Pendapatan sukses</div>
+                        <div class="stat-subtitle">Margin 10% dari GMV: Rp <%= (stats.totalRevenue ||
+                                0).toLocaleString('id-ID') %>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Chart Infographic Section -->
+            <section class="dashboard-section"
+                style="margin-bottom: 40px; display: flex; flex-wrap: wrap; gap: 40px; align-items: stretch; justify-content: center; background: var(--bg-white); border: 1px solid var(--border); box-shadow: var(--shadow-md);">
+                <div
+                    style="flex: 1; min-width: 300px; max-width: 350px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                    <h2
+                        style="border-bottom: none; margin-bottom: 24px; font-size: 18px; text-align: center; color: var(--text-dark);">
+                        Komposisi Platform</h2>
+                    <canvas id="usersChart" width="300" height="300"></canvas>
+                </div>
+                <div style="flex: 2; min-width: 300px; display: flex;">
+                    <div
+                        style="background: var(--bg-light); color: var(--text-dark); padding: 32px; border-radius: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); border: 1px solid var(--border); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; width: 100%;">
+
+                        <!-- Decoration elements -->
+                        <div
+                            style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(0, 176, 155, 0.05); border-radius: 50%;">
+                        </div>
+                        <div
+                            style="position: absolute; bottom: -30px; right: 20px; width: 100px; height: 100px; background: rgba(255, 107, 53, 0.05); border-radius: 50%;">
+                        </div>
+
+                        <div
+                            style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
+                            <div
+                                style="background: var(--bg-white); padding: 8px; border-radius: 12px; font-size: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);">
+                                🌟</div>
+                            <h3
+                                style="margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 0.02em; color: var(--text-dark);">
+                                Intelijen Performa Sistem</h3>
+                        </div>
+
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; position: relative; z-index: 1;">
+                            <div
+                                style="background: var(--bg-white); padding: 20px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+                                <h4
+                                    style="margin: 0 0 8px 0; font-size: 13px; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.05em;">
+                                    Pusat Etalase Obat</h4>
+                                <p style="margin: 0; font-size: 15px; color: var(--text-dark); line-height: 1.6;">
+                                    Menghimpun <strong style="color: #3b82f6; font-size: 18px;">
+                                        <%= stats.totalProducts %>
+                                    </strong> obat-obatan yang dinaungi oleh <strong
+                                        style="color: #3b82f6; font-size: 18px;">
+                                        <%= stats.totalSellers %>
+                                    </strong> Mitra Lapak Aktif.</p>
+                            </div>
+
+                            <div
+                                style="background: var(--bg-white); padding: 20px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+                                <h4
+                                    style="margin: 0 0 8px 0; font-size: 13px; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.05em;">
+                                    Sirkulasi Kapital (GMV)</h4>
+                                <p style="margin: 0; font-size: 15px; color: var(--text-dark); line-height: 1.6;">
+                                    Perputaran dana kotor sebesar <strong style="color: #10b981; font-size: 18px;">Rp
+                                        <%= (stats.totalRevenue || 0).toLocaleString('id-ID') %></strong> via kesuksesan
+                                    <strong style="color: #f43f5e; font-size: 18px;">
+                                        <%= stats.totalOrders %>
+                                    </strong> transaksi pesanan.</p>
+                            </div>
+
+                            <div
+                                style="grid-column: 1 / -1; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); padding: 20px; border-radius: 16px; box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                                <div>
+                                    <h4
+                                        style="margin: 0 0 4px 0; font-size: 13px; color: rgba(255,255,255,0.9); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">
+                                        Keuntungan Dividen (10% GMV)</h4>
+                                    <p style="margin: 0; font-size: 13px; color: rgba(255,255,255,0.8);">Total
+                                        penerimaan bersih potong margin untuk Medimart.</p>
+                                </div>
+                                <div
+                                    style="font-size: 28px; font-weight: 800; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    Rp <%= (stats.adminRevenue || 0).toLocaleString('id-ID') %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <!-- User List -->
             <section class="dashboard-section">
@@ -285,7 +367,7 @@
                         <tbody>
                             <% allUsers.forEach(user=> { %>
                                 <tr>
-                                    <td style="font-family: monospace; color: #6b7280;">#<%= user.id %>
+                                    <td style="font-family: monospace; color: var(--text-gray);">#<%= user.id %>
                                     </td>
                                     <td style="font-weight: 500;">
                                         <%= user.username %>
@@ -309,7 +391,7 @@
                                                 <button type="submit" class="btn-icon-danger">Hapus</button>
                                             </form>
                                             <% } else { %>
-                                                <span style="color: #d1d5db;">-</span>
+                                                <span style="color: var(--border);">-</span>
                                                 <% } %>
                                     </td>
                                 </tr>
@@ -382,7 +464,7 @@
                                         <% } else { %>
                                             <tr>
                                                 <td colspan="6"
-                                                    style="text-align: center; padding: 40px; color: #9ca3af;">
+                                                    style="text-align: center; padding: 40px; color: var(--text-gray);">
                                                     Belum ada transaksi terbaru.</td>
                                             </tr>
                                             <% } %>
@@ -395,8 +477,44 @@
 
     <%- include('../partials/footer') %>
 
+        <!-- Include Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
         <script>
-            <!-- Legacy showToast removed. Using window.showToast from header -->
+            // Initialize User Roles Chart
+            document.addEventListener('DOMContentLoaded', () => {
+                const ctx = document.getElementById('usersChart');
+                if (ctx) {
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Customers', 'Sellers'],
+                            datasets: [{
+                                data: JSON.parse('<%- JSON.stringify(chartData || [0,0]) %>'),
+                                backgroundColor: [
+                                    '#3b82f6', // Blue for Customers
+                                    '#f97316'  // Orange for Sellers
+                                ],
+                                borderWidth: 0,
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 20,
+                                        font: { family: "'DM Sans', sans-serif", size: 13 }
+                                    }
+                                }
+                            },
+                            cutout: '70%'
+                        }
+                    });
+                }
+            });
 
             // AJAX Admin Delete
             document.addEventListener('DOMContentLoaded', () => {

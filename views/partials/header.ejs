@@ -12,6 +12,27 @@
     <!-- CSS -->
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+
+    <!-- Theme Initialization Script (Prevent FOUC) -->
+    <script>
+        const savedTheme = localStorage.getItem('medimart_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', target);
+            localStorage.setItem('medimart_theme', target);
+            document.getElementById('themeToggleBtn').innerHTML = target === 'dark' ? '☀️' : '🌙';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) btn.innerHTML = current === 'dark' ? '☀️' : '🌙';
+        });
+    </script>
+
     <style>
         /* Colorful Conversion Elements */
         :root {
@@ -49,14 +70,106 @@
         }
 
         .btn-login {
-            background: white;
+            background: var(--bg-white);
             color: #FF6B35 !important;
             border: 2px solid #FF6B35 !important;
             font-weight: 700 !important;
+            transition: all 0.3s ease !important;
         }
 
         .btn-login:hover {
-            background: #FFF5F2 !important;
+            background: var(--bg-light) !important;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.15) !important;
+        }
+
+        /* Modern Glassmorphism Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--bg-glass, rgba(255, 255, 255, 0.85));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+            box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        /* Search Bar Cosmetics */
+        .search-bar form {
+            display: flex;
+            align-items: center;
+            background: var(--bg-light);
+            border: 2px solid var(--border);
+            border-radius: 99px;
+            padding: 4px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .search-bar form:focus-within {
+            background: var(--bg-white);
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+        }
+
+        .search-bar input {
+            border: none !important;
+            background: transparent !important;
+            padding: 0 16px !important;
+            font-size: 14px;
+            height: 38px;
+            outline: none;
+            width: 100%;
+            box-shadow: none !important;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+        }
+
+        .search-btn {
+            border-radius: 99px !important;
+            background: var(--gradient-primary) !important;
+            border: none !important;
+            color: white !important;
+            padding: 0 20px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            font-size: 14px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            box-shadow: 0 4px 6px rgba(255, 107, 53, 0.2);
+        }
+
+        .search-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* User Menu & Actions */
+        .user-menu a,
+        .cart-btn {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s !important;
+        }
+
+        .user-menu a:hover,
+        .cart-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            transition: opacity 0.2s;
+        }
+
+        .user-info:hover {
+            opacity: 0.8;
+        }
+
+        .user-info:hover .user-name {
+            color: #FF6B35 !important;
         }
     </style>
 </head>
@@ -72,11 +185,17 @@
                 </div>
 
                 <div class="search-bar">
-                    <form action="/" method="GET" style="display: flex; width: 100%; align-items: center;">
-                        <input type="text" name="search" placeholder="Cari obat, vitamin..."
-                            value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
-                        <button type="submit" class="search-btn">🔍</button>
-                    </form>
+                    <% let searchAction="/" ; let searchPlaceholder="Cari obat, vitamin..." ; if (typeof currentUser
+                        !=='undefined' && currentUser) { if (currentUser.role==='seller' ) {
+                        searchAction="/seller/products" ; searchPlaceholder="Cari inventaris saya..." ; } else if
+                        (currentUser.role==='admin' ) { searchAction="/admin/dashboard" ;
+                        searchPlaceholder="Cari profil pengguna..." ; } } %>
+                        <form action="<%= searchAction %>" method="GET"
+                            style="display: flex; width: 100%; align-items: center;">
+                            <input type="text" name="search" placeholder="<%= searchPlaceholder %>"
+                                value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+                            <button type="submit" class="search-btn">🔍</button>
+                        </form>
                 </div>
 
                 <div class="header-actions">
@@ -92,38 +211,50 @@
                         </a>
                         <% } %>
 
+                            <!-- Theme Toggle Global -->
+                            <button id="themeToggleBtn" onclick="toggleTheme()"
+                                style="background: var(--bg-light); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px;"
+                                title="Ganti Layar Siang/Malam">
+                                🌙
+                            </button>
+
                             <!-- 2. User Menu / Auth Buttons -->
                             <% if (currentUser) { %>
                                 <div class="user-menu" style="display: flex; align-items: center; gap: 12px;">
                                     <a href="/profile"
-                                        style="text-decoration: none; display: flex; align-items: center; gap: 8px;"
-                                        title="Lihat Profil">
+                                        style="text-decoration: none; display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 99px; <%= (typeof activeTab !== 'undefined' && activeTab === 'profile') ? 'background: var(--bg-light); border: 1px solid var(--border);' : 'background: transparent; border: 1px solid transparent;' %> transition: all 0.2s;"
+                                        title="Manajemen Profil Akun">
                                         <div class="user-info" style="display: flex; align-items: center; gap: 8px;">
-                                            <div class="user-avatar"
-                                                style="background-color: #FF6B35; color: white; display: flex; justify-content: center; align-items: center; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 14px;">
-                                                <%= currentUser.username.charAt(0).toUpperCase() %>
-                                            </div>
-                                            <div style="display: flex; flex-direction: column;">
-                                                <span class="user-name"
-                                                    style="font-weight: 600; font-size: 14px; color: #1f2937;">
-                                                    <%= currentUser.username %>
-                                                </span>
-                                                <span
-                                                    style="font-size: 11px; color: #6b7280; text-transform: uppercase;">
-                                                    <%= currentUser.role %>
-                                                </span>
-                                            </div>
+                                            <% if (currentUser.profile_image) { %>
+                                                <img src="<%= currentUser.profile_image %>" alt="Avatar"
+                                                    style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-white); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                                <% } else { %>
+                                                    <div class="user-avatar"
+                                                        style="background-color: #FF6B35; color: white; display: flex; justify-content: center; align-items: center; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 14px;">
+                                                        <%= currentUser.username.charAt(0).toUpperCase() %>
+                                                    </div>
+                                                    <% } %>
+                                                        <div style="display: flex; flex-direction: column;">
+                                                            <span class="user-name"
+                                                                style="font-weight: 600; font-size: 14px; color: var(--text-dark);">
+                                                                <%= currentUser.username %>
+                                                            </span>
+                                                            <span
+                                                                style="font-size: 11px; color: var(--text-gray); text-transform: uppercase;">
+                                                                <%= currentUser.role %>
+                                                            </span>
+                                                        </div>
                                         </div>
                                     </a>
                                     <a href="/logout" class="auth-btn btn-logout"
-                                        style="text-decoration: none; font-size: 12px; padding: 6px 12px; border: 1px solid #e5e7eb; border-radius: 6px; color: #374151; background: white; transition: all 0.2s;">Logout</a>
+                                        style="text-decoration: none; font-size: 12px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; color: var(--text-dark); background: var(--bg-white); transition: all 0.2s;">Logout</a>
                                 </div>
                                 <% } else { %>
                                     <div class="user-menu" style="display: flex; gap: 8px;">
                                         <a href="/login" class="auth-btn btn-login"
                                             style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; font-weight: 600;">Masuk</a>
                                         <a href="/register" class="auth-btn"
-                                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; background: #f3f4f6; color: #374151; font-weight: 600;">Daftar</a>
+                                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; background: var(--border); color: var(--text-dark); font-weight: 600;">Daftar</a>
                                     </div>
                                     <% } %>
                 </div>
@@ -145,9 +276,22 @@
                                     class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'dashboard') ? 'active' : '' %>"
                                     onclick="window.location.href='/admin/dashboard'">🛡️ Admin Dashboard</button>
                                 <% } else if (currentUser.role==='seller' ) { %>
-                                    <button
-                                        class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'dashboard') ? 'active' : '' %>"
-                                        onclick="window.location.href='/seller/dashboard'">📊 Seller Dashboard</button>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button
+                                            class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'dashboard') ? 'active' : '' %>"
+                                            onclick="window.location.href='/seller/dashboard'">📊 Dashboard</button>
+                                        <button
+                                            class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'products') ? 'active' : '' %>"
+                                            onclick="window.location.href='/seller/products'">🛠️ Kelola Produk &
+                                            Inventaris</button>
+                                        <button
+                                            class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'orders') ? 'active' : '' %>"
+                                            onclick="window.location.href='/seller/orders'">📝 Pesanan Masuk</button>
+                                        <button
+                                            class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'settings') ? 'active' : '' %>"
+                                            onclick="window.location.href='/seller/settings'">⚙️ Pengaturan
+                                            Toko</button>
+                                    </div>
                                     <% } else { %>
                                         <!-- Customer -->
                                         <button
@@ -182,21 +326,21 @@
             border-radius: 16px !important;
             padding: 16px 20px !important;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
-            color: #1f2937 !important;
+            color: var(--text-dark) !important;
         }
 
         .psych-success {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%) !important;
+            background: var(--bg-white) !important;
             border-left: 6px solid #22c55e !important;
         }
 
         .psych-error {
-            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+            background: var(--bg-white) !important;
             border-left: 6px solid #ef4444 !important;
         }
 
         .psych-warning {
-            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+            background: var(--bg-white) !important;
             border-left: 6px solid #f59e0b !important;
         }
 
@@ -204,14 +348,14 @@
             font-family: 'Outfit', sans-serif !important;
             font-size: 16px !important;
             font-weight: 800 !important;
-            color: #111827 !important;
+            color: var(--text-dark) !important;
             margin-bottom: 4px !important;
         }
 
         .psych-text {
             font-family: 'DM Sans', sans-serif !important;
             font-size: 14px !important;
-            color: #4b5563 !important;
+            color: var(--text-gray) !important;
             line-height: 1.5 !important;
         }
 
@@ -296,13 +440,13 @@
 
             Swal.fire({
                 title: isDanger ? 'Anda Yakin?' : 'Tunggu Sebentar..',
-                html: `<span style="font-size: 15px; color: #4b5563;">${message}</span>`,
+                html: `<span style="font-size: 15px; color: var(--text-gray);">${message}</span>`,
                 icon: isDanger ? 'warning' : 'question',
                 showCancelButton: true,
                 confirmButtonColor: confirmColor,
-                cancelButtonColor: '#e5e7eb',
+                cancelButtonColor: 'var(--border)',
                 confirmButtonText: `${actionBtnText}`,
-                cancelButtonText: '<span style="color: #4b5563;">Kembali</span>',
+                cancelButtonText: '<span style="color: var(--text-gray);">Kembali</span>',
                 reverseButtons: true, // Psychological trick: Action button on the left grabs second-thought attention
                 showClass: {
                     popup: 'animate__animated animate__fadeInUp animate__faster'

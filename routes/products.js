@@ -15,6 +15,8 @@ const upload = require('../middlewares/upload');
 
 // Public
 router.get('/', productController.index);
+router.get('/product/:id', productController.show);
+router.get('/store/:id', productController.storeView);
 
 // Seller Management
 router.get('/products/new', ensureSeller, productController.createPage);

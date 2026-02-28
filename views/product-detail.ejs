@@ -1,0 +1,259 @@
+<%- include('partials/header', { activeTab: 'marketplace' }) %>
+
+    <div class="container" style="padding: 40px 20px; max-width: 1200px; margin: 0 auto; min-height: 80vh;">
+        <!-- Breadcrumbs -->
+        <div style="font-size: 14px; color: var(--text-gray); margin-bottom: 24px; display: flex; gap: 8px;">
+            <a href="/" style="color: #FF6B35; text-decoration: none; font-weight: 500;">Marketplace</a>
+            <span>&rsaquo;</span>
+            <a href="/?category=<%= product.category %>"
+                style="color: #FF6B35; text-decoration: none; font-weight: 500;">
+                <%= product.category %>
+            </a>
+            <span>&rsaquo;</span>
+            <span
+                style="color: var(--text-gray); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 200px;">
+                <%= product.name %>
+            </span>
+        </div>
+
+        <div class="product-detail-grid">
+            <!-- 1. Product Gallery (Left) -->
+            <div
+                style="background: var(--bg-white); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; position: sticky; top: 100px;">
+                <div
+                    style="position: relative; width: 100%; aspect-ratio: 1 / 1; background: var(--bg-white); display: flex; align-items: center; justify-content: center; padding: 16px;">
+                    <img src="<%= product.original_image_url || product.image_url || '/img/default-product.svg' %>"
+                        alt="<%= product.name %>"
+                        style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px;">
+                    <% if (product.stock===0) { %>
+                        <div
+                            style="position: absolute; inset: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
+                            <span
+                                style="background: #ef4444; color: white; padding: 8px 20px; border-radius: 99px; font-weight: 800; font-size: 16px; letter-spacing: 1px; transform: rotate(-10deg);">HABIS
+                                TERJUAL</span>
+                        </div>
+                        <% } %>
+                </div>
+            </div>
+
+            <!-- 2. Product Info (Middle) -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                <!-- Header Info -->
+                <div>
+                    <% const icons={ 'Obat Bebas' : '💊' , 'Obat Keras' : '💉' , 'Vitamin' : '🍊' , 'Alat Kesehatan'
+                        : '🩹' , 'Herbal' : '🌿' }; const icon=icons[product.category] || '💊' ; %>
+                        <div
+                            style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--bg-light); color: #FF6B35; border-radius: 99px; font-size: 13px; font-weight: 700; margin-bottom: 12px;">
+                            <%= icon %>
+                                <%= product.category %>
+                        </div>
+                        <h1
+                            style="font-size: 24px; font-weight: 800; color: var(--text-dark); margin: 0 0 12px 0; line-height: 1.3;">
+                            <%= product.name %>
+                        </h1>
+                        <div style="font-size: 28px; font-weight: 900; color: var(--text-dark); margin-bottom: 0;">
+                            Rp <%= parseInt(product.price).toLocaleString('id-ID') %>
+                        </div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid var(--border); margin: 0;">
+
+                <!-- Detail / Spesifikasi -->
+                <div>
+                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">Detail
+                        Produk
+                    </h3>
+                    <div
+                        style="display: grid; grid-template-columns: 120px 1fr; gap: 12px; font-size: 14px; color: var(--text-gray);">
+                        <div style="color: var(--text-gray);">Kondisi</div>
+                        <div style="font-weight: 500; color: var(--text-dark);">Baru</div>
+
+                        <div style="color: var(--text-gray);">Kategori</div>
+                        <div style="font-weight: 600; color: #FF6B35;">
+                            <%= product.category %>
+                        </div>
+
+                        <div style="color: var(--text-gray);">Min. Pemesanan</div>
+                        <div style="font-weight: 500; color: var(--text-dark);">1 Buah</div>
+
+                        <div style="color: var(--text-gray);">Etalase</div>
+                        <div style="font-weight: 600; color: #3b82f6;">
+                            <a href="/store/<%= product.seller_id %>" style="color: inherit; text-decoration: none;">
+                                <%= product.seller ? (product.seller.Seller?.store_name || product.seller.username)
+                                    : 'Medimart Official' %>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid var(--border); margin: 0;">
+
+                <!-- Deskripsi -->
+                <div>
+                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">
+                        Deskripsi Produk
+                    </h3>
+                    <div
+                        style="color: var(--text-dark); font-size: 15px; line-height: 1.7; white-space: pre-wrap; font-family: 'DM Sans', sans-serif;">
+                        <%= product.description || 'Tidak ada deskripsi detail untuk produk ini.' %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Interactive & Seller (Right) -->
+            <div style="display: flex; flex-direction: column; gap: 16px; position: sticky; top: 100px;">
+                <!-- Seller Card -->
+                <div style="background: var(--bg-white); border-radius: 16px; border: 1px solid var(--border); padding: 16px; display: flex; align-items: center; gap: 12px; transition: transform 0.1s, background-color 0.2s; cursor: pointer;"
+                    onclick="window.location.href='/store/<%= product.seller_id %>'"
+                    onmousedown="this.style.transform='scale(0.96)';" onmouseup="this.style.transform='scale(1)';"
+                    onmouseleave="this.style.transform='scale(1)';"
+                    onmouseover="this.style.backgroundColor='var(--bg-light)';"
+                    onmouseout="this.style.backgroundColor='var(--bg-white)';">
+                    <div
+                        style="width: 48px; height: 48px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 20px; overflow: hidden; flex-shrink: 0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+                        <% if (product.seller && product.seller.profile_image) { %>
+                            <img src="<%= product.seller.profile_image %>"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                            <% } else { %>
+                                🏪
+                                <% } %>
+                    </div>
+                    <div style="flex: 1; overflow: hidden;">
+                        <div style="font-size: 12px; color: var(--text-gray); margin-bottom: 2px;">Penjual / Lapak</div>
+                        <div
+                            style="font-size: 14px; font-weight: 700; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <%= product.seller ? (product.seller.Seller?.store_name || product.seller.username)
+                                : 'Official Store' %>
+                        </div>
+                        <% if (product.seller && product.seller.Seller?.store_address) { %>
+                            <div
+                                style="font-size: 12px; color: var(--text-gray); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                📍 <%= product.seller.Seller.store_address %>
+                            </div>
+                            <% } %>
+                    </div>
+                </div>
+
+                <!-- Action Box -->
+                <div
+                    style="background: var(--bg-white); border-radius: 16px; border: 1px solid var(--border); padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">Atur
+                        Pembelian
+                    </h3>
+
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+                        <span style="font-size: 14px; color: var(--text-gray);">Subtotal</span>
+                        <span style="font-size: 18px; font-weight: 800; color: var(--text-dark);">Rp <%=
+                                parseInt(product.price).toLocaleString('id-ID') %></span>
+                    </div>
+
+                    <form action="/cart/add" method="POST" id="detailCartForm"
+                        style="display: flex; flex-direction: column; gap: 12px;">
+                        <input type="hidden" name="productId" value="<%= product.id %>">
+
+                        <% if (typeof currentUser !=='undefined' && currentUser && currentUser.id===product.seller_id) {
+                            %>
+                            <button type="button" onclick="window.location.href='/products/<%= product.id %>/edit'"
+                                style="width: 100%; padding: 14px; border-radius: 10px; background: var(--bg-white); color: #3b82f6; border: 1px solid #3b82f6; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);"
+                                onmouseover="this.style.background='#eff6ff'"
+                                onmouseout="this.style.background='white'">
+                                ✏️ Menu Edit Produk Pribadi
+                            </button>
+                            <% } else { %>
+                                <button type="submit" class="btn-primary"
+                                    style="width: 100%; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;"
+                                    <%=product.stock===0 ? 'disabled' : '' %>>
+                                    <span style="font-size: 18px;">🛒</span>
+                                    <%= product.stock===0 ? 'Stok Habis' : '+ Keranjang' %>
+                                </button>
+                                <% } %>
+                    </form>
+
+                    <div
+                        style="margin-top: 16px; display: flex; align-items: center; gap: 6px; justify-content: center; font-family: 'DM Sans', sans-serif;">
+                        <% if (product.stock> 10) { %>
+                            <span style="color: #059669; font-size: 13px; font-weight: 600;">✅ Stok Tersedia (<%=
+                                    product.stock %>)</span>
+                            <% } else if (product.stock> 0) { %>
+                                <span style="color: #d97706; font-size: 13px; font-weight: 600;">⚠️ Sisa <%=
+                                        product.stock %> buah!</span>
+                                <% } else { %>
+                                    <span style="color: #dc2626; font-size: 13px; font-weight: 600;">❌ Kosong</span>
+                                    <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .product-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (min-width: 1024px) {
+            .product-detail-grid {
+                /* Layout 3 kolom: Gambar (300px), Info (flexible), Aksi (300px) */
+                grid-template-columns: 320px 1fr 320px;
+                gap: 32px;
+            }
+        }
+    </style>
+
+    <script>
+        // AJAX Add to Cart for Detail Page
+        const detailForm = document.getElementById('detailCartForm');
+        if (detailForm) {
+            detailForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = detailForm.querySelector('button[type="submit"]');
+                if (!btn) return;
+
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = 'Memproses ⏳...';
+                btn.disabled = true;
+
+                try {
+                    const formData = new URLSearchParams(new FormData(detailForm));
+                    const response = await fetch('/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        window.showToast(data.message || 'Berhasil masuk keranjang!', 'success');
+
+                        // Fire Confetti!
+                        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#FF6B35', '#22c55e', '#E040FB'] });
+
+                        // Update Header Badge
+                        const badge = document.getElementById('cartBadge');
+                        if (badge) {
+                            badge.innerText = data.cartCount;
+                            if (data.cartCount > 0) badge.style.display = 'flex';
+                        }
+                    } else {
+                        window.showToast(data.message || 'Gagal menambahkan', 'error');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    window.showToast('Terjadi kesalahan koneksi', 'error');
+                } finally {
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                }
+            });
+        }
+    </script>
+
+    <%- include('partials/footer') %>

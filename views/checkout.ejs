@@ -53,7 +53,7 @@
         }
 
         .checkout-form-section {
-            background: white;
+            background: var(--bg-white);
             border-radius: 16px;
             padding: 24px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -63,13 +63,13 @@
         .checkout-header {
             margin-bottom: 24px;
             padding-bottom: 16px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--border);
         }
 
         .checkout-header h2 {
             font-family: 'Outfit', sans-serif;
             font-size: 24px;
-            color: #1f2937;
+            color: var(--text-dark);
             margin: 0;
         }
 
@@ -81,14 +81,14 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #374151;
+            color: var(--text-dark);
         }
 
         .form-input,
         .form-textarea {
             width: 100%;
             padding: 12px;
-            border: 1px solid #d1d5db;
+            border: 1px solid var(--border);
             border-radius: 8px;
             font-family: inherit;
         }
@@ -98,7 +98,7 @@
             align-items: center;
             gap: 12px;
             padding: 16px;
-            border: 2px solid #e5e7eb;
+            border: 2px solid var(--border);
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s;
@@ -183,20 +183,20 @@
                     <!-- Right Column: Summary -->
                     <div class="order-summary">
                         <div class="summary-card"
-                            style="background: white; padding: 24px; border-radius: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 100px;">
+                            style="background: var(--bg-white); padding: 24px; border-radius: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 100px;">
                             <h3>Ringkasan Pesanan</h3>
 
                             <div id="checkoutItems" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
                                 <% cart.forEach(item=> { %>
                                     <div
-                                        style="display: flex; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid #f3f4f6; padding-bottom: 12px;">
+                                        style="display: flex; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
                                         <img src="<%= item.image_url || '/img/default-product.svg' %>"
                                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
                                         <div style="flex: 1;">
                                             <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">
                                                 <%= item.name %>
                                             </div>
-                                            <div style="font-size: 12px; color: #6b7280;">
+                                            <div style="font-size: 12px; color: var(--text-gray);">
                                                 <%= item.quantity %> x Rp <%=
                                                         parseFloat(item.price).toLocaleString('id-ID') %>
                                             </div>
@@ -208,7 +208,7 @@
                                     <% }); %>
                             </div>
 
-                            <div class="divider-summary" style="height: 1px; background: #e5e7eb; margin: 16px 0;">
+                            <div class="divider-summary" style="height: 1px; background: var(--border); margin: 16px 0;">
                             </div>
 
                             <div class="summary-row"
@@ -253,7 +253,7 @@
             // Tampilkan Modal Penenang
             Swal.fire({
                 title: 'Mengamankan Transaksi..',
-                html: '<span style="color:#4b5563; font-size:15px;">Mohon tunggu, kami sedang menyandikan pesanan Anda 🔒</span>',
+                html: '<span style="color: var(--text-gray); font-size:15px;">Mohon tunggu, kami sedang menyandikan pesanan Anda 🔒</span>',
                 allowOutsideClick: false,
                 showConfirmButton: false,
                 willOpen: () => {

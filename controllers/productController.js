@@ -1,4 +1,4 @@
-const { Product, User, sequelize } = require('../models');
+const { Product, User, Order, OrderItem, sequelize } = require('../models');
 const { Op } = require('sequelize');
 const { optimizeImage } = require('../utils/imageOptimizer');
 
@@ -17,12 +17,106 @@ module.exports = {
                 order: [['createdAt', 'DESC']]
             });
 
+            // Recommendation Engine Logic
+            let recommendedProducts = [];
+            let recoTitle = "Spesial Untuk Anda";
+
+            if (req.session.user && req.session.user.role !== 'seller') {
+                const userId = req.session.user.id;
+                // Find categories this user has bought
+                const pastOrders = await OrderItem.findAll({
+                    include: [
+                        { model: Order, where: { user_id: userId } },
+                        { model: Product, attributes: ['category'] }
+                    ]
+                });
+
+                if (pastOrders.length > 0) {
+                    const boughtCategories = [...new Set(pastOrders.map(item => item.Product?.category).filter(Boolean))];
+
+                    if (boughtCategories.length > 0) {
+                        recoTitle = "Berdasarkan Pembelian Anda";
+                        recommendedProducts = await Product.findAll({
+                            where: { category: { [Op.in]: boughtCategories } },
+                            include: [{ model: User, as: 'seller' }],
+                            order: sequelize.random(),
+                            limit: 4
+                        });
+                    }
+                }
+            }
+
+            // Fallback generic recommendation if no history or not logged in
+            if (recommendedProducts.length === 0) {
+                recommendedProducts = await Product.findAll({
+                    include: [{ model: User, as: 'seller' }],
+                    order: sequelize.random(),
+                    limit: 4
+                });
+            }
+
             res.render('index', {
                 products,
                 category: category || 'all',
                 searchQuery: search,
                 cartCount: res.locals.cartCount || 0,
-                cartTotal: res.locals.cartTotal || 0
+                cartTotal: res.locals.cartTotal || 0,
+                recommendedProducts,
+                recoTitle,
+                currentUser: req.session.user || null
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server Error');
+        }
+    },
+
+    // Public Product Detail
+    show: async (req, res) => {
+        try {
+            const product = await Product.findByPk(req.params.id, {
+                include: [{ model: User, as: 'seller' }]
+            });
+            if (!product) {
+                req.flash('error', 'Produk tidak ditemukan');
+                return res.redirect('/');
+            }
+            res.render('product-detail', {
+                product,
+                cartCount: res.locals.cartCount || 0,
+                cartTotal: res.locals.cartTotal || 0,
+                currentUser: req.session.user || null
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server Error');
+        }
+    },
+
+    // Public Seller Store View
+    storeView: async (req, res) => {
+        try {
+            const sellerId = req.params.id;
+            const seller = await User.findOne({
+                where: { id: sellerId, role: 'seller' }
+            });
+
+            if (!seller) {
+                req.flash('error', 'Toko tidak ditemukan atau data penjual tidak valid.');
+                return res.redirect('/');
+            }
+
+            const products = await Product.findAll({
+                where: { seller_id: sellerId },
+                order: [['createdAt', 'DESC']]
+            });
+
+            res.render('store/index', {
+                seller,
+                products,
+                cartCount: res.locals.cartCount || 0,
+                cartTotal: res.locals.cartTotal || 0,
+                currentUser: req.session.user || null
             });
         } catch (err) {
             console.error(err);
@@ -48,7 +142,7 @@ module.exports = {
 
     // Create Page
     createPage: (req, res) => {
-        res.render('product-form', { isEdit: false, product: {} });
+        res.render('product-form', { isEdit: false, product: {}, currentUser: req.session.user });
     },
 
     // Create Action
@@ -97,7 +191,7 @@ module.exports = {
                 req.flash('error', 'Produk tidak ditemukan');
                 return res.redirect('/seller/dashboard');
             }
-            res.render('product-form', { isEdit: true, product });
+            res.render('product-form', { isEdit: true, product, currentUser: req.session.user });
         } catch (err) {
             console.error(err);
             res.redirect('/seller/dashboard');
