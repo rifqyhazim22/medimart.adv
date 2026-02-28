@@ -78,7 +78,7 @@ module.exports = {
                 include: [{ model: User, as: 'seller' }]
             });
             if (!product) {
-                req.flash('error', 'Produk tidak ditemukan');
+                req.flash('error', req.t('product.not_found'));
                 return res.redirect('/');
             }
             res.render('product-detail', {
@@ -102,7 +102,7 @@ module.exports = {
             });
 
             if (!seller) {
-                req.flash('error', 'Toko tidak ditemukan atau data penjual tidak valid.');
+                req.flash('error', req.t('product.store_not_found'));
                 return res.redirect('/');
             }
 
@@ -172,11 +172,11 @@ module.exports = {
                 name, category, description, price, stock, image_url, original_image_url,
                 seller_id: req.session.user.id
             });
-            req.flash('success_msg', 'Produk berhasil ditambahkan');
+            req.flash('success_msg', req.t('product.added'));
             res.redirect('/seller/dashboard');
         } catch (err) {
             console.error(err);
-            req.flash('error', 'Gagal menambah produk');
+            req.flash('error', req.t('product.add_failed'));
             res.redirect('/products/new');
         }
     },
@@ -188,7 +188,7 @@ module.exports = {
                 where: { id: req.params.id, seller_id: req.session.user.id }
             });
             if (!product) {
-                req.flash('error', 'Produk tidak ditemukan');
+                req.flash('error', req.t('product.not_found'));
                 return res.redirect('/seller/dashboard');
             }
             res.render('product-form', { isEdit: true, product, currentUser: req.session.user });
@@ -208,7 +208,7 @@ module.exports = {
         try {
             const product = await Product.findOne({ where: { id: req.params.id, seller_id: req.session.user.id } });
             if (!product) {
-                req.flash('error', 'Produk tidak ditemukan');
+                req.flash('error', req.t('product.not_found'));
                 return res.redirect('/seller/dashboard');
             }
 
@@ -233,11 +233,11 @@ module.exports = {
             }
 
             await product.update(updateData);
-            req.flash('success_msg', 'Produk berhasil diupdate');
+            req.flash('success_msg', req.t('product.updated'));
             res.redirect('/seller/dashboard');
         } catch (err) {
             console.error(err);
-            req.flash('error', 'Gagal update produk');
+            req.flash('error', req.t('product.update_failed'));
             res.redirect('/seller/dashboard'); // Helper redirect or referer
         }
     },
@@ -248,11 +248,11 @@ module.exports = {
             await Product.destroy({
                 where: { id: req.params.id, seller_id: req.session.user.id }
             });
-            req.flash('success_msg', 'Produk dihapus');
+            req.flash('success_msg', req.t('product.deleted'));
             res.redirect('/seller/dashboard');
         } catch (err) {
             console.error(err);
-            req.flash('error', 'Gagal menghapus produk');
+            req.flash('error', req.t('product.delete_failed'));
             res.redirect('/seller/dashboard');
         }
     }

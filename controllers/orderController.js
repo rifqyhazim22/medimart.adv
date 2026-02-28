@@ -76,7 +76,7 @@ module.exports = {
         }
 
         if (cart.length === 0) {
-            req.flash('error', 'Keranjang belanja Anda masih kosong nih. Yuk tambah barang dulu!');
+            req.flash('error', req.t('order.cart_empty'));
             return res.redirect('/cart');
         }
 
@@ -124,7 +124,7 @@ module.exports = {
                     });
 
                     if (product.stock < item.quantity) {
-                        throw new Error(`Stok tidak cukup untuk produk: ${product.name}`);
+                        throw new Error(req.t('order.stock_insufficient', product.name));
                     }
 
                     await OrderItem.create({
@@ -150,8 +150,8 @@ module.exports = {
             }
             req.session.save(() => {
                 const flashMsg = createdOrderIds.length > 1
-                    ? `Transaksi berhasil! Pesanan Anda dipecah menjadi ${createdOrderIds.length} tagihan terpisah berdasarkan masing-masing toko.`
-                    : 'Transaksi berhasil! Pesanan Anda sedang diteruskan ke Penjual.';
+                    ? req.t('order.checkout_success_multi', createdOrderIds.length)
+                    : req.t('order.checkout_success_single');
                 req.flash('success_msg', flashMsg);
                 res.redirect('/user/dashboard');
             });
@@ -159,7 +159,7 @@ module.exports = {
         } catch (err) {
             await t.rollback();
             console.error(err);
-            req.flash('error', 'Yah, transaksi gagal diproses, pastikan saldo atau koneksi aman: ' + err.message);
+            req.flash('error', req.t('order.checkout_failed', err.message));
             res.redirect('/cart');
         }
     },
@@ -172,7 +172,7 @@ module.exports = {
             });
 
             if (!order) {
-                req.flash('error', 'Waduh, pesanan yang Anda cari tidak dapat ditemukan di catatan kami.');
+                req.flash('error', req.t('order.not_found'));
                 return res.redirect('/user/dashboard');
             }
 
@@ -242,7 +242,7 @@ module.exports = {
             await updateOrderStatus(order.id, t);
             await t.commit();
             req.session.save(() => {
-                req.flash('success_msg', 'Pesanan utuh berhasil dibatalkan. Jangan khawatir, sistem telah mencatatnya.');
+                req.flash('success_msg', req.t('order.cancelled'));
                 res.redirect('/orders/' + req.params.id);
             });
 
@@ -250,7 +250,7 @@ module.exports = {
             await t.rollback();
             console.error(err);
             req.session.save(() => {
-                req.flash('error', 'Gagal membatalkan pesanan. Coba lagi nanti: ' + err.message);
+                req.flash('error', req.t('order.cancel_failed', err.message));
                 res.redirect('/user/dashboard');
             });
         }
@@ -272,12 +272,12 @@ module.exports = {
             });
 
             if (!item) {
-                if (isAjax) return res.status(404).json({ success: false, message: 'Item tidak ditemukan' });
+                if (isAjax) return res.status(404).json({ success: false, message: req.t('order.item_not_found') });
                 throw new Error('Item tidak ditemukan');
             }
 
             if (['cancelled', 'completed', 'rejected', 'shipped'].includes(item.status)) {
-                if (isAjax) return res.status(400).json({ success: false, message: 'Item tidak bisa dibatalkan' });
+                if (isAjax) return res.status(400).json({ success: false, message: req.t('order.item_cannot_cancel') });
                 throw new Error('Item sudah diproses, dikirim, selesai, atau dibatalkan');
             }
 
@@ -296,11 +296,11 @@ module.exports = {
             await t.commit();
 
             if (isAjax) {
-                return res.json({ success: true, message: 'Satu barang berhasil dibatalkan.' });
+                return res.json({ success: true, message: req.t('order.item_cancelled') });
             }
 
             req.session.save(() => {
-                req.flash('success_msg', 'Satu barang dari pesanan berhasil dibatalkan. Sisa barang akan tetap dikirim.');
+                req.flash('success_msg', req.t('order.item_cancel_flash'));
                 res.redirect('/orders/' + item.order_id);
             });
         } catch (err) {
@@ -308,7 +308,7 @@ module.exports = {
             console.error(err);
             if (isAjax) return res.status(500).json({ success: false, message: err.message });
             req.session.save(() => {
-                req.flash('error', 'Terjadi sedikit kendala saat membatalkan barang: ' + err.message);
+                req.flash('error', req.t('order.item_cancel_error', err.message));
                 res.redirect('/user/dashboard');
             });
         }
@@ -328,13 +328,13 @@ module.exports = {
             await updateOrderStatus(item.order_id);
 
             req.session.save(() => {
-                req.flash('success_msg', 'Hore! Pesanan telah Anda terima. Semoga produknya bermanfaat ya! 🎉');
+                req.flash('success_msg', req.t('order.complete_success'));
                 res.redirect('/orders/' + item.order_id);
             });
         } catch (err) {
             console.error(err);
             req.session.save(() => {
-                req.flash('error', 'Gagal konfirmasi: ' + err.message);
+                req.flash('error', req.t('order.confirm_failed', err.message));
                 res.redirect('/user/dashboard');
             });
         }
@@ -359,8 +359,8 @@ module.exports = {
             if (item.status === 'pending' || item.status === 'paid') {
                 const product = await Product.findByPk(item.product_id, { transaction: t, lock: true });
                 if (!product || product.stock < item.quantity) {
-                    if (isAjax) return res.status(400).json({ success: false, message: "Stok barang tidak mencukupi." });
-                    throw new Error("Stok barang tidak mencukupi.");
+                    if (isAjax) return res.status(400).json({ success: false, message: req.t('order.seller_stock_insufficient') });
+                    throw new Error(req.t('order.seller_stock_insufficient'));
                 }
                 await Product.decrement('stock', {
                     by: item.quantity,
@@ -376,17 +376,17 @@ module.exports = {
             await t.commit();
 
             if (isAjax) {
-                return res.json({ success: true, message: 'Pesanan diproses', status: 'processed' });
+                return res.json({ success: true, message: req.t('order.processed'), status: 'processed' });
             }
 
             req.session.save(() => {
-                req.flash('success_msg', 'Pesanan diproses.');
+                req.flash('success_msg', req.t('order.processed'));
                 res.redirect('/seller/dashboard');
             });
         } catch (err) {
             await t.rollback();
             console.error(err);
-            if (isAjax) return res.status(500).json({ success: false, message: err.message || 'Gagal memproses pesanan' });
+            if (isAjax) return res.status(500).json({ success: false, message: err.message || req.t('order.seller_process_failed') });
             req.session.save(() => {
                 req.flash('error', err.message || 'Gagal.');
                 res.redirect('/seller/dashboard');
@@ -409,16 +409,16 @@ module.exports = {
             await updateOrderStatus(item.order_id);
 
             if (isAjax) {
-                return res.json({ success: true, message: 'Pesanan dikirim', status: 'shipped' });
+                return res.json({ success: true, message: req.t('order.shipped'), status: 'shipped' });
             }
 
             req.session.save(() => {
-                req.flash('success_msg', 'Pesanan dikirim.');
+                req.flash('success_msg', req.t('order.shipped'));
                 res.redirect('/seller/dashboard');
             });
         } catch (err) {
             console.error(err);
-            if (isAjax) return res.status(500).json({ success: false, message: 'Gagal mengirim pesanan' });
+            if (isAjax) return res.status(500).json({ success: false, message: req.t('order.ship_failed') });
             req.session.save(() => {
                 req.flash('error', 'Gagal.');
                 res.redirect('/seller/dashboard');
@@ -440,8 +440,8 @@ module.exports = {
                 throw new Error("Item not found");
             }
             if (['rejected', 'cancelled'].includes(item.status)) {
-                if (isAjax) return res.status(400).json({ success: false, message: "Sudah ditolak/batal" });
-                throw new Error('Sudah ditolak/batal');
+                if (isAjax) return res.status(400).json({ success: false, message: req.t('order.already_rejected') });
+                throw new Error(req.t('order.already_rejected'));
             }
 
             const previousStatus = item.status;
@@ -461,19 +461,19 @@ module.exports = {
             await t.commit();
 
             if (isAjax) {
-                return res.json({ success: true, message: 'Pesanan ditolak', status: 'rejected' });
+                return res.json({ success: true, message: req.t('order.rejected'), status: 'rejected' });
             }
 
             req.session.save(() => {
-                req.flash('success_msg', 'Pesanan ditolak.');
+                req.flash('success_msg', req.t('order.rejected'));
                 res.redirect('/seller/dashboard');
             });
         } catch (err) {
             await t.rollback();
             console.error(err);
-            if (isAjax) return res.status(500).json({ success: false, message: 'Gagal menolak pesanan' });
+            if (isAjax) return res.status(500).json({ success: false, message: req.t('order.reject_failed') });
             req.session.save(() => {
-                req.flash('error', 'Gagal: ' + err.message);
+                req.flash('error', req.t('order.seller_reject_error', err.message));
                 res.redirect('/seller/dashboard');
             });
         }
@@ -494,7 +494,7 @@ module.exports = {
             });
 
             if (!item) {
-                req.flash('error', 'Pesanan tidak ditemukan atau akses ditolak.');
+                req.flash('error', req.t('order.seller_detail_denied'));
                 return res.redirect('/seller/dashboard');
             }
 
@@ -513,24 +513,24 @@ module.exports = {
                 where: { id: req.params.id, user_id: req.session.user.id }
             });
             if (!order) {
-                if (isAjax) return res.status(404).json({ success: false, message: 'Pesanan tidak ditemukan' });
+                if (isAjax) return res.status(404).json({ success: false, message: req.t('order.order_not_found') });
                 throw new Error('Pesanan tidak ditemukan');
             }
 
             // Allow hiding if status is completed or cancelled.
             if (order.status !== 'completed' && order.status !== 'cancelled' && order.status !== 'rejected') {
-                if (isAjax) return res.status(400).json({ success: false, message: 'Hanya pesanan selesai, ditolak, atau dibatalkan yang bisa dihapus dari riwayat.' });
+                if (isAjax) return res.status(400).json({ success: false, message: req.t('order.hide_restriction') });
                 throw new Error('Hanya pesanan selesai, ditolak, atau dibatalkan yang bisa dihapus dari riwayat.');
             }
 
             await order.update({ visible_to_customer: false });
 
             if (isAjax) {
-                return res.json({ success: true, message: 'Riwayat pesanan dihapus.' });
+                return res.json({ success: true, message: req.t('order.history_removed') });
             }
 
             req.session.save(() => {
-                req.flash('success_msg', 'Riwayat pesanan dihapus.');
+                req.flash('success_msg', req.t('order.history_removed'));
                 res.redirect('/user/dashboard');
             });
         } catch (err) {
@@ -551,24 +551,24 @@ module.exports = {
                 where: { id: req.params.id, seller_id: req.session.user.id }
             });
             if (!item) {
-                if (isAjax) return res.status(404).json({ success: false, message: 'Item tidak ditemukan' });
+                if (isAjax) return res.status(404).json({ success: false, message: req.t('order.item_not_found') });
                 throw new Error('Item tidak ditemukan');
             }
 
             // Allow hiding if completed, cancelled, or rejected
             if (!['completed', 'cancelled', 'rejected'].includes(item.status)) {
-                if (isAjax) return res.status(400).json({ success: false, message: 'Hanya pesanan selesai/batal/tolak yang bisa dihapus.' });
+                if (isAjax) return res.status(400).json({ success: false, message: req.t('order.hide_restriction_short') });
                 throw new Error('Hanya pesanan selesai/batal/tolak yang bisa dihapus.');
             }
 
             await item.update({ visible_to_seller: false });
 
             if (isAjax) {
-                return res.json({ success: true, message: 'Riwayat pesanan dihapus.' });
+                return res.json({ success: true, message: req.t('order.history_removed') });
             }
 
             req.session.save(() => {
-                req.flash('success_msg', 'Riwayat pesanan dihapus.');
+                req.flash('success_msg', req.t('order.history_removed'));
                 res.redirect('/seller/dashboard');
             });
         } catch (err) {
@@ -594,18 +594,18 @@ module.exports = {
             await order.destroy(); // Cascade deletes items usually, based on migration
 
             if (isAjax) {
-                return res.json({ success: true, message: 'Order permanen dihapus.' });
+                return res.json({ success: true, message: req.t('order.permanent_deleted') });
             }
 
             req.session.save(() => {
-                req.flash('success_msg', 'Order permanen dihapus.');
+                req.flash('success_msg', req.t('order.permanent_deleted'));
                 res.redirect('/admin/dashboard');
             });
         } catch (err) {
             console.error(err);
-            if (isAjax) return res.status(500).json({ success: false, message: 'Gagal menghapus: ' + err.message });
+            if (isAjax) return res.status(500).json({ success: false, message: req.t('order.delete_failed', err.message) });
             req.session.save(() => {
-                req.flash('error', 'Gagal menghapus: ' + err.message);
+                req.flash('error', req.t('order.delete_failed', err.message));
                 res.redirect('/admin/dashboard');
             });
         }

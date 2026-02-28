@@ -243,11 +243,11 @@ module.exports = {
 
             await sellerData.save();
 
-            req.flash('success_msg', 'Identitas lapak berhasil diperbarui!');
+            req.flash('success_msg', req.t('dashboard.store_updated'));
             res.redirect('/seller/settings');
         } catch (err) {
             console.error(err);
-            req.flash('error', 'Gagal menyimpan pengaturan toko.');
+            req.flash('error', req.t('dashboard.store_save_failed'));
             res.redirect('/seller/settings');
         }
     },

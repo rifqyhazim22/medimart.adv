@@ -131,15 +131,15 @@
         <div class="dashboard-container">
             <div class="section-header"
                 style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
-                <h2 class="section-title">Produk Saya</h2>
+                <h2 class="section-title" data-i18n="seller_products.title">Produk Saya</h2>
                 <a href="/products/new" class="btn-primary">
-                    <span>➕</span> Tambah Produk
+                    <span>➕</span> <span data-i18n="seller_products.add">Tambah Produk</span>
                 </a>
             </div>
 
             <div class="products-grid">
                 <% if (products.length===0) { %>
-                    <p>Belum ada produk. Silakan tambah produk baru.</p>
+                    <p data-i18n="seller_products.no_products">Belum ada produk. Silakan tambah produk baru.</p>
                     <% } else { %>
                         <% products.forEach(product=> { %>
                             <div class="product-card" style="cursor: pointer; position: relative;"
@@ -155,7 +155,8 @@
                                     <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
                                         <% if (product.stock===0) { %>
                                             <span class="stock-badge error"
-                                                style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Habis</span>
+                                                style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;"
+                                                data-i18n="cart.out_of_stock">Habis</span>
                                             <% } else if (product.stock <=5) { %>
                                                 <span class="stock-badge warning"
                                                     style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Sisa:
@@ -168,18 +169,20 @@
                                                     </span>
                                                     <% } %>
                                     </div>
-                                    <p style="color: var(--text-gray); font-size: 14px;">Stok: <%= product.stock %>
+                                    <p style="color: var(--text-gray); font-size: 14px;"><span
+                                            data-i18n="seller_products.stock_label">Stok</span>: <%= product.stock %>
                                     </p>
                                     <div class="product-footer">
                                         <div class="product-price">Rp <%=
                                                 parseInt(product.price).toLocaleString('id-ID') %>
                                         </div>
                                         <div style="display: flex; gap: 8px;">
-                                            <a href="/products/<%= product.id %>/edit"
-                                                class="btn-small btn-secondary">Edit</a>
+                                            <a href="/products/<%= product.id %>/edit" class="btn-small btn-secondary"
+                                                data-i18n="seller_products.edit">Edit</a>
                                             <form action="/products/<%= product.id %>?_method=DELETE" method="POST"
-                                                onsubmit="return confirmAction(event, 'Yakin ingin menghapus produk ini?', 'Ya, Hapus', '#EF4444');">
-                                                <button type="submit" class="btn-small btn-delete">Hapus</button>
+                                                onsubmit="return confirmAction(event, t('product.delete_confirm'), t('product.yes_delete'), '#EF4444');">
+                                                <button type="submit" class="btn-small btn-delete"
+                                                    data-i18n="seller_products.delete">Hapus</button>
                                             </form>
                                         </div>
                                     </div>

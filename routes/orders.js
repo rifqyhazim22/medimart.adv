@@ -5,7 +5,7 @@ const orderController = require('../controllers/orderController');
 // Ensure Auth
 const ensureAuthenticated = (req, res, next) => {
     if (req.session.user) return next();
-    req.flash('error_msg', 'Silakan login terlebih dahulu');
+    req.flash('error_msg', req.t('route.login_required'));
     res.redirect('/login');
 };
 
@@ -13,7 +13,7 @@ const ensureSeller = (req, res, next) => {
     if (req.session.user && req.session.user.role === 'seller') {
         return next();
     }
-    req.flash('error', 'Akses khusus penjual.');
+    req.flash('error', req.t('route.seller_only'));
     res.redirect('/');
 };
 
@@ -41,7 +41,7 @@ const ensureAdmin = (req, res, next) => {
     if (req.session.user && req.session.user.role === 'admin') {
         return next();
     }
-    req.flash('error', 'Akses khusus Admin.');
+    req.flash('error', req.t('route.admin_only'));
     res.redirect('/login');
 };
 router.post('/admin/orders/:id/delete', ensureAdmin, orderController.adminDelete);

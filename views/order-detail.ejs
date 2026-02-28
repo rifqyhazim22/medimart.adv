@@ -259,7 +259,7 @@
                                                 !=='cancelled' ) { %>
                                                 <form action="/orders/items/<%= item.id %>/cancel" method="POST"
                                                     style="margin-top: 8px;"
-                                                    onsubmit="return confirmAction(event, 'Yakin ingin membatalkan barang ini secara spesifik? Dana akan di-refund.', 'Ya, Batalkan Barang', '#dc2626');">
+                                                    onsubmit="return confirmAction(event, t('order.cancel_item_confirm'), t('order.yes_cancel_item'), '#dc2626');">
                                                     <button type="submit"
                                                         style="background: none; border: 1px solid #dc2626; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s;">
                                                         ❌ Batalkan
@@ -321,7 +321,7 @@
                 <% if (order.status !=='cancelled' && order.status !=='completed' && order.status !=='rejected' ) { %>
                     <div style="margin-top: 32px; display: flex; justify-content: flex-end;">
                         <form action="/orders/<%= order.id %>/cancel" method="POST"
-                            onsubmit="return confirmAction(event, 'Apakah Anda yakin ingin membatalkan seluruh pesanan ini? Dana akan dikembalikan.', 'Ya, Batalkan', '#EF4444');">
+                            onsubmit="return confirmAction(event, t('order.cancel_order_confirm'), t('order.yes_cancel'), '#EF4444');">
                             <button type="submit" class="btn-outline-danger"
                                 style="padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
                                 <span>🚫</span> Batalkan Pesanan

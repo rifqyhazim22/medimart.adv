@@ -37,7 +37,7 @@
                                 onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='white'"
                                 onmousedown="this.style.transform='scale(0.95)'"
                                 onmouseup="this.style.transform='scale(1)'">
-                                ⚙️ Pengaturan Toko
+                                <span data-i18n="store.settings">⚙️ Pengaturan Toko</span>
                             </button>
                             <% } %>
                     </div>
@@ -46,12 +46,14 @@
                         <div
                             style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--border); color: var(--text-gray); border-radius: 99px; font-size: 13px; font-weight: 600;">
                             <span>📦</span>
-                            <%= products.length %> Produk Etalase
+                            <span>
+                                <%= products.length %> <span data-i18n="store.products_count">Produk Etalase</span>
+                            </span>
                         </div>
                         <% if (seller.phone) { %>
                             <div
                                 style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #f0fdf4; color: #166534; border-radius: 99px; font-size: 13px; font-weight: 600;">
-                                <span>📞</span> Mitra Terverifikasi
+                                <span>📞</span> <span data-i18n="store.verified">Mitra Terverifikasi</span>
                             </div>
                             <% } %>
                                 <div
@@ -61,7 +63,8 @@
                                 </div>
                                 <div
                                     style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #fef2f2; color: #b91c1c; border-radius: 99px; font-size: 13px; font-weight: 600;">
-                                    <span>⏱️</span> Bergabung Sejak <%= new Date(seller.createdAt).getFullYear() %>
+                                    <span>⏱️</span> <span data-i18n="store.joined_since">Bergabung Sejak</span>
+                                    <%= new Date(seller.createdAt).getFullYear() %>
                                 </div>
                     </div>
 
@@ -71,7 +74,8 @@
                             <%= seller.Seller.store_description %>
                         </p>
                         <% } else { %>
-                            <p style="margin: 16px 0 0 0; color: var(--text-gray); font-size: 14px; font-style: italic;">
+                            <p style="margin: 16px 0 0 0; color: var(--text-gray); font-size: 14px; font-style: italic;"
+                                data-i18n="store.no_desc">
                                 Belum ada deskripsi toko yang ditambahkan.
                             </p>
                             <% } %>
@@ -91,7 +95,7 @@
 
         <!-- Store Products Catalog -->
         <div class="section-header" style="margin-bottom: 24px;">
-            <h2 class="section-title">Katalog Produk</h2>
+            <h2 class="section-title" data-i18n="store.catalog">Katalog Produk</h2>
         </div>
 
         <div class="products-grid" id="storeProducts">
@@ -99,8 +103,10 @@
                 <div
                     style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: var(--bg-white); border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                     <span style="font-size: 48px; display: block; margin-bottom: 16px;">🔍</span>
-                    <h3 style="font-size: 20px; color: var(--text-dark); margin-bottom: 8px;">Etalase Masih Kosong</h3>
-                    <p style="color: var(--text-gray);">Penjual belum mengunggah produk apapun di tokonya saat ini.</p>
+                    <h3 style="font-size: 20px; color: var(--text-dark); margin-bottom: 8px;"
+                        data-i18n="store.empty_title">Etalase Masih Kosong</h3>
+                    <p style="color: var(--text-gray);" data-i18n="store.empty_desc">Penjual belum mengunggah produk
+                        apapun di tokonya saat ini.</p>
                 </div>
                 <% } else { %>
                     <% products.forEach(product=> { %>
@@ -122,7 +128,8 @@
                                     </div>
                                     <% if (product.stock===0) { %>
                                         <span class="stock-badge error"
-                                            style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Habis</span>
+                                            style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;"
+                                            data-i18n="cart.out_of_stock">Habis</span>
                                         <% } else if (product.stock <=5) { %>
                                             <span class="stock-badge warning"
                                                 style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Sisa:
@@ -145,7 +152,8 @@
                                     <% if (typeof currentUser !=='undefined' && currentUser &&
                                         currentUser.id===seller.id) { %>
                                         <button disabled class="btn-add-cart"
-                                            style="background: var(--border); color: var(--text-gray); cursor: not-allowed; border: 1px dashed var(--border);">
+                                            style="background: var(--border); color: var(--text-gray); cursor: not-allowed; border: 1px dashed var(--border);"
+                                            data-i18n="store.own_product">
                                             Barang Anda
                                         </button>
                                         <% } else { %>
@@ -153,7 +161,10 @@
                                                 <input type="hidden" name="productId" value="<%= product.id %>">
                                                 <button type="submit" class="btn-add-cart" <%=product.stock===0
                                                     ? 'disabled' : '' %>>
-                                                    <%= product.stock===0 ? 'Habis' : '+ Keranjang' %>
+                                                    <span
+                                                        data-i18n="<%= product.stock===0 ? 'cart.out_of_stock' : 'cart.add_cart' %>">
+                                                        <%= product.stock===0 ? 'Habis' : '+ Keranjang' %>
+                                                    </span>
                                                 </button>
                                             </form>
                                             <% } %>
@@ -189,7 +200,7 @@
                     const data = await response.json();
 
                     if (data.success) {
-                        window.showToast(data.message || 'Berhasil masuk keranjang!', 'success');
+                        window.showToast(data.message || t('toast.add_success'), 'success');
 
                         const badge = document.getElementById('cartBadge');
                         if (badge) {
@@ -197,11 +208,11 @@
                             if (data.cartCount > 0) badge.style.display = 'flex';
                         }
                     } else {
-                        window.showToast(data.message || 'Gagal menambahkan', 'error');
+                        window.showToast(data.message || t('toast.add_failed'), 'error');
                     }
                 } catch (err) {
                     console.error(err);
-                    window.showToast('Terjadi kesalahan koneksi', 'error');
+                    window.showToast(t('toast.connection_error'), 'error');
                 } finally {
                     btn.innerHTML = originalText;
                     btn.disabled = false;

@@ -7,7 +7,7 @@ const ensureSeller = (req, res, next) => {
     if (req.session.user && req.session.user.role === 'seller') {
         return next();
     }
-    req.flash('error', 'Akses khusus penjual.');
+    req.flash('error', req.t('route.seller_only'));
     res.redirect('/');
 };
 

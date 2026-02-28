@@ -3,7 +3,7 @@
     <div style="max-width: 800px; margin: 40px auto; padding: 0 20px;">
         <div
             style="background: var(--bg-white); padding: 30px; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
-            <h1 style="margin-top: 0;">
+            <h1 style="margin-top: 0;" data-i18n="<%= isEdit ? 'product_form.title_edit' : 'product_form.title_new' %>">
                 <%= isEdit ? 'Edit Produk' : 'Tambah Produk Baru' %>
             </h1>
 
@@ -14,16 +14,18 @@
                 <!-- Hidden inputs for method override if needed (handled by query param usually but good to have) -->
 
                 <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Nama Produk</label>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;"
+                        data-i18n="product_form.name">Nama Produk</label>
                     <input type="text" name="name" value="<%= isEdit ? product.name : '' %>" required class="form-input"
                         style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
                 </div>
 
                 <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Kategori</label>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;"
+                        data-i18n="product_form.category">Kategori</label>
                     <select name="category" required
                         style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-white);">
-                        <option value="">Pilih Kategori</option>
+                        <option value="" data-i18n="product_form.select_category">Pilih Kategori</option>
                         <% const categories=['Obat Bebas', 'Obat Keras' , 'Vitamin' , 'Alat Kesehatan' , 'Herbal' ]; %>
                             <% categories.forEach(cat=> { %>
                                 <option value="<%= cat %>" <%=isEdit && product.category===cat ? 'selected' : '' %>><%=
@@ -34,19 +36,22 @@
                 </div>
 
                 <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Deskripsi</label>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;"
+                        data-i18n="product_form.desc">Deskripsi</label>
                     <textarea name="description" required rows="4"
                         style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;"><%= isEdit ? product.description : '' %></textarea>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div class="form-group">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Harga (Rp)</label>
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;"
+                            data-i18n="product_form.price">Harga (Rp)</label>
                         <input type="number" name="price" value="<%= isEdit ? product.price : '' %>" required min="0"
                             style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
                     </div>
                     <div class="form-group">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Stok</label>
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;"
+                            data-i18n="product_form.stock">Stok</label>
                         <input type="number" name="stock" value="<%= isEdit ? product.stock : '' %>" required min="0"
                             style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
                     </div>
@@ -54,13 +59,15 @@
 
                 <!-- Image Upload Section -->
                 <div class="form-group" style="margin-bottom: 30px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Foto Produk</label>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;"
+                        data-i18n="product_form.image">Foto Produk</label>
 
                     <!-- Current Image Preview -->
                     <% if (isEdit && product.image_url) { %>
                         <div style="margin-bottom: 15px; display: flex; align-items: start; gap: 20px;">
                             <div>
-                                <p style="font-size: 12px; color: #666; margin-bottom: 4px;">Tampilan di Toko:</p>
+                                <p style="font-size: 12px; color: #666; margin-bottom: 4px;"
+                                    data-i18n="product_form.store_preview">Tampilan di Toko:</p>
                                 <img src="<%= product.image_url %>"
                                     style="height: 120px; width: 120px; object-fit: contain; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9;">
                             </div>
@@ -68,12 +75,14 @@
                             <% if (product.original_image_url) { %>
                                 <div style="display: flex; flex-direction: column; gap: 10px;">
                                     <div>
-                                        <p style="font-size: 12px; color: #666; margin-bottom: 4px;">Sumber Asli:</p>
+                                        <p style="font-size: 12px; color: #666; margin-bottom: 4px;"
+                                            data-i18n="product_form.original_source">Sumber Asli:</p>
                                         <img src="<%= product.original_image_url %>" id="originalSource"
                                             style="height: 80px; width: 80px; object-fit: contain; border-radius: 8px; border: 1px solid #ddd; opacity: 0.7;">
                                     </div>
                                     <button type="button" id="btnReCrop" class="btn-secondary"
-                                        style="font-size: 12px; padding: 6px 12px;">✂️ Crop Ulang dari Asli</button>
+                                        style="font-size: 12px; padding: 6px 12px;" data-i18n="product_form.recrop">✂️
+                                        Crop Ulang dari Asli</button>
                                 </div>
                                 <% } %>
                         </div>
@@ -92,25 +101,30 @@
                             <!-- Editor Container (Hidden initially) -->
                             <div id="cropContainer"
                                 style="display:none; margin-top: 20px; background: #fceaee; padding: 15px; border-radius: 12px;">
-                                <h4 style="margin: 0 0 10px 0; font-size: 14px;">Editor Foto</h4>
+                                <h4 style="margin: 0 0 10px 0; font-size: 14px;" data-i18n="product_form.photo_editor">
+                                    Editor Foto</h4>
                                 <div style="max-height: 400px; overflow: hidden; background: #333; border-radius: 8px;">
                                     <img id="imageToCrop" style="max-width: 100%; display: block;">
                                 </div>
                                 <div
                                     style="margin-top: 15px; text-align: right; display: flex; justify-content: flex-end; gap: 10px;">
-                                    <button type="button" id="btnCropCancel" class="btn-secondary">Batal</button>
-                                    <button type="button" id="btnCropApply" class="btn-primary">Terapkan Crop</button>
+                                    <button type="button" id="btnCropCancel" class="btn-secondary"
+                                        data-i18n="product_form.cancel">Batal</button>
+                                    <button type="button" id="btnCropApply" class="btn-primary"
+                                        data-i18n="product_form.apply_crop">Terapkan Crop</button>
                                 </div>
                             </div>
 
                             <!-- New Crop Preview -->
                             <div id="newImagePreview" style="display:none; margin-top: 20px;">
-                                <p style="font-size: 12px; color: #00B09B; font-weight: bold;">Hasil Crop Baru:</p>
+                                <p style="font-size: 12px; color: #00B09B; font-weight: bold;"
+                                    data-i18n="product_form.crop_result">Hasil Crop Baru:</p>
                                 <div style="display: flex; align-items: center; gap: 15px;">
                                     <img id="previewResult"
                                         style="height: 120px; width: 120px; object-fit: contain; border-radius: 8px; border: 2px solid #00B09B; background: var(--bg-white);">
                                     <button type="button" id="btnResetUpload"
-                                        style="background: none; border: none; color: #d9534f; cursor: pointer; text-decoration: underline; font-size: 13px;">
+                                        style="background: none; border: none; color: #d9534f; cursor: pointer; text-decoration: underline; font-size: 13px;"
+                                        data-i18n="product_form.reset_upload">
                                         Batalkan Ubahan
                                     </button>
                                 </div>
@@ -119,8 +133,10 @@
 
                 <div style="display: flex; gap: 16px;">
                     <a href="/seller/dashboard" class="btn-cancel"
-                        style="text-align: center; text-decoration: none; padding: 12px 24px;">Kembali</a>
-                    <button type="submit" id="btnSubmit" class="btn-primary" style="flex: 1;">Simpan Produk</button>
+                        style="text-align: center; text-decoration: none; padding: 12px 24px;"
+                        data-i18n="product_form.back">Kembali</a>
+                    <button type="submit" id="btnSubmit" class="btn-primary" style="flex: 1;"
+                        data-i18n="product_form.submit">Simpan Produk</button>
                 </div>
             </form>
         </div>
@@ -251,13 +267,13 @@
                 e.preventDefault();
 
                 const originalBtnText = btnSubmit.innerText;
-                btnSubmit.innerText = 'Menyimpan...';
+                btnSubmit.innerText = t('product.saving_btn');
                 btnSubmit.disabled = true;
 
                 // 🧠 Modal Penenang IT
                 Swal.fire({
-                    title: 'Menyimpan Produk..',
-                    html: '<span style="color: var(--text-gray); font-size:15px;">Mengamankan data dan meregistrasi katalog ke rak toko Anda 📦</span>',
+                    title: t('product.saving'),
+                    html: `<span style="color: var(--text-gray); font-size:15px;">${t('product.saving_desc')}</span>`,
                     allowOutsideClick: false,
                     showConfirmButton: false,
                     willOpen: () => Swal.showLoading(),
@@ -285,7 +301,7 @@
                             })
                             .catch(err => {
                                 console.error(err);
-                                window.showToast('Gagal menyimpan produk.', 'error');
+                                window.showToast(t('product.save_failed'), 'error');
                                 btnSubmit.innerText = originalBtnText;
                                 btnSubmit.disabled = false;
                             });

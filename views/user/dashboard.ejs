@@ -280,9 +280,9 @@
             <!-- Header & Stats -->
             <div class="dashboard-header">
                 <h1 data-i18n="user.dashboard_title">Pesanan Saya</h1>
-                <p>Halo, <strong>
+                <p><span data-i18n="user.greeting">Halo</span>, <strong>
                         <%= currentUser.full_name || currentUser.username %>
-                    </strong>! Kelola riwayat belanjaan Anda di sini.</p>
+                    </strong>! <span data-i18n="user.greeting_desc">Kelola riwayat belanjaan Anda di sini.</span></p>
 
                 <div class="dashboard-stats">
                     <div class="stat-card">
@@ -319,7 +319,8 @@
                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <h2 class="section-title" style="margin: 0; border: none;" data-i18n="user.order_history">Riwayat
                     Belanja</h2>
-                <a href="/" class="btn-detail" style="padding: 8px 16px; font-size: 14px;">🛍️ Belanja Lagi</a>
+                <a href="/" class="btn-detail" style="padding: 8px 16px; font-size: 14px;"
+                    data-i18n="user.shop_again">🛍️ Belanja Lagi</a>
             </div>
 
             <div class="table-container"
@@ -327,11 +328,11 @@
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="background: var(--bg-light); text-align: left;">
-                            <th style="padding: 16px; width: 120px;">Tanggal</th>
-                            <th colspan="3" style="padding: 16px;">Rincian Barang</th>
-                            <th style="padding: 16px;">Total Tagihan</th>
-                            <th style="padding: 16px;">Status</th>
-                            <th style="padding: 16px;">Aksi</th>
+                            <th style="padding: 16px; width: 120px;" data-i18n="user.th_date">Tanggal</th>
+                            <th colspan="3" style="padding: 16px;" data-i18n="user.th_items">Rincian Barang</th>
+                            <th style="padding: 16px;" data-i18n="user.th_total">Total Tagihan</th>
+                            <th style="padding: 16px;" data-i18n="user.th_status">Status</th>
+                            <th style="padding: 16px;" data-i18n="user.th_action">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -339,8 +340,10 @@
                             <tr>
                                 <td colspan="7" style="padding: 40px; text-align: center;">
                                     <span style="font-size: 40px; display: block; margin-bottom: 10px;">🛍️</span>
-                                    <h3 style="color: var(--text-dark); margin: 0 0 8px 0;">Belum ada pesanan</h3>
-                                    <p style="color: var(--text-gray); margin: 0;">Yuk, mulai belanja kebutuhan
+                                    <h3 style="color: var(--text-dark); margin: 0 0 8px 0;" data-i18n="user.no_orders">
+                                        Belum ada pesanan</h3>
+                                    <p style="color: var(--text-gray); margin: 0;" data-i18n="user.no_orders_desc">Yuk,
+                                        mulai belanja kebutuhan
                                         kesehatanmu
                                         sekarang!</p>
                                 </td>
@@ -396,24 +399,28 @@
                                                                         </span>
                                                                         <% } else if (item.status==='shipped' ) { %>
                                                                             <span
-                                                                                style="color: #1e40af; background: #dbeafe; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
+                                                                                style="color: #1e40af; background: #dbeafe; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;"
+                                                                                data-i18n="user.status_shipped">
                                                                                 🚚 Dalam Perjalanan Kurir
                                                                             </span>
                                                                             <% } else if (item.status==='completed' ) {
                                                                                 %>
                                                                                 <span
-                                                                                    style="color: #065f46; background: #d1fae5; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
+                                                                                    style="color: #065f46; background: #d1fae5; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;"
+                                                                                    data-i18n="user.status_completed">
                                                                                     ✅ Barang Diterima
                                                                                 </span>
                                                                                 <% } else if (item.status==='processed'
                                                                                     ) { %>
                                                                                     <span
-                                                                                        style="color: #0d9488; background: #ccfbf1; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
+                                                                                        style="color: #0d9488; background: #ccfbf1; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;"
+                                                                                        data-i18n="user.status_processed">
                                                                                         🔵 Sedang Dikemas Penjual
                                                                                     </span>
                                                                                     <% } else { %>
                                                                                         <span
-                                                                                            style="color: #92400e; background: #fef3c7; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">
+                                                                                            style="color: #92400e; background: #fef3c7; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;"
+                                                                                            data-i18n="user.status_pending">
                                                                                             🟡 Menunggu Lapak Diproses
                                                                                         </span>
                                                                                         <% } %>
@@ -479,17 +486,19 @@
                                             style="padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top;">
                                             <div style="display: flex; gap: 8px; flex-direction: column;">
                                                 <a href="/orders/<%= order.id %>" class="btn-small btn-secondary"
-                                                    style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; padding: 6px 12px; font-size: 13px; border-radius: 6px; background: var(--border); color: var(--text-dark); font-weight: 500;">
+                                                    style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; padding: 6px 12px; font-size: 13px; border-radius: 6px; background: var(--border); color: var(--text-dark); font-weight: 500;"
+                                                    data-i18n="user.detail_invoice">
                                                     Detail Invoice
                                                 </a>
 
                                                 <% if (order.status==='completed' || order.status==='cancelled' ||
                                                     order.status==='rejected' ) { %>
                                                     <form action="/orders/<%= order.id %>/hide" method="POST"
-                                                        onsubmit="return confirmAction(event, 'Yakin ingin menyembunyikan riwayat pesanan ini?', 'Ya, Sembunyikan', '#EF4444');"
+                                                        onsubmit="return confirmAction(event, t('misc.hide_confirm'), t('misc.yes_hide'), '#EF4444');"
                                                         style="margin: 0;">
                                                         <button type="submit" class="btn-small btn-delete"
-                                                            style="width: 100%; border: none; padding: 6px 12px; font-size: 13px; border-radius: 6px; cursor: pointer; background: #fee2e2; color: #b91c1c;">
+                                                            style="width: 100%; border: none; padding: 6px 12px; font-size: 13px; border-radius: 6px; cursor: pointer; background: #fee2e2; color: #b91c1c;"
+                                                            data-i18n="user.btn_delete">
                                                             🗑️ Hapus
                                                         </button>
                                                     </form>

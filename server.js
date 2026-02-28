@@ -3,6 +3,8 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const path = require('path');
 const methodOverride = require('method-override');
+const cookieParser = require('cookie-parser');
+const { i18nMiddleware } = require('./utils/serverI18n');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -12,6 +14,7 @@ const routes = require('./routes');
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -48,6 +51,7 @@ if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
 }
 
 app.use(flash());
+app.use(i18nMiddleware);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 

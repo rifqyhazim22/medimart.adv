@@ -35,7 +35,7 @@ module.exports = {
                     if (user.role !== selectedRole) {
                         // Allow 'customer' to also match 'user' if legacy
                         if (!(selectedRole === 'customer' && (user.role === 'user' || user.role === 'customer'))) {
-                            req.flash('error', `Akses ditolak. Coba periksa lagi, karena sepertinya ini bukan akun ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}.`);
+                            req.flash('error', req.t('auth.role_denied', selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)));
                             return res.redirect('/login');
                         }
                     }
@@ -52,7 +52,7 @@ module.exports = {
                     }
 
                     return req.session.save(() => {
-                        req.flash('success_msg', `Selamat datang kembali, ${user.full_name}! Senang melihat Anda bertransaksi lagi.`);
+                        req.flash('success_msg', req.t('auth.welcome_back', user.full_name));
                         if (user.role === 'admin') {
                             return res.redirect('/admin/dashboard');
                         }
@@ -63,11 +63,11 @@ module.exports = {
                     });
                 }
             }
-            req.flash('error', 'Hmm, sepertinya Username atau Password Anda kurang tepat. Coba lagi ya!');
+            req.flash('error', req.t('auth.wrong_credentials'));
             res.redirect('/login');
         } catch (err) {
             console.error(err);
-            req.flash('error', 'Terjadi kesalahan pada server.');
+            req.flash('error', req.t('auth.server_error'));
             res.redirect('/login');
         }
     },
@@ -77,7 +77,7 @@ module.exports = {
         try {
             const existingUser = await User.findOne({ where: { username } });
             if (existingUser) {
-                req.flash('error', 'Maaf, Username tersebut sudah ada yang punya. Coba variasi nama lain?');
+                req.flash('error', req.t('auth.username_taken'));
                 return res.redirect('/register');
             }
 
@@ -108,13 +108,13 @@ module.exports = {
             }
 
             req.session.save(() => {
-                req.flash('success_msg', `Selamat bergabung, ${full_name}! Akun Anda telah berhasil diciptakan. Silakan masuk untuk mulai penjelajahan.`);
+                req.flash('success_msg', req.t('auth.register_success', full_name));
                 res.redirect('/login');
             });
         } catch (err) {
             console.error(err);
             req.session.save(() => {
-                req.flash('error', 'Aduh, ada sedikit kendala saat mendaftarkan Anda. Mohon coba beberapa saat lagi.');
+                req.flash('error', req.t('auth.register_failed'));
                 res.redirect('/register');
             });
         }
@@ -136,7 +136,7 @@ module.exports = {
         try {
             const user = await User.findOne({ where: { email } });
             if (!user) {
-                req.flash('error', 'Email tidak ditemukan.');
+                req.flash('error', req.t('auth.email_not_found'));
                 return res.redirect('/forgot-password');
             }
 
@@ -155,11 +155,11 @@ module.exports = {
             console.log(`http://localhost:3000/auth/reset-password/${token}`);
             console.log('==================================================');
 
-            req.flash('success_msg', 'Link reset password telah dikirim ke email Anda (Cek Terminal Server untuk simulasi).');
+            req.flash('success_msg', req.t('auth.reset_link_sent'));
             res.redirect('/forgot-password');
         } catch (err) {
             console.error(err);
-            req.flash('error', 'Gagal memproses permintaan.');
+            req.flash('error', req.t('auth.request_failed'));
             res.redirect('/forgot-password');
         }
     },
@@ -175,14 +175,14 @@ module.exports = {
             });
 
             if (!user) {
-                req.flash('error', 'Token tidak valid atau sudah kadaluarsa.');
+                req.flash('error', req.t('auth.token_invalid'));
                 return res.redirect('/forgot-password');
             }
 
             res.render('reset-password', { token });
         } catch (err) {
             console.error(err);
-            req.flash('error', 'Terjadi kesalahan.');
+            req.flash('error', req.t('auth.error_generic'));
             res.redirect('/forgot-password');
         }
     },
@@ -193,7 +193,7 @@ module.exports = {
 
         try {
             if (password !== confirmPassword) {
-                req.flash('error', 'Password tidak cocok.');
+                req.flash('error', req.t('auth.password_mismatch'));
                 return res.redirect(`/auth/reset-password/${token}`);
             }
 
@@ -205,7 +205,7 @@ module.exports = {
             });
 
             if (!user) {
-                req.flash('error', 'Token tidak valid atau sudah kadaluarsa.');
+                req.flash('error', req.t('auth.token_invalid'));
                 return res.redirect('/forgot-password');
             }
 
@@ -216,11 +216,11 @@ module.exports = {
                 reset_password_expires: null
             });
 
-            req.flash('success_msg', 'Password berhasil diubah. Silakan login.');
+            req.flash('success_msg', req.t('auth.password_reset_success'));
             res.redirect('/login');
         } catch (err) {
             console.error(err);
-            req.flash('error', 'Gagal mereset password.');
+            req.flash('error', req.t('auth.password_reset_failed'));
             res.redirect(`/auth/reset-password/${token}`);
         }
     }

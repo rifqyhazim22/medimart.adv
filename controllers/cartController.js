@@ -52,13 +52,13 @@ module.exports = {
         try {
             const product = await Product.findByPk(productId);
             if (!product) {
-                if (isAjax) return res.status(404).json({ success: false, message: 'Produk tidak ditemukan' });
+                if (isAjax) return res.status(404).json({ success: false, message: req.t('cart.product_not_found') });
                 return res.redirect('/');
             }
 
             if (req.session.user && product.seller_id === req.session.user.id) {
-                if (isAjax) return res.status(403).json({ success: false, message: 'Anda tidak dapat membeli produk Anda sendiri' });
-                req.flash('error', 'Wah, Anda tidak dapat memborong produk dari lapak Anda sendiri ya 😅');
+                if (isAjax) return res.status(403).json({ success: false, message: req.t('cart.own_product') });
+                req.flash('error', req.t('cart.own_product_flash'));
                 return res.redirect(req.get('Referer') || '/');
             }
 
@@ -134,7 +134,7 @@ module.exports = {
             res.redirect(req.get('Referer') || '/');
         } catch (err) {
             console.error(err);
-            if (isAjax) return res.status(500).json({ success: false, message: 'Server Error' });
+            if (isAjax) return res.status(500).json({ success: false, message: req.t('cart.server_error') });
             res.redirect('/');
         }
     },
@@ -146,7 +146,7 @@ module.exports = {
         try {
             const product = await Product.findByPk(productId);
             if (!product) {
-                if (isAjax) return res.json({ success: false, message: 'Produk tidak ditemukan' });
+                if (isAjax) return res.json({ success: false, message: req.t('cart.product_not_found') });
                 return res.redirect('/cart');
             }
 
@@ -161,14 +161,14 @@ module.exports = {
                                 item.quantity++;
                                 await item.save();
                             } else {
-                                if (isAjax) return res.json({ success: false, message: 'Stok makasimal tercapai' });
+                                if (isAjax) return res.json({ success: false, message: req.t('cart.max_stock') });
                             }
                         } else if (action === 'decrease') {
                             if (item.quantity > 1) {
                                 item.quantity--;
                                 await item.save();
                             } else {
-                                if (isAjax) return res.json({ success: false, message: 'Minimal 1 barang' });
+                                if (isAjax) return res.json({ success: false, message: req.t('cart.min_quantity') });
                                 await item.destroy();
                             }
                         }
@@ -248,7 +248,7 @@ module.exports = {
                     if (err) console.error(err);
                     res.json({
                         success: true,
-                        message: 'Item dihapus',
+                        message: req.t('cart.item_removed'),
                         cartCount,
                         cartTotal: subtotal,
                         subtotal
@@ -256,7 +256,7 @@ module.exports = {
                 });
             }
 
-            req.flash('success_msg', 'Sip, barang telah dikeluarkan dari keranjang belanja.');
+            req.flash('success_msg', req.t('cart.item_removed_flash'));
             res.redirect('/cart');
         } catch (err) {
             console.error(err);
@@ -279,10 +279,10 @@ module.exports = {
             }
 
             if (isAjax) {
-                return res.json({ success: true, message: 'Keranjang dikosongkan' });
+                return res.json({ success: true, message: req.t('cart.cleared') });
             }
 
-            req.flash('success_msg', 'Keranjang sudah dibersihkan. Yuk mulai berburu barang baru! ✨');
+            req.flash('success_msg', req.t('cart.cleared_flash'));
             res.redirect('/cart');
         } catch (err) {
             console.error(err);

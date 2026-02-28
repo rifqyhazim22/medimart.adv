@@ -13,7 +13,7 @@ const redirectNonCustomers = (req, res, next) => {
 
 const ensureAuthenticated = (req, res, next) => {
     if (req.session.user) return next();
-    req.flash('error_msg', 'Silakan login terlebih dahulu');
+    req.flash('error_msg', req.t('route.login_required'));
     res.redirect('/login');
 };
 

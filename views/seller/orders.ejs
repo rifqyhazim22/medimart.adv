@@ -57,10 +57,11 @@
     <div class="main-container">
         <div class="dashboard-container">
             <div class="dashboard-header">
-                <h1>Kelola Pesanan Masuk</h1>
+                <h1 data-i18n="seller.orders_title">Kelola Pesanan Masuk</h1>
                 <p>Halo, <strong>
                         <%= currentUser.full_name || currentUser.username %>
-                    </strong>! Berikut adalah daftar pesanan dari para pelanggan.</p>
+                    </strong>! <span data-i18n="seller.orders_subtitle_prefix">Berikut adalah daftar pesanan dari para
+                        pelanggan.</span></p>
             </div>
 
 
@@ -71,19 +72,20 @@
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="background: var(--bg-light); text-align: left;">
-                            <th style="padding: 16px;">Tanggal</th>
-                            <th style="padding: 16px;">Produk</th>
-                            <th style="padding: 16px;">Pembeli</th>
+                            <th style="padding: 16px;" data-i18n="seller.col_date">Tanggal</th>
+                            <th style="padding: 16px;" data-i18n="seller.col_product">Produk</th>
+                            <th style="padding: 16px;" data-i18n="seller.col_buyer">Pembeli</th>
                             <th style="padding: 16px;">Qty</th>
-                            <th style="padding: 16px;">Total</th>
-                            <th style="padding: 16px;">Status</th>
-                            <th style="padding: 16px;">Aksi</th>
+                            <th style="padding: 16px;" data-i18n="seller.col_total">Total</th>
+                            <th style="padding: 16px;" data-i18n="seller.col_status">Status</th>
+                            <th style="padding: 16px;" data-i18n="seller.col_action">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% if (orders.length===0) { %>
                             <tr>
-                                <td colspan="7" style="padding: 24px; text-align: center;">Belum ada pesanan masuk.</td>
+                                <td colspan="7" style="padding: 24px; text-align: center;" data-i18n="seller.no_orders">
+                                    Belum ada pesanan masuk.</td>
                             </tr>
                             <% } else { %>
                                 <% orders.forEach(item=> { %>
@@ -106,34 +108,40 @@
                                         <td style="padding: 16px; border-bottom: 1px solid var(--border);">
                                             <%= item.quantity %>
                                         </td>
-                                        <td style="padding: 16px; border-bottom: 1px solid var(--border); font-weight: 600;">
+                                        <td
+                                            style="padding: 16px; border-bottom: 1px solid var(--border); font-weight: 600;">
                                             Rp <%= (item.price_at_purchase * item.quantity).toLocaleString('id-ID') %>
                                         </td>
                                         <td style="padding: 16px; border-bottom: 1px solid var(--border);">
                                             <% if (item.status==='paid' || item.status==='pending' ) { %>
                                                 <span
-                                                    style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #fef3c7; color: #92400e;">
+                                                    style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #fef3c7; color: #92400e;"
+                                                    data-i18n="status.waiting">
                                                     🟡 Menunggu Diproses
                                                 </span>
                                                 <% } else if (item.status==='processed' ) { %>
                                                     <span
-                                                        style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #ccfbf1; color: #0d9488;">
+                                                        style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #ccfbf1; color: #0d9488;"
+                                                        data-i18n="status.packing">
                                                         🔵 Sedang Dikemas
                                                     </span>
                                                     <% } else if (item.status==='shipped' ) { %>
                                                         <span
-                                                            style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #dbeafe; color: #1e40af;">
+                                                            style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #dbeafe; color: #1e40af;"
+                                                            data-i18n="status.shipping">
                                                             🚚 Dalam Pengiriman
                                                         </span>
                                                         <% } else if (item.status==='completed' ) { %>
                                                             <span
-                                                                style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #d1fae5; color: #065f46;">
+                                                                style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #d1fae5; color: #065f46;"
+                                                                data-i18n="status.completed">
                                                                 ✅ Selesai Diterima
                                                             </span>
                                                             <% } else if (item.status==='rejected' ||
                                                                 item.status==='cancelled' ) { %>
                                                                 <span
-                                                                    style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #b91c1c;">
+                                                                    style="padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #b91c1c;"
+                                                                    data-i18n="<%= item.status==='rejected' ? 'status.rejected_seller' : 'status.cancelled_buyer' %>">
                                                                     <%= item.status==='rejected' ? '⛔ Saya Tolak'
                                                                         : '❌ Dibatalkan Pembeli' %>
                                                                 </span>
@@ -149,47 +157,54 @@
                                                 <% if (item.status==='paid' || item.status==='pending' ) { %>
                                                     <form action="/orders/items/<%= item.id %>/accept" method="POST"
                                                         style="margin: 0;">
-                                                        <button type="submit"
-                                                            class="btn-small btn-primary">Proses</button>
+                                                        <button type="submit" class="btn-small btn-primary"
+                                                            data-i18n="seller.btn_process">Proses</button>
                                                     </form>
                                                     <form action="/orders/items/<%= item.id %>/reject" method="POST"
                                                         style="margin: 0;"
-                                                        onsubmit="return confirmAction(event, 'Tolak pesanan ini dan kembalikan stok?', 'Ya, Tolak', '#EF4444');">
-                                                        <button type="submit"
-                                                            class="btn-small btn-delete">Tolak</button>
+                                                        onsubmit="return confirmAction(event, t('seller.reject_confirm'), t('seller.yes_reject'), '#EF4444');">
+                                                        <button type="submit" class="btn-small btn-delete"
+                                                            data-i18n="seller.btn_reject">Tolak</button>
                                                     </form>
                                                     <a href="/orders/seller/<%= item.id %>"
-                                                        class="btn-small btn-secondary"
-                                                        style="text-decoration: none;">Detail</a>
+                                                        class="btn-small btn-secondary" style="text-decoration: none;"
+                                                        data-i18n="seller.btn_detail">Detail</a>
                                                     <% } else if (item.status==='processed' ) { %>
                                                         <form action="/orders/items/<%= item.id %>/ship" method="POST"
                                                             style="margin: 0;">
-                                                            <button type="submit" class="btn-small btn-purple">🚚
+                                                            <button type="submit" class="btn-small btn-purple"
+                                                                data-i18n="seller.btn_ship">🚚
                                                                 Kirim</button>
                                                         </form>
                                                         <a href="/orders/seller/<%= item.id %>"
                                                             class="btn-small btn-secondary"
-                                                            style="text-decoration: none;">Detail</a>
+                                                            style="text-decoration: none;"
+                                                            data-i18n="seller.btn_detail">Detail</a>
                                                         <% } else if (item.status==='shipped' ) { %>
                                                             <span
-                                                                style="color: #6366f1; font-weight: 600; font-size: 13px;">Sedang
+                                                                style="color: #6366f1; font-weight: 600; font-size: 13px;"
+                                                                data-i18n="status.shipping_inline">Sedang
                                                                 Dikirim...</span>
                                                             <a href="/orders/seller/<%= item.id %>"
                                                                 class="btn-small btn-secondary"
-                                                                style="text-decoration: none;">Detail</a>
+                                                                style="text-decoration: none;"
+                                                                data-i18n="seller.btn_detail">Detail</a>
                                                             <% } else if (item.status==='completed' ) { %>
                                                                 <span
-                                                                    style="color: #059669; font-weight: 600; font-size: 13px;">✅
+                                                                    style="color: #059669; font-weight: 600; font-size: 13px;"
+                                                                    data-i18n="status.completed_inline">✅
                                                                     Selesai</span>
                                                                 <a href="/orders/seller/<%= item.id %>"
                                                                     class="btn-small btn-secondary"
-                                                                    style="text-decoration: none;">Detail</a>
+                                                                    style="text-decoration: none;"
+                                                                    data-i18n="seller.btn_detail">Detail</a>
                                                                 <form action="/orders/items/<%= item.id %>/hide"
                                                                     method="POST"
-                                                                    onsubmit="return confirmAction(event, 'Hapus dari riwayat?', 'Ya, Hapus', '#EF4444')"
+                                                                    onsubmit="return confirmAction(event, t('seller.delete_history'), t('product.yes_delete'), '#EF4444')"
                                                                     style="margin: 0;">
                                                                     <button type="submit" class="btn-small"
-                                                                        style="background:var(--border); color: var(--text-gray); font-size:11px; padding: 4px 8px;">Hapus</button>
+                                                                        style="background:var(--border); color: var(--text-gray); font-size:11px; padding: 4px 8px;"
+                                                                        data-i18n="seller.btn_delete">Hapus</button>
                                                                 </form>
                                                                 <% } else if (item.status==='rejected' ||
                                                                     item.status==='cancelled' ) { %>
@@ -199,10 +214,11 @@
                                                                     </span>
                                                                     <form action="/orders/items/<%= item.id %>/hide"
                                                                         method="POST"
-                                                                        onsubmit="return confirmAction(event, 'Hapus dari riwayat?', 'Ya, Hapus', '#EF4444')"
+                                                                        onsubmit="return confirmAction(event, t('seller.delete_history'), t('product.yes_delete'), '#EF4444')"
                                                                         style="margin: 0;">
                                                                         <button type="submit" class="btn-small"
-                                                                            style="background:var(--border); color: var(--text-gray); font-size:11px; padding: 4px 8px;">Hapus</button>
+                                                                            style="background:var(--border); color: var(--text-gray); font-size:11px; padding: 4px 8px;"
+                                                                            data-i18n="seller.btn_delete">Hapus</button>
                                                                     </form>
                                                                     <% } else { %>
                                                                         <span
@@ -211,7 +227,8 @@
                                                                         </span>
                                                                         <a href="/orders/seller/<%= item.id %>"
                                                                             class="btn-small btn-secondary"
-                                                                            style="text-decoration: none;">Detail</a>
+                                                                            style="text-decoration: none;"
+                                                                            data-i18n="seller.btn_detail">Detail</a>
                                                                         <% } %>
                                             </div>
                                         </td>
@@ -280,13 +297,13 @@
                             setTimeout(() => location.reload(), 500);
 
                         } else {
-                            window.showToast(data.message || 'Gagal', 'error');
+                            window.showToast(data.message || t('admin.failed'), 'error');
                             btn.innerHTML = originalText;
                             btn.disabled = false;
                         }
                     } catch (err) {
                         console.error(err);
-                        window.showToast('Terjadi kesalahan', 'error');
+                        window.showToast(t('toast.error_generic'), 'error');
                         btn.innerHTML = originalText;
                         btn.disabled = false;
                     }

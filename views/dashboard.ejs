@@ -4,7 +4,7 @@
         <% if (currentUser.role==='seller' || currentUser.role==='admin' ) { %>
             <!-- SELLER DASHBOARD -->
             <div class="dashboard-header">
-                <h1>Dashboard Toko</h1>
+                <h1 data-i18n="legacy.store_title">Dashboard Toko</h1>
                 <p>Halo, <%= currentUser.full_name || currentUser.username %>! Kelola produk Anda disini.</p>
                 <div class="dashboard-stats">
                     <div class="stat-card">
@@ -29,16 +29,16 @@
 
             <div class="section-header"
                 style="margin-top: 30px; display: flex; justify-content: space-between; align-items: center;">
-                <h2 class="section-title">Produk Saya</h2>
+                <h2 class="section-title" data-i18n="legacy.my_products">Produk Saya</h2>
                 <a href="/products/new" class="btn-primary"
                     style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-weight: 600;">
-                    <span>➕</span> Tambah Produk
+                    <span>➕</span> <span data-i18n="seller_products.add">Tambah Produk</span>
                 </a>
             </div>
 
             <div class="products-grid">
                 <% if (products.length===0) { %>
-                    <p>Belum ada produk. Silakan tambah produk baru.</p>
+                    <p data-i18n="seller_products.no_products">Belum ada produk. Silakan tambah produk baru.</p>
                     <% } else { %>
                         <% products.forEach(product=> { %>
                             <div class="product-card">
@@ -78,11 +78,13 @@
                                             </div>
                                             <div style="display: flex; gap: 8px;">
                                                 <a href="/products/<%= product.id %>/edit" class="btn-small"
-                                                    style="background: var(--border); color: var(--text-dark); text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 12px;">Edit</a>
+                                                    style="background: var(--border); color: var(--text-dark); text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 12px;"
+                                                    data-i18n="legacy.edit">Edit</a>
                                                 <form action="/products/<%= product.id %>?_method=DELETE" method="POST"
-                                                    onsubmit="return confirmAction(event, 'Yakin ingin menghapus produk ini?', 'Ya, Hapus', '#EF4444');">
+                                                    onsubmit="return confirmAction(event, t('product.delete_confirm'), t('product.yes_delete'), '#EF4444');">
                                                     <button type="submit" class="btn-small"
-                                                        style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">Hapus</button>
+                                                        style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;"
+                                                        data-i18n="legacy.delete">Hapus</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -94,7 +96,7 @@
 
                             <!-- SELLER INCOMING ORDERS -->
                             <div class="section-header" style="margin-top: 30px;">
-                                <h2 class="section-title">Pesanan Masuk</h2>
+                                <h2 class="section-title" data-i18n="legacy.incoming_orders">Pesanan Masuk</h2>
                             </div>
                             <div class="table-container"
                                 style="background: var(--bg-white); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden; margin-bottom: 40px;">
@@ -119,10 +121,12 @@
                                             <% } else { %>
                                                 <% orders.forEach(item=> { %>
                                                     <tr>
-                                                        <td style="padding: 16px; border-bottom: 1px solid var(--border);">
+                                                        <td
+                                                            style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                             <%= new Date(item.created_at).toLocaleDateString('id-ID') %>
                                                         </td>
-                                                        <td style="padding: 16px; border-bottom: 1px solid var(--border);">
+                                                        <td
+                                                            style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                             <div style="display: flex; align-items: center; gap: 10px;">
                                                                 <img src="<%= item.image_url || '/img/default-product.svg' %>"
                                                                     style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">
@@ -131,10 +135,12 @@
                                                                 </span>
                                                             </div>
                                                         </td>
-                                                        <td style="padding: 16px; border-bottom: 1px solid var(--border);">
+                                                        <td
+                                                            style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                             <%= item.buyer_name %>
                                                         </td>
-                                                        <td style="padding: 16px; border-bottom: 1px solid var(--border);">
+                                                        <td
+                                                            style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                             <%= item.quantity %>
                                                         </td>
                                                         <td
@@ -142,7 +148,8 @@
                                                             Rp <%= (item.price_at_purchase *
                                                                 item.quantity).toLocaleString('id-ID') %>
                                                         </td>
-                                                        <td style="padding: 16px; border-bottom: 1px solid var(--border);">
+                                                        <td
+                                                            style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                             <span style="padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500; 
                                             <%= item.status === 'processed' || item.status === 'completed' ? 'background: #d1fae5; color: #065f46;' : 
                                                item.status === 'rejected' || item.status === 'cancelled' ? 'background: #fee2e2; color: #b91c1c;' : 
@@ -151,24 +158,28 @@
                                                                     item.status.slice(1) %>
                                                             </span>
                                                         </td>
-                                                        <td style="padding: 16px; border-bottom: 1px solid var(--border);">
+                                                        <td
+                                                            style="padding: 16px; border-bottom: 1px solid var(--border);">
                                                             <% if (item.status==='pending' ) { %>
                                                                 <div style="display: flex; gap: 6px;">
                                                                     <form action="/orders/items/<%= item.id %>/accept"
                                                                         method="POST">
                                                                         <button type="submit" class="btn-small"
-                                                                            style="background: #d1fae5; color: #065f46; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight:600;">Terima</button>
+                                                                            style="background: #d1fae5; color: #065f46; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight:600;"
+                                                                            data-i18n="seller.btn_process">Terima</button>
                                                                     </form>
                                                                     <form action="/orders/items/<%= item.id %>/reject"
                                                                         method="POST"
-                                                                        onsubmit="return confirmAction(event, 'Tolak pesanan ini dan kembalikan stok?', 'Ya, Tolak', '#EF4444');">
+                                                                        onsubmit="return confirmAction(event, t('seller.reject_confirm'), t('seller.yes_reject'), '#EF4444');">
                                                                         <button type="submit" class="btn-small"
-                                                                            style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight:600;">Tolak</button>
+                                                                            style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight:600;"
+                                                                            data-i18n="legacy.reject">Tolak</button>
                                                                     </form>
                                                                 </div>
                                                                 <% } else { %>
                                                                     <span
-                                                                        style="color: var(--text-gray); font-size: 12px;">Selesai</span>
+                                                                        style="color: var(--text-gray); font-size: 12px;"
+                                                                        data-i18n="legacy.completed">Selesai</span>
                                                                     <% } %>
                                                         </td>
                                                     </tr>
@@ -184,7 +195,8 @@
                                     style="background: linear-gradient(135deg, #FF6B35, #E55A2D);">
                                     <h1 style="color: white;">Halo, <%= currentUser.full_name || currentUser.username %>
                                             ! 👋</h1>
-                                    <p style="color: rgba(255,255,255,0.9);">Riwayat pesanan Anda</p>
+                                    <p style="color: rgba(255,255,255,0.9);" data-i18n="legacy.order_history_desc">
+                                        Riwayat pesanan Anda</p>
 
                                     <div class="dashboard-stats">
                                         <div class="stat-card">
@@ -197,7 +209,7 @@
                                             <div class="stat-value">
                                                 <%= stats.activeOrders %>
                                             </div>
-                                            <div class="stat-label">Pesanan Aktif</div>
+                                            <div class="stat-label" data-i18n="legacy.active_orders">Pesanan Aktif</div>
                                         </div>
                                         <div class="stat-card">
                                             <div class="stat-value">Rp <%=
@@ -209,7 +221,8 @@
                                 </div>
 
                                 <div class="section-header" style="margin-top: 30px;">
-                                    <h2 class="section-title">Riwayat Transaksi</h2>
+                                    <h2 class="section-title" data-i18n="legacy.transaction_history">Riwayat Transaksi
+                                    </h2>
                                 </div>
 
                                 <div class="table-container"
@@ -217,21 +230,26 @@
                                     <table style="width: 100%; border-collapse: collapse;">
                                         <thead>
                                             <tr style="background: var(--bg-light); text-align: left;">
-                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">ID Pesanan
+                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">ID
+                                                    Pesanan
                                                 </th>
-                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">Tanggal
+                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">
+                                                    Tanggal
                                                 </th>
                                                 <th style="padding: 16px; border-bottom: 1px solid var(--border);">Total
                                                     Belanja</th>
-                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">Status</th>
-                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">Aksi</th>
+                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">
+                                                    Status</th>
+                                                <th style="padding: 16px; border-bottom: 1px solid var(--border);">Aksi
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <% if (orders.length===0) { %>
                                                 <tr>
                                                     <td colspan="5"
-                                                        style="padding: 24px; text-align: center; color: var(--text-gray);">Belum
+                                                        style="padding: 24px; text-align: center; color: var(--text-gray);">
+                                                        Belum
                                                         ada
                                                         pesanan.</td>
                                                 </tr>

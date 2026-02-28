@@ -134,7 +134,7 @@
                             <% } else { %>
                                 <a href="/login" class="btn-checkout-page"
                                     style="display: flex; justify-content: center; align-items: center; text-decoration: none;">
-                                    Login untuk Checkout
+                                    <span data-i18n="cart.login_to_checkout">Login untuk Checkout</span>
                                 </a>
                                 <% } %>
 
@@ -153,9 +153,11 @@
                     <div class="promo-card">
                         <h4 data-i18n="cart.promo_title">Punya Kode Promo?</h4>
                         <div class="promo-box">
-                            <input type="text" placeholder="Masukkan kode promo">
+                            <input type="text" data-i18n-placeholder="cart.promo_placeholder"
+                                placeholder="Masukkan kode promo">
                             <button type="button" class="btn btn-secondary"
-                                onclick="window.showToast('Fitur promo belum tersedia saat ini.', 'info')">Pakai</button>
+                                onclick="window.showToast(t('toast.promo_unavailable'), 'info')"><span
+                                    data-i18n="cart.promo_apply">Pakai</span></button>
                         </div>
                     </div>
 
@@ -281,11 +283,11 @@
                             }
 
                         } else {
-                            window.showToast(data.message || 'Gagal update keranjang', 'error');
+                            window.showToast(data.message || t('toast.update_failed'), 'error');
                         }
                     } catch (err) {
                         console.error(err);
-                        window.showToast('Koneksi error', 'error');
+                        window.showToast(t('toast.connection_error_short'), 'error');
                     } finally {
                         btn.disabled = false;
                         btn.style.opacity = '1';
@@ -404,12 +406,12 @@
                                 }
                             }
                         } else {
-                            window.showToast(data.message || 'Gagal menghapus', 'error');
+                            window.showToast(data.message || t('toast.delete_failed'), 'error');
                             window.location.reload();
                         }
                     } catch (err) {
                         console.error(err);
-                        window.showToast('Error', 'error');
+                        window.showToast(t('toast.error_generic'), 'error');
                         window.location.reload();
                     }
                 });

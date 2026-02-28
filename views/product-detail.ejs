@@ -29,7 +29,8 @@
                         <div
                             style="position: absolute; inset: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
                             <span
-                                style="background: #ef4444; color: white; padding: 8px 20px; border-radius: 99px; font-weight: 800; font-size: 16px; letter-spacing: 1px; transform: rotate(-10deg);">HABIS
+                                style="background: #ef4444; color: white; padding: 8px 20px; border-radius: 99px; font-weight: 800; font-size: 16px; letter-spacing: 1px; transform: rotate(-10deg);"
+                                data-i18n="detail.sold_out">HABIS
                                 TERJUAL</span>
                         </div>
                         <% } %>
@@ -60,23 +61,26 @@
 
                 <!-- Detail / Spesifikasi -->
                 <div>
-                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">Detail
+                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;"
+                        data-i18n="detail.product_details">Detail
                         Produk
                     </h3>
                     <div
                         style="display: grid; grid-template-columns: 120px 1fr; gap: 12px; font-size: 14px; color: var(--text-gray);">
-                        <div style="color: var(--text-gray);">Kondisi</div>
-                        <div style="font-weight: 500; color: var(--text-dark);">Baru</div>
+                        <div style="color: var(--text-gray);" data-i18n="detail.condition">Kondisi</div>
+                        <div style="font-weight: 500; color: var(--text-dark);" data-i18n="detail.condition_new">Baru
+                        </div>
 
-                        <div style="color: var(--text-gray);">Kategori</div>
+                        <div style="color: var(--text-gray);" data-i18n="detail.category">Kategori</div>
                         <div style="font-weight: 600; color: #FF6B35;">
                             <%= product.category %>
                         </div>
 
-                        <div style="color: var(--text-gray);">Min. Pemesanan</div>
-                        <div style="font-weight: 500; color: var(--text-dark);">1 Buah</div>
+                        <div style="color: var(--text-gray);" data-i18n="detail.min_order">Min. Pemesanan</div>
+                        <div style="font-weight: 500; color: var(--text-dark);" data-i18n="detail.min_order_value">1
+                            Buah</div>
 
-                        <div style="color: var(--text-gray);">Etalase</div>
+                        <div style="color: var(--text-gray);" data-i18n="detail.store">Etalase</div>
                         <div style="font-weight: 600; color: #3b82f6;">
                             <a href="/store/<%= product.seller_id %>" style="color: inherit; text-decoration: none;">
                                 <%= product.seller ? (product.seller.Seller?.store_name || product.seller.username)
@@ -90,11 +94,12 @@
 
                 <!-- Deskripsi -->
                 <div>
-                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">
+                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;"
+                        data-i18n="detail.description">
                         Deskripsi Produk
                     </h3>
                     <div
-                        style="color: var(--text-dark); font-size: 15px; line-height: 1.7; white-space: pre-wrap; font-family: 'DM Sans', sans-serif;">
+                        style="color: var(--text-dark); font-size: 15px; line-height: 1.7; font-family: 'DM Sans', sans-serif;">
                         <%= product.description || 'Tidak ada deskripsi detail untuk produk ini.' %>
                     </div>
                 </div>
@@ -119,7 +124,8 @@
                                 <% } %>
                     </div>
                     <div style="flex: 1; overflow: hidden;">
-                        <div style="font-size: 12px; color: var(--text-gray); margin-bottom: 2px;">Penjual / Lapak</div>
+                        <div style="font-size: 12px; color: var(--text-gray); margin-bottom: 2px;"
+                            data-i18n="detail.seller_label">Penjual / Lapak</div>
                         <div
                             style="font-size: 14px; font-weight: 700; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             <%= product.seller ? (product.seller.Seller?.store_name || product.seller.username)
@@ -137,7 +143,8 @@
                 <!-- Action Box -->
                 <div
                     style="background: var(--bg-white); border-radius: 16px; border: 1px solid var(--border); padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;">Atur
+                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;"
+                        data-i18n="detail.purchase">Atur
                         Pembelian
                     </h3>
 
@@ -158,30 +165,40 @@
                                 style="width: 100%; padding: 14px; border-radius: 10px; background: var(--bg-white); color: #3b82f6; border: 1px solid #3b82f6; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);"
                                 onmouseover="this.style.background='#eff6ff'"
                                 onmouseout="this.style.background='white'">
-                                ✏️ Menu Edit Produk Pribadi
+                                <span data-i18n="detail.edit_own">✏️ Menu Edit Produk Pribadi</span>
                             </button>
                             <% } else { %>
                                 <button type="submit" class="btn-primary"
                                     style="width: 100%; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;"
                                     <%=product.stock===0 ? 'disabled' : '' %>>
                                     <span style="font-size: 18px;">🛒</span>
-                                    <%= product.stock===0 ? 'Stok Habis' : '+ Keranjang' %>
+                                    <span
+                                        data-i18n="<%= product.stock===0 ? 'detail.out_of_stock' : 'detail.add_cart' %>">
+                                        <%= product.stock===0 ? 'Stok Habis' : '+ Keranjang' %>
+                                    </span>
                                 </button>
                                 <% } %>
                     </form>
 
                     <div
                         style="margin-top: 16px; display: flex; align-items: center; gap: 6px; justify-content: center; font-family: 'DM Sans', sans-serif;">
-                        <% if (product.stock> 10) { %>
-                            <span style="color: #059669; font-size: 13px; font-weight: 600;">✅ Stok Tersedia (<%=
-                                    product.stock %>)</span>
-                            <% } else if (product.stock> 0) { %>
-                                <span style="color: #d97706; font-size: 13px; font-weight: 600;">⚠️ Sisa <%=
-                                        product.stock %> buah!</span>
-                                <% } else { %>
-                                    <span style="color: #dc2626; font-size: 13px; font-weight: 600;">❌ Kosong</span>
-                                    <% } %>
+                        <span id="stockStatusText" data-stock="<%= product.stock %>"
+                            style="font-size: 13px; font-weight: 600;
+                            <% if (product.stock > 10) { %>color: #059669;<% } else if (product.stock > 0) { %>color: #d97706;<% } else { %>color: #dc2626;<% } %>"></span>
                     </div>
+                    <script>
+                        (function () {
+                            const el = document.getElementById('stockStatusText');
+                            const stock = parseInt(el.dataset.stock);
+                            if (stock > 10) {
+                                el.textContent = '✅ ' + t('detail.stock_available') + ' (' + stock + ')';
+                            } else if (stock > 0) {
+                                el.textContent = '⚠️ ' + t('detail.stock_remaining') + ' ' + stock + ' ' + t('detail.stock_remaining_suffix');
+                            } else {
+                                el.textContent = '❌ ' + t('detail.stock_empty');
+                            }
+                        })();
+                    </script>
                 </div>
             </div>
         </div>
@@ -214,7 +231,7 @@
                 if (!btn) return;
 
                 const originalHTML = btn.innerHTML;
-                btn.innerHTML = 'Memproses ⏳...';
+                btn.innerHTML = t('product.processing_btn');
                 btn.disabled = true;
 
                 try {
@@ -231,7 +248,7 @@
                     const data = await response.json();
 
                     if (data.success) {
-                        window.showToast(data.message || 'Berhasil masuk keranjang!', 'success');
+                        window.showToast(data.message || t('toast.add_success'), 'success');
 
                         // Fire Confetti!
                         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#FF6B35', '#22c55e', '#E040FB'] });
@@ -243,11 +260,11 @@
                             if (data.cartCount > 0) badge.style.display = 'flex';
                         }
                     } else {
-                        window.showToast(data.message || 'Gagal menambahkan', 'error');
+                        window.showToast(data.message || t('toast.add_failed'), 'error');
                     }
                 } catch (err) {
                     console.error(err);
-                    window.showToast('Terjadi kesalahan koneksi', 'error');
+                    window.showToast(t('toast.connection_error'), 'error');
                 } finally {
                     btn.innerHTML = originalHTML;
                     btn.disabled = false;

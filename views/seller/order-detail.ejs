@@ -184,7 +184,7 @@
                 style="background: var(--bg-light); display: flex; justify-content: flex-end; gap: 12px;">
                 <% if (item.status==='pending' || item.status==='paid' ) { %>
                     <form action="/orders/items/<%= item.id %>/reject" method="POST"
-                        onsubmit="return confirmAction(event, 'Tolak pesanan ini dan kembalikan stok?', 'Ya, Tolak', '#EF4444');">
+                        onsubmit="return confirmAction(event, t('seller.reject_confirm'), t('seller.yes_reject'), '#EF4444');">
                         <button type="submit" class="btn-danger"
                             style="padding: 10px 20px; border-radius: 8px; font-weight: 600; border: none; background: #fee2e2; color: #b91c1c; cursor: pointer;">
                             ❌ Tolak Pesanan
@@ -209,7 +209,8 @@
                             <% } else if (item.status==='completed' ) { %>
                                 <span style="color: #059669; font-weight: 600;">✅ Transaksi Selesai</span>
                                 <% } else { %>
-                                    <span style="color: var(--text-gray); font-weight: 600;">Status: <%= item.status %></span>
+                                    <span style="color: var(--text-gray); font-weight: 600;">Status: <%= item.status %>
+                                            </span>
                                     <% } %>
             </div>
         </div>

@@ -6,15 +6,17 @@
                 style="background: var(--bg-white); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden;">
                 <div
                     style="padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                    <h2 style="margin: 0; font-size: 20px;">Edit Profil</h2>
-                    <a href="/profile" style="color: var(--text-gray); text-decoration: none; font-size: 14px;">Batal</a>
+                    <h2 style="margin: 0; font-size: 20px;" data-i18n="profile_edit.title">Edit Profil</h2>
+                    <a href="/profile" style="color: var(--text-gray); text-decoration: none; font-size: 14px;"
+                        data-i18n="profile_edit.cancel">Batal</a>
                 </div>
 
                 <div style="padding: 30px;">
                     <!-- Edit Info Form -->
                     <form action="/profile/update" method="POST" enctype="multipart/form-data"
                         style="margin-bottom: 40px;">
-                        <h3 style="font-size: 16px; margin-bottom: 20px; color: var(--text-dark);">Informasi Pribadi</h3>
+                        <h3 style="font-size: 16px; margin-bottom: 20px; color: var(--text-dark);">Informasi Pribadi
+                        </h3>
 
                         <!-- Profile Avatar Section -->
                         <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 24px;">
@@ -22,7 +24,8 @@
                                 style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border);">
                             <div class="form-group" style="flex: 1;">
                                 <label
-                                    style="display: block; font-size: 14px; font-weight: 500; color: var(--text-dark); margin-bottom: 6px;">Ubah
+                                    style="display: block; font-size: 14px; font-weight: 500; color: var(--text-dark); margin-bottom: 6px;"
+                                    data-i18n="profile_edit.change_photo">Ubah
                                     Foto Profil (Maks. 5MB)</label>
                                 <input type="file" name="profile_image" accept="image/*"
                                     style="width: 100%; padding: 8px; border: 1px dashed var(--border); border-radius: 8px; font-size: 13px;">
@@ -97,7 +100,8 @@
                                     <% } %>
 
                                         <div style="text-align: right;">
-                                            <button type="submit" class="btn-primary">Simpan Perubahan</button>
+                                            <button type="submit" class="btn-primary"
+                                                data-i18n="profile_edit.save">Simpan Perubahan</button>
                                         </div>
                     </form>
 
@@ -125,7 +129,8 @@
                             </div>
                             <div class="form-group">
                                 <label
-                                    style="display: block; font-size: 14px; font-weight: 500; color: var(--text-dark); margin-bottom: 6px;">Konfirmasi
+                                    style="display: block; font-size: 14px; font-weight: 500; color: var(--text-dark); margin-bottom: 6px;"
+                                    data-i18n="profile_edit.confirm_password">Konfirmasi
                                     Password Baru</label>
                                 <input type="password" name="confirmNewPassword" required minlength="6"
                                     style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px;">
@@ -151,7 +156,7 @@
                         </p>
                         <div style="text-align: right;">
                             <form action="/profile/delete" method="POST"
-                                onsubmit="return confirmAction(event, 'Apakah Anda YAKIN ingin menghapus akun Anda? Tindakan ini tidak dapat dibatalkan.', 'Ya, Hapus Akun', '#EF4444');">
+                                onsubmit="return confirmAction(event, t('profile.delete_confirm_alt'), t('profile.yes_delete_account_alt'), '#EF4444');">
                                 <button type="submit"
                                     style="background-color: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">
                                     Hapus Akun Saya

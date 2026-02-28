@@ -15,7 +15,7 @@ module.exports = {
             res.render('profile/index', { user });
         } catch (err) {
             console.error(err);
-            req.flash('error', 'Gagal memuat profil.');
+            req.flash('error', req.t('profile.load_failed'));
             res.redirect('/');
         }
     },
@@ -32,7 +32,7 @@ module.exports = {
             res.render('profile/edit', { user });
         } catch (err) {
             console.error(err);
-            req.flash('error', 'Gagal memuat form edit.');
+            req.flash('error', req.t('profile.edit_load_failed'));
             res.redirect('/profile');
         }
     },
@@ -51,7 +51,7 @@ module.exports = {
             if (username && username !== user.username) {
                 const existingUser = await User.findOne({ where: { username } });
                 if (existingUser) {
-                    req.flash('error', 'Username sudah digunakan oleh pengguna lain.');
+                    req.flash('error', req.t('profile.username_taken'));
                     return res.redirect('/profile');
                 }
             }
@@ -59,7 +59,7 @@ module.exports = {
             // Ganti Sandi (Jika diisi)
             if (new_password) {
                 if (new_password !== confirm_password) {
-                    req.flash('error', 'Konfirmasi kata sandi baru tidak cocok.');
+                    req.flash('error', req.t('profile.password_mismatch'));
                     return res.redirect('/profile');
                 }
                 const hashedPassword = await bcrypt.hash(new_password, 10);
@@ -93,13 +93,13 @@ module.exports = {
             req.session.user = user;
 
             req.session.save(() => {
-                req.flash('success_msg', 'Profil berhasil diperbarui secara menyeluruh.');
+                req.flash('success_msg', req.t('profile.updated'));
                 res.redirect('/profile');
             });
         } catch (err) {
             console.error(err);
             req.session.save(() => {
-                req.flash('error', 'Gagal memperbarui profil.');
+                req.flash('error', req.t('profile.update_failed'));
                 res.redirect('/profile');
             });
         }
@@ -123,7 +123,7 @@ module.exports = {
                 });
 
                 if (activeOrders > 0) {
-                    req.flash('error', 'Tidak dapat menghapus akun karena masih ada pesanan yang aktif.');
+                    req.flash('error', req.t('profile.active_orders'));
                     return res.redirect('/profile');
                 }
             } else if (user.role === 'seller') {
@@ -136,7 +136,7 @@ module.exports = {
                 });
 
                 if (activeItems > 0) {
-                    req.flash('error', 'Tidak dapat menghapus akun karena masih ada pesanan masuk yang belum selesai.');
+                    req.flash('error', req.t('profile.active_seller_orders'));
                     return res.redirect('/profile');
                 }
             }
@@ -148,7 +148,7 @@ module.exports = {
         } catch (err) {
             console.error(err);
             req.session.save(() => {
-                req.flash('error', 'Gagal menghapus akun: ' + err.message);
+                req.flash('error', req.t('profile.delete_failed', err.message));
                 res.redirect('/profile');
             });
         }

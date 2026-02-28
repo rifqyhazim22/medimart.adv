@@ -132,9 +132,9 @@
             <!-- SELLER DASHBOARD -->
             <div class="dashboard-header">
                 <h1 data-i18n="seller.dashboard_title">Dashboard Toko</h1>
-                <p>Halo, <strong>
+                <p><span data-i18n="seller.greeting">Halo</span>, <strong>
                         <%= currentUser.full_name || currentUser.username %>
-                    </strong>! Kelola produk Anda disini.</p>
+                    </strong>! <span data-i18n="seller.greeting_desc">Kelola produk Anda disini.</span></p>
                 <div class="dashboard-stats">
                     <div class="stat-card">
                         <div class="stat-icon blue">📦</div>
@@ -215,8 +215,8 @@
                                     </div>
                                     <% }) %>
                                         <% } else { %>
-                                            <p
-                                                style="color: var(--text-gray); font-size: 14px; text-align: center; margin-top: 40px;">
+                                            <p style="color: var(--text-gray); font-size: 14px; text-align: center; margin-top: 40px;"
+                                                data-i18n="seller.no_sales">
                                                 Belum ada penjualan tercatat.</p>
                                             <% } %>
                         </div>
@@ -241,20 +241,20 @@
                             <thead>
                                 <tr
                                     style="border-bottom: 2px solid var(--border); text-align: left; background: var(--bg-light);">
-                                    <th
-                                        style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                    <th style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;"
+                                        data-i18n="seller.th_buyer">
                                         Pembeli</th>
-                                    <th
-                                        style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                    <th style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;"
+                                        data-i18n="seller.th_product">
                                         Produk (Kuantitas)</th>
-                                    <th
-                                        style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                    <th style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;"
+                                        data-i18n="seller.th_amount">
                                         Nominal Resi</th>
-                                    <th
-                                        style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                    <th style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;"
+                                        data-i18n="seller.th_status">
                                         Status Order</th>
-                                    <th
-                                        style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+                                    <th style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;"
+                                        data-i18n="seller.th_date">
                                         Tanggal Berlangsung</th>
                                 </tr>
                             </thead>
@@ -280,23 +280,28 @@
                                             <td style="padding: 16px;">
                                                 <% if (order.status==='pending' ) { %>
                                                     <span
-                                                        style="background: #fef08a; color: #854d0e; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">⏳
+                                                        style="background: #fef08a; color: #854d0e; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;"
+                                                        data-i18n="seller.st_pending">⏳
                                                         Menunggu Dibayar</span>
                                                     <% } else if (order.status==='paid' ) { %>
                                                         <span
-                                                            style="background: #bfdbfe; color: #1e40af; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">⚠️
+                                                            style="background: #bfdbfe; color: #1e40af; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;"
+                                                            data-i18n="seller.st_paid">⚠️
                                                             Perlu Diproses</span>
                                                         <% } else if (order.status==='processed' ) { %>
                                                             <span
-                                                                style="background: #fde047; color: #a16207; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">📦
+                                                                style="background: #fde047; color: #a16207; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;"
+                                                                data-i18n="seller.st_processed">📦
                                                                 Sedang Dikemas</span>
                                                             <% } else if (order.status==='shipped' ) { %>
                                                                 <span
-                                                                    style="background: #e9d5ff; color: #6b21a8; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">🚚
+                                                                    style="background: #e9d5ff; color: #6b21a8; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;"
+                                                                    data-i18n="seller.st_shipped">🚚
                                                                     Meluncur Dikirim</span>
                                                                 <% } else if (order.status==='completed' ) { %>
                                                                     <span
-                                                                        style="background: #bbf7d0; color: #166534; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">✅
+                                                                        style="background: #bbf7d0; color: #166534; padding: 6px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;"
+                                                                        data-i18n="seller.st_completed">✅
                                                                         Transaksi Selesai</span>
                                                                     <% } else { %>
                                                                         <span
@@ -314,7 +319,8 @@
                                             <% } else { %>
                                                 <tr>
                                                     <td colspan="5"
-                                                        style="text-align: center; padding: 40px; color: var(--text-gray);">
+                                                        style="text-align: center; padding: 40px; color: var(--text-gray);"
+                                                        data-i18n="seller.no_orders">
                                                         Hingga saat ini belum ada pesanan yang masuk. Perbanyak
                                                         inventaris produk!</td>
                                                 </tr>
