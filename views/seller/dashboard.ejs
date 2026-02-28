@@ -228,9 +228,9 @@
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h3 style="margin: 0; color: var(--text-dark); font-size: 18px;">Pesanan Masuk Terbaru 🛍️</h3>
                         <a href="/seller/orders"
-                            style="color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 600; padding: 6px 12px; background: #eff6ff; border-radius: 8px; transition: background 0.2s;"
-                            onmouseover="this.style.background='#dbeafe'"
-                            onmouseout="this.style.background='#eff6ff'">Lihat Seluruhnya &rarr;</a>
+                            style="color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 600; padding: 6px 12px; background: var(--bg-light); border: 1px solid var(--border); border-radius: 8px; transition: background 0.2s;"
+                            onmouseover="this.style.background='var(--border)'"
+                            onmouseout="this.style.background='var(--bg-light)'">Lihat Seluruhnya &rarr;</a>
                     </div>
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
@@ -258,8 +258,8 @@
                                 <% if(recentOrders && recentOrders.length> 0) { %>
                                     <% recentOrders.forEach(order=> { %>
                                         <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;"
-                                            onmouseover="this.style.background='#f9fafb'"
-                                            onmouseout="this.style.background='white'">
+                                            onmouseover="this.style.background='var(--bg-light)'"
+                                            onmouseout="this.style.background='transparent'">
                                             <td
                                                 style="padding: 16px; font-weight: 600; color: var(--text-dark); font-size: 14px;">
                                                 <%= order.buyer_name %>

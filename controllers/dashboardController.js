@@ -66,7 +66,7 @@ module.exports = {
                     seller_id: user.id,
                     status: { [Op.in]: ['paid', 'processed', 'shipped', 'completed'] }
                 },
-                include: [{ model: Product }],
+                include: [{ model: Product }, { model: Order }],
                 order: [['id', 'ASC']]
             });
 
@@ -79,7 +79,7 @@ module.exports = {
                 grossSellerRevenue += itemRevenue;
 
                 // Chart Data (Net Revenue = 90% of Gross)
-                const month = new Date(item.createdAt).getMonth();
+                const month = new Date(item.Order ? item.Order.createdAt : Date.now()).getMonth();
                 monthlyRevenue[month] += (itemRevenue * 0.90);
 
                 // Populating top products
@@ -121,7 +121,7 @@ module.exports = {
                 price: item.price_at_purchase,
                 product_name: item.Product ? item.Product.name : 'Terhapus',
                 buyer_name: item.Order && item.Order.user ? item.Order.user.username : 'Unknown',
-                date: item.createdAt
+                date: item.Order ? item.Order.createdAt : null
             }));
 
             const stats = {
