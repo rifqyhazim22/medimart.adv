@@ -18,6 +18,7 @@ const translations = {
     'auth.logout': { id: 'Logout', en: 'Logout' },
     'header.search_placeholder': { id: 'Cari obat, vitamin, alat kesehatan...', en: 'Search medicines, vitamins, health tools...' },
     'header.search_seller': { id: 'Cari inventaris saya...', en: 'Search my inventory...' },
+    'header.search_admin': { id: 'Cari profil pengguna...', en: 'Search user profiles...' },
     'header.theme_title': { id: 'Ganti Layar Siang/Malam', en: 'Toggle Day/Night Mode' },
     'header.lang_title': { id: 'Ganti Bahasa', en: 'Switch Language' },
     'header.profile_title': { id: 'Manajemen Profil Akun', en: 'Account Profile Management' },
@@ -299,6 +300,8 @@ const translations = {
     'index.btn_out_of_stock': { id: 'Habis', en: 'Sold Out' },
     'index.btn_add_cart': { id: '+ Keranjang', en: '+ Cart' },
     'index.item_suffix': { id: 'Item', en: 'Item' },
+    'index.reco_generic': { id: 'Spesial Untuk Anda', en: 'Special For You' },
+    'index.reco_personal': { id: 'Berdasarkan Pembelian Anda', en: 'Based on Your Purchases' },
 
     // ========== CHECKOUT PAYMENT LABELS ==========
     'checkout.bank_label': { id: '🏦 Transfer Bank (BCA/Mandiri)', en: '🏦 Bank Transfer (BCA/Mandiri)' },

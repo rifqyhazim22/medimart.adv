@@ -187,14 +187,16 @@
                 </div>
 
                 <div class="search-bar">
-                    <% let searchAction="/" ; let searchPlaceholder="Cari obat, vitamin..." ; if (typeof currentUser
-                        !=='undefined' && currentUser) { if (currentUser.role==='seller' ) {
-                        searchAction="/seller/products" ; searchPlaceholder="Cari inventaris saya..." ; } else if
+                    <% let searchAction="/" ; let searchPlaceholder="Cari obat, vitamin..." ; let
+                        searchI18nKey="header.search_placeholder" ; if (typeof currentUser !=='undefined' &&
+                        currentUser) { if (currentUser.role==='seller' ) { searchAction="/seller/products" ;
+                        searchPlaceholder="Cari inventaris saya..." ; searchI18nKey="header.search_seller" ; } else if
                         (currentUser.role==='admin' ) { searchAction="/admin/dashboard" ;
-                        searchPlaceholder="Cari profil pengguna..." ; } } %>
+                        searchPlaceholder="Cari profil pengguna..." ; searchI18nKey="header.search_admin" ; } } %>
                         <form action="<%= searchAction %>" method="GET"
                             style="display: flex; width: 100%; align-items: center;">
                             <input type="text" name="search" placeholder="<%= searchPlaceholder %>"
+                                data-i18n-placeholder="<%= searchI18nKey %>"
                                 value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
                             <button type="submit" class="search-btn">🔍</button>
                         </form>
