@@ -11,6 +11,8 @@
         rel="stylesheet">
     <!-- CSS -->
     <link rel="stylesheet" href="/css/login.css">
+    <!-- i18n System -->
+    <script src="/js/i18n.js"></script>
     <!-- Theme Initialization (Prevent FOUC) -->
     <script>
         const savedTheme = localStorage.getItem('medimart_theme') || 'light';
@@ -29,6 +31,9 @@
 <body>
     <!-- Floating Theme Toggle -->
     <button class="theme-toggle-float" id="themeToggleBtn" onclick="toggleTheme()" title="Ganti Siang/Malam">🌙</button>
+    <!-- Floating Language Toggle -->
+    <button class="theme-toggle-float" id="langToggleFloat" onclick="toggleLanguage()" title="Ganti Bahasa"
+        style="right: 70px; font-size: 13px; font-weight: 700; font-family: 'Outfit', sans-serif;">ID</button>
 
     <div class="login-container">
         <!-- Left Side - Branding -->
@@ -38,28 +43,28 @@
                     <div class="logo-icon">💊</div>
                     <h1>MediMart</h1>
                 </div>
-                <p class="tagline">Marketplace Obat & Produk Kesehatan Terpercaya</p>
+                <p class="tagline" data-i18n="login.brand_tagline">Marketplace Obat & Produk Kesehatan Terpercaya</p>
 
                 <div class="features">
                     <div class="feature-item">
                         <span class="feature-icon">🏪</span>
                         <div>
-                            <h3>Marketplace Lengkap</h3>
-                            <p>Ribuan produk kesehatan tersedia</p>
+                            <h3 data-i18n="login.feat1_title">Marketplace Lengkap</h3>
+                            <p data-i18n="login.feat1_desc">Ribuan produk kesehatan tersedia</p>
                         </div>
                     </div>
                     <div class="feature-item">
                         <span class="feature-icon">📊</span>
                         <div>
-                            <h3>Dashboard Seller</h3>
-                            <p>Kelola toko Anda dengan mudah</p>
+                            <h3 data-i18n="login.feat2_title">Dashboard Seller</h3>
+                            <p data-i18n="login.feat2_desc">Kelola toko Anda dengan mudah</p>
                         </div>
                     </div>
                     <div class="feature-item">
                         <span class="feature-icon">🔒</span>
                         <div>
-                            <h3>Aman & Terpercaya</h3>
-                            <p>Transaksi dijamin keamanannya</p>
+                            <h3 data-i18n="login.feat3_title">Aman & Terpercaya</h3>
+                            <p data-i18n="login.feat3_desc">Transaksi dijamin keamanannya</p>
                         </div>
                     </div>
                 </div>
@@ -71,8 +76,8 @@
             <div class="login-box">
                 <div id="loginView">
                     <div class="login-header">
-                        <h2>Selamat Datang!</h2>
-                        <p>Silakan login sesuai peran Anda</p>
+                        <h2 data-i18n="login.welcome">Selamat Datang!</h2>
+                        <p data-i18n="login.subtitle">Silakan login sesuai peran Anda</p>
                     </div>
 
                     <!-- Role Tabs (Visual Only - handled by backend check) -->
@@ -80,15 +85,15 @@
                         style="display: flex; gap: 8px; margin-bottom: 24px; padding: 4px; background: var(--border); border-radius: 12px;">
                         <button type="button" class="role-tab active" onclick="selectRole('customer')"
                             style="flex: 1; padding: 8px; border: none; border-radius: 8px; background: var(--bg-white); color: #FF6B35; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
-                            Pelanggan
+                            <span data-i18n="login.role_customer">Pelanggan</span>
                         </button>
                         <button type="button" class="role-tab" onclick="selectRole('seller')"
                             style="flex: 1; padding: 8px; border: none; border-radius: 8px; background: transparent; color: var(--text-gray); font-weight: 500; cursor: pointer; transition: all 0.3s;">
-                            Seller
+                            <span data-i18n="login.role_seller">Seller</span>
                         </button>
                         <button type="button" class="role-tab" onclick="selectRole('admin')"
                             style="flex: 1; padding: 8px; border: none; border-radius: 8px; background: transparent; color: var(--text-gray); font-weight: 500; cursor: pointer; transition: all 0.3s;">
-                            Admin
+                            <span data-i18n="login.role_admin">Admin</span>
                         </button>
                     </div>
 
@@ -109,10 +114,11 @@
                                         <input type="hidden" id="roleInput" name="role" value="customer">
 
                                         <div class="form-group">
-                                            <label for="username">Email / Username</label>
+                                            <label for="username" data-i18n="login.username">Email / Username</label>
                                             <div class="input-wrapper">
                                                 <span class="input-icon">👤</span>
                                                 <input type="text" id="username" name="username"
+                                                    data-i18n-placeholder="login.username_placeholder"
                                                     placeholder="Masukkan email atau username" required
                                                     autocomplete="username">
                                             </div>
@@ -121,11 +127,13 @@
                                         <div class="form-group">
                                             <div
                                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                                <label for="password" style="margin-bottom: 0;">Password</label>
+                                                <label for="password" style="margin-bottom: 0;"
+                                                    data-i18n="login.password">Password</label>
                                             </div>
                                             <div class="input-wrapper">
                                                 <span class="input-icon">🔒</span>
                                                 <input type="password" id="password" name="password"
+                                                    data-i18n-placeholder="login.password_placeholder"
                                                     placeholder="Masukkan password" required
                                                     autocomplete="current-password">
                                                 <button type="button" class="toggle-password"
@@ -138,13 +146,14 @@
                                         <div class="form-options">
                                             <label class="remember-me">
                                                 <input type="checkbox" id="rememberMe" name="remember_me">
-                                                <span>Ingat saya</span>
+                                                <span data-i18n="login.remember_me">Ingat saya</span>
                                             </label>
-                                            <a href="/forgot-password" class="forgot-password">Lupa password?</a>
+                                            <a href="/forgot-password" class="forgot-password"
+                                                data-i18n="login.forgot">Lupa password?</a>
                                         </div>
 
                                         <button type="submit" class="btn-login">
-                                            <span>Login</span>
+                                            <span data-i18n="login.submit">Login</span>
                                             <span class="btn-icon">→</span>
                                         </button>
 
@@ -155,12 +164,14 @@
                                         <a href="/" class="btn-guest"
                                             style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 12px; background: var(--bg-white); color: var(--text-dark); font-weight: 600; cursor: pointer; transition: all 0.2s;">
                                             <span>🛒</span>
-                                            <span>Lanjut sebagai Tamu</span>
+                                            <span data-i18n="login.guest">Lanjut sebagai Tamu</span>
                                         </a>
                                     </form>
 
                                     <div class="login-footer">
-                                        <p>Belum punya akun? <a href="/register" class="link-register">Daftar
+                                        <p><span data-i18n="login.no_account">Belum punya akun?</span> <a
+                                                href="/register" class="link-register"
+                                                data-i18n="login.register_now">Daftar
                                                 sekarang</a></p>
                                     </div>
 

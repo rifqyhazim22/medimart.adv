@@ -12,6 +12,8 @@
     <!-- CSS -->
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <!-- i18n System -->
+    <script src="/js/i18n.js"></script>
 
     <!-- Theme Initialization Script (Prevent FOUC) -->
     <script>
@@ -214,8 +216,15 @@
                             <!-- Theme Toggle Global -->
                             <button id="themeToggleBtn" onclick="toggleTheme()"
                                 style="background: var(--bg-light); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px;"
-                                title="Ganti Layar Siang/Malam">
+                                data-i18n-title="header.theme_title" title="Ganti Layar Siang/Malam">
                                 🌙
+                            </button>
+
+                            <!-- Language Toggle Global -->
+                            <button id="langToggleBtn" onclick="toggleLanguage()"
+                                style="background: var(--bg-light); border: 1px solid var(--border); border-radius: 8px; min-width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 13px; font-weight: 700; color: var(--text-dark); letter-spacing: 0.5px;"
+                                data-i18n-title="header.lang_title" title="Ganti Bahasa">
+                                ID
                             </button>
 
                             <!-- 2. User Menu / Auth Buttons -->
@@ -247,14 +256,17 @@
                                         </div>
                                     </a>
                                     <a href="/logout" class="auth-btn btn-logout"
-                                        style="text-decoration: none; font-size: 12px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; color: var(--text-dark); background: var(--bg-white); transition: all 0.2s;">Logout</a>
+                                        style="text-decoration: none; font-size: 12px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; color: var(--text-dark); background: var(--bg-white); transition: all 0.2s;"><span
+                                            data-i18n="auth.logout">Logout</span></a>
                                 </div>
                                 <% } else { %>
                                     <div class="user-menu" style="display: flex; gap: 8px;">
                                         <a href="/login" class="auth-btn btn-login"
-                                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; font-weight: 600;">Masuk</a>
+                                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; font-weight: 600;"><span
+                                                data-i18n="auth.login">Masuk</span></a>
                                         <a href="/register" class="auth-btn"
-                                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; background: var(--border); color: var(--text-dark); font-weight: 600;">Daftar</a>
+                                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; background: var(--border); color: var(--text-dark); font-weight: 600;"><span
+                                                data-i18n="auth.register">Daftar</span></a>
                                     </div>
                                     <% } %>
                 </div>
@@ -266,7 +278,8 @@
                 <% if (!currentUser || currentUser.role==='customer' ) { %>
                     <button
                         class="nav-tab <%= (typeof activeTab === 'undefined' || activeTab === 'marketplace') ? 'active' : '' %>"
-                        onclick="window.location.href='/'">🏪 Marketplace</button>
+                        onclick="window.location.href='/'">🏪 <span
+                            data-i18n="nav.marketplace">Marketplace</span></button>
                     <% } %>
 
                         <!-- Role Specific Dashboards -->
@@ -274,29 +287,33 @@
                             <% if (currentUser.role==='admin' ) { %>
                                 <button
                                     class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'dashboard') ? 'active' : '' %>"
-                                    onclick="window.location.href='/admin/dashboard'">🛡️ Admin Dashboard</button>
+                                    onclick="window.location.href='/admin/dashboard'">🛡️ <span
+                                        data-i18n="nav.admin_dashboard">Admin Dashboard</span></button>
                                 <% } else if (currentUser.role==='seller' ) { %>
                                     <div style="display: flex; gap: 8px;">
                                         <button
                                             class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'dashboard') ? 'active' : '' %>"
-                                            onclick="window.location.href='/seller/dashboard'">📊 Dashboard</button>
+                                            onclick="window.location.href='/seller/dashboard'">📊 <span
+                                                data-i18n="nav.dashboard">Dashboard</span></button>
                                         <button
                                             class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'products') ? 'active' : '' %>"
-                                            onclick="window.location.href='/seller/products'">🛠️ Kelola Produk &
-                                            Inventaris</button>
+                                            onclick="window.location.href='/seller/products'">🛠️ <span
+                                                data-i18n="nav.products">Kelola Produk & Inventaris</span></button>
                                         <button
                                             class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'orders') ? 'active' : '' %>"
-                                            onclick="window.location.href='/seller/orders'">📝 Pesanan Masuk</button>
+                                            onclick="window.location.href='/seller/orders'">📝 <span
+                                                data-i18n="nav.orders">Pesanan Masuk</span></button>
                                         <button
                                             class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'settings') ? 'active' : '' %>"
-                                            onclick="window.location.href='/seller/settings'">⚙️ Pengaturan
-                                            Toko</button>
+                                            onclick="window.location.href='/seller/settings'">⚙️ <span
+                                                data-i18n="nav.settings">Pengaturan Toko</span></button>
                                     </div>
                                     <% } else { %>
                                         <!-- Customer -->
                                         <button
                                             class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'dashboard') ? 'active' : '' %>"
-                                            onclick="window.location.href='/user/dashboard'">📦 Pesanan Saya</button>
+                                            onclick="window.location.href='/user/dashboard'">📦 <span
+                                                data-i18n="nav.my_orders">Pesanan Saya</span></button>
                                         <% } %>
                                             <% } %>
             </div>

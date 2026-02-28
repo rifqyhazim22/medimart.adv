@@ -67,14 +67,14 @@
             <% } %>
 
                 <div class="section-header">
-                    <h2 class="section-title">Eksplorasi Katalog</h2>
+                    <h2 class="section-title" data-i18n="index.explore">Eksplorasi Katalog</h2>
                 </div>
 
                 <!-- Category Filters -->
                 <div class="category-filters">
                     <a href="/" class="filter-btn <%= (!category || category === 'all') ? 'active' : '' %>"
                         style="text-decoration: none;">
-                        <span class="filter-icon">🏥</span> Semua
+                        <span class="filter-icon">🏥</span> <span data-i18n="index.all">Semua</span>
                     </a>
                     <a href="/?category=Obat Bebas"
                         class="filter-btn <%= (category === 'Obat Bebas') ? 'active' : '' %>"
@@ -109,7 +109,7 @@
                 <div class="products-grid" id="marketplaceProducts">
                     <% if (products.length===0) { %>
                         <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-gray);">
-                            <p>Belum ada produk yang tersedia.</p>
+                            <p data-i18n="index.no_products">Belum ada produk yang tersedia.</p>
                         </div>
                         <% } else { %>
                             <% products.forEach(product=> { %>
@@ -132,7 +132,8 @@
                                             </div>
                                             <% if (product.stock===0) { %>
                                                 <span class="stock-badge error"
-                                                    style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Habis</span>
+                                                    style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;"><span
+                                                        data-i18n="index.out_of_stock">Habis</span></span>
                                                 <% } else if (product.stock <=5) { %>
                                                     <span class="stock-badge warning"
                                                         style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Sisa:
@@ -247,7 +248,7 @@
             letter-spacing: 0.5px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         ">
-            Lanjut <span style="font-size: 14px;">➔</span>
+            <span data-i18n="index.continue">Lanjut</span> <span style="font-size: 14px;">➔</span>
         </button>
     </div>
 

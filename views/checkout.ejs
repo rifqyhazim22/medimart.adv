@@ -120,10 +120,11 @@
         <div class="cart-content">
             <a href="/cart" class="btn-back" style="margin-bottom: 20px;">
                 <span>←</span>
-                <span>Kembali ke Keranjang</span>
+                <span data-i18n="checkout.back_to_cart">Kembali ke Keranjang</span>
             </a>
 
-            <h1 style="margin-bottom: 24px; font-family: 'Outfit', sans-serif;">Checkout Pesanan</h1>
+            <h1 style="margin-bottom: 24px; font-family: 'Outfit', sans-serif;" data-i18n="checkout.title">Checkout
+                Pesanan</h1>
 
             <form action="/orders" method="POST" id="checkoutForm">
                 <div class="checkout-container">
@@ -132,22 +133,23 @@
                         <!-- Shipping Address -->
                         <div class="checkout-form-section">
                             <div class="checkout-header">
-                                <h2>📍 Alamat Pengiriman</h2>
+                                <h2>📍 <span data-i18n="checkout.shipping_address">Alamat Pengiriman</span></h2>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Nama Penerima</label>
+                                <label class="form-label" data-i18n="checkout.recipient_name">Nama Penerima</label>
                                 <input type="text" class="form-input" name="recipient_name" required
+                                    data-i18n-placeholder="checkout.recipient_placeholder"
                                     placeholder="Nama lengkap penerima"
                                     value="<%= (currentUser && currentUser.full_name) || '' %>">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Nomor Telepon</label>
+                                <label class="form-label" data-i18n="checkout.phone">Nomor Telepon</label>
                                 <input type="tel" class="form-input" name="recipient_phone" required
                                     placeholder="08xxxxxxxxxx" value="<%= (currentUser && currentUser.phone) || '' %>">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Alamat Lengkap</label>
+                                <label class="form-label" data-i18n="checkout.address">Alamat Lengkap</label>
                                 <textarea class="form-textarea" name="shipping_address" required
                                     placeholder="Jalan, Nomor rumah, RT/RW, Kelurahan, Kecamatan"
                                     style="min-height: 80px;"><%= (currentUser && currentUser.address) || '' %></textarea>
@@ -158,7 +160,7 @@
                         <!-- Payment Method -->
                         <div class="checkout-form-section">
                             <div class="checkout-header">
-                                <h2>💳 Metode Pembayaran</h2>
+                                <h2>💳 <span data-i18n="checkout.payment_method">Metode Pembayaran</span></h2>
                             </div>
                             <div class="payment-options">
                                 <label class="payment-option selected" onclick="selectPayment(this)">
@@ -184,7 +186,7 @@
                     <div class="order-summary">
                         <div class="summary-card"
                             style="background: var(--bg-white); padding: 24px; border-radius: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 100px;">
-                            <h3>Ringkasan Pesanan</h3>
+                            <h3 data-i18n="cart.order_summary">Ringkasan Pesanan</h3>
 
                             <div id="checkoutItems" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
                                 <% cart.forEach(item=> { %>
@@ -208,7 +210,8 @@
                                     <% }); %>
                             </div>
 
-                            <div class="divider-summary" style="height: 1px; background: var(--border); margin: 16px 0;">
+                            <div class="divider-summary"
+                                style="height: 1px; background: var(--border); margin: 16px 0;">
                             </div>
 
                             <div class="summary-row"
@@ -218,17 +221,17 @@
                             </div>
                             <div class="summary-row"
                                 style="display: flex; justify-content: space-between; margin-bottom: 16px;">
-                                <span>Ongkos Kirim</span>
+                                <span data-i18n="cart.shipping">Ongkos Kirim</span>
                                 <span class="text-primary" style="color: #10b981; font-weight: 600;">GRATIS</span>
                             </div>
                             <div class="summary-row total"
                                 style="display: flex; justify-content: space-between; margin-bottom: 24px; font-size: 18px; font-weight: 700;">
-                                <span>Total Bayar</span>
+                                <span data-i18n="checkout.total_pay">Total Bayar</span>
                                 <span id="total">Rp <%= cartTotal.toLocaleString('id-ID') %></span>
                             </div>
 
                             <button type="submit" class="btn-checkout-page">
-                                <span>Konfirmasi & Bayar</span>
+                                <span data-i18n="checkout.confirm_pay">Konfirmasi & Bayar</span>
                                 <span>→</span>
                             </button>
                         </div>

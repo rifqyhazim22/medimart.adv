@@ -131,7 +131,7 @@
         <div class="dashboard-container">
             <!-- SELLER DASHBOARD -->
             <div class="dashboard-header">
-                <h1>Dashboard Toko</h1>
+                <h1 data-i18n="seller.dashboard_title">Dashboard Toko</h1>
                 <p>Halo, <strong>
                         <%= currentUser.full_name || currentUser.username %>
                     </strong>! Kelola produk Anda disini.</p>
@@ -139,7 +139,7 @@
                     <div class="stat-card">
                         <div class="stat-icon blue">📦</div>
                         <div class="stat-content">
-                            <h3>Total Produk</h3>
+                            <h3 data-i18n="seller.total_products">Total Produk</h3>
                             <div class="stat-value">
                                 <%= stats.totalProducts %>
                             </div>
@@ -148,7 +148,7 @@
                     <div class="stat-card">
                         <div class="stat-icon orange">📊</div>
                         <div class="stat-content">
-                            <h3>Total Stok</h3>
+                            <h3 data-i18n="seller.total_stock">Total Stok</h3>
                             <div class="stat-value">
                                 <%= stats.totalStock %>
                             </div>
@@ -157,7 +157,7 @@
                     <div class="stat-card">
                         <div class="stat-icon green">📦</div>
                         <div class="stat-content">
-                            <h3>Nilai Inventory</h3>
+                            <h3 data-i18n="seller.inventory_value">Nilai Inventory</h3>
                             <div class="stat-value">Rp <%= parseInt(stats.totalValue).toLocaleString('id-ID') %>
                             </div>
                         </div>
@@ -165,7 +165,7 @@
                     <div class="stat-card">
                         <div class="stat-icon purple" style="background: #f3e8ff; color: #a855f7;">💳</div>
                         <div class="stat-content">
-                            <h3>Laba Bersih (90%)</h3>
+                            <h3 data-i18n="seller.net_revenue">Laba Bersih (90%)</h3>
                             <div class="stat-value">Rp <%= parseInt(stats.netRevenue || 0).toLocaleString('id-ID') %>
                             </div>
                         </div>
@@ -178,7 +178,8 @@
                     <!-- Chart.js Graph -->
                     <div
                         style="flex: 1 1 600px; background: var(--bg-white); padding: 24px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-                        <h3 style="margin: 0 0 20px 0; color: var(--text-dark); font-size: 18px;">Tren Laba Bersih Lapak
+                        <h3 style="margin: 0 0 20px 0; color: var(--text-dark); font-size: 18px;"
+                            data-i18n="seller.revenue_trend">Tren Laba Bersih Lapak
                             Tahun
                             Ini (IDR)</h3>
                         <div style="position: relative; height: 300px; width: 100%;">
@@ -189,7 +190,8 @@
                     <!-- Top Selling Products -->
                     <div
                         style="flex: 1 1 300px; background: var(--bg-white); padding: 24px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-                        <h3 style="margin: 0 0 20px 0; color: var(--text-dark); font-size: 18px;">Top 5 Produk Terlaris
+                        <h3 style="margin: 0 0 20px 0; color: var(--text-dark); font-size: 18px;"><span
+                                data-i18n="seller.top_products">Top 5 Produk Terlaris</span>
                             🏆</h3>
                         <div style="display: flex; flex-direction: column; gap: 16px;">
                             <% if(topProducts && topProducts.length> 0) { %>
@@ -203,7 +205,7 @@
                                                 <%= tp.name %>
                                             </div>
                                             <div style="font-size: 12px; color: var(--text-gray); margin-top: 2px;">
-                                                <%= tp.qty %> barang terjual
+                                                <%= tp.qty %> <span data-i18n="seller.items_sold">barang terjual</span>
                                             </div>
                                         </div>
                                         <div
@@ -226,11 +228,13 @@
                     style="margin-top: 24px; background: var(--bg-white); padding: 24px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0; color: var(--text-dark); font-size: 18px;">Pesanan Masuk Terbaru 🛍️</h3>
+                        <h3 style="margin: 0; color: var(--text-dark); font-size: 18px;"><span
+                                data-i18n="seller.recent_orders">Pesanan Masuk Terbaru</span> 🛍️</h3>
                         <a href="/seller/orders"
                             style="color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 600; padding: 6px 12px; background: var(--bg-light); border: 1px solid var(--border); border-radius: 8px; transition: background 0.2s;"
                             onmouseover="this.style.background='var(--border)'"
-                            onmouseout="this.style.background='var(--bg-light)'">Lihat Seluruhnya &rarr;</a>
+                            onmouseout="this.style.background='var(--bg-light)'"><span data-i18n="seller.view_all">Lihat
+                                Seluruhnya</span> &rarr;</a>
                     </div>
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; min-width: 600px;">

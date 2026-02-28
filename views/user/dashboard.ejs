@@ -279,7 +279,7 @@
         <div class="dashboard-container">
             <!-- Header & Stats -->
             <div class="dashboard-header">
-                <h1>Pesanan Saya</h1>
+                <h1 data-i18n="user.dashboard_title">Pesanan Saya</h1>
                 <p>Halo, <strong>
                         <%= currentUser.full_name || currentUser.username %>
                     </strong>! Kelola riwayat belanjaan Anda di sini.</p>
@@ -288,7 +288,7 @@
                     <div class="stat-card">
                         <div class="stat-icon blue">📦</div>
                         <div class="stat-content">
-                            <h3>Total Pesanan</h3>
+                            <h3 data-i18n="user.total_orders">Total Pesanan</h3>
                             <div class="stat-value">
                                 <%= stats.totalOrders %>
                             </div>
@@ -297,7 +297,7 @@
                     <div class="stat-card">
                         <div class="stat-icon orange">⏳</div>
                         <div class="stat-content">
-                            <h3>Pesanan Aktif</h3>
+                            <h3 data-i18n="user.active_orders">Pesanan Aktif</h3>
                             <div class="stat-value">
                                 <%= stats.activeOrders %>
                             </div>
@@ -306,7 +306,7 @@
                     <div class="stat-card">
                         <div class="stat-icon green">💰</div>
                         <div class="stat-content">
-                            <h3>Total Belanja</h3>
+                            <h3 data-i18n="user.total_spent">Total Belanja</h3>
                             <div class="stat-value">Rp <%= parseInt(stats.totalSpent).toLocaleString('id-ID') %>
                             </div>
                         </div>
@@ -317,7 +317,8 @@
             <!-- Orders List (Table View) -->
             <div class="section-header"
                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                <h2 class="section-title" style="margin: 0; border: none;">Riwayat Belanja</h2>
+                <h2 class="section-title" style="margin: 0; border: none;" data-i18n="user.order_history">Riwayat
+                    Belanja</h2>
                 <a href="/" class="btn-detail" style="padding: 8px 16px; font-size: 14px;">🛍️ Belanja Lagi</a>
             </div>
 
@@ -339,7 +340,8 @@
                                 <td colspan="7" style="padding: 40px; text-align: center;">
                                     <span style="font-size: 40px; display: block; margin-bottom: 10px;">🛍️</span>
                                     <h3 style="color: var(--text-dark); margin: 0 0 8px 0;">Belum ada pesanan</h3>
-                                    <p style="color: var(--text-gray); margin: 0;">Yuk, mulai belanja kebutuhan kesehatanmu
+                                    <p style="color: var(--text-gray); margin: 0;">Yuk, mulai belanja kebutuhan
+                                        kesehatanmu
                                         sekarang!</p>
                                 </td>
                             </tr>

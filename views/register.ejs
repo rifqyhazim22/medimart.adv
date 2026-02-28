@@ -9,6 +9,8 @@
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Outfit:wght@300;400;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/css/login.css">
+    <!-- i18n System -->
+    <script src="/js/i18n.js"></script>
     <!-- Theme Initialization (Prevent FOUC) -->
     <script>
         const savedTheme = localStorage.getItem('medimart_theme') || 'light';
@@ -27,6 +29,9 @@
 <body>
     <!-- Floating Theme Toggle -->
     <button class="theme-toggle-float" id="themeToggleBtn" onclick="toggleTheme()" title="Ganti Siang/Malam">🌙</button>
+    <!-- Floating Language Toggle -->
+    <button class="theme-toggle-float" id="langToggleFloat" onclick="toggleLanguage()" title="Ganti Bahasa"
+        style="right: 70px; font-size: 13px; font-weight: 700; font-family: 'Outfit', sans-serif;">ID</button>
 
     <div class="login-container">
         <!-- Left Side: Branding -->
@@ -36,28 +41,32 @@
                     <div class="logo-icon">📝</div>
                     <h1>MediMart</h1>
                 </div>
-                <p class="tagline">Bergabunglah dengan ribuan pengguna lain<br>untuk hidup yang lebih sehat.</p>
+                <p class="tagline" data-i18n="register.tagline">Bergabunglah dengan ribuan pengguna lain<br>untuk hidup
+                    yang lebih sehat.</p>
 
                 <div class="features">
                     <div class="feature-item">
                         <span class="feature-icon">🚀</span>
                         <div>
-                            <h3>Daftar Cepat</h3>
-                            <p>Proses pendaftaran mudah, hanya butuh waktu kurang dari 1 menit.</p>
+                            <h3 data-i18n="register.feat1_title">Daftar Cepat</h3>
+                            <p data-i18n="register.feat1_desc">Proses pendaftaran mudah, hanya butuh waktu kurang dari 1
+                                menit.</p>
                         </div>
                     </div>
                     <div class="feature-item">
                         <span class="feature-icon">🏷️</span>
                         <div>
-                            <h3>Promo Eksklusif</h3>
-                            <p>Dapatkan akses ke promo dan diskon khusus member baru.</p>
+                            <h3 data-i18n="register.feat2_title">Promo Eksklusif</h3>
+                            <p data-i18n="register.feat2_desc">Dapatkan akses ke promo dan diskon khusus member baru.
+                            </p>
                         </div>
                     </div>
                     <div class="feature-item">
                         <span class="feature-icon">💳</span>
                         <div>
-                            <h3>Transaksi Aman</h3>
-                            <p>Sistem pembayaran terintegrasi dan aman untuk setiap transaksi.</p>
+                            <h3 data-i18n="register.feat3_title">Transaksi Aman</h3>
+                            <p data-i18n="register.feat3_desc">Sistem pembayaran terintegrasi dan aman untuk setiap
+                                transaksi.</p>
                         </div>
                     </div>
                 </div>
@@ -68,8 +77,8 @@
         <div class="login-right">
             <div class="login-box">
                 <div class="login-header">
-                    <h2>Buat Akun Baru</h2>
-                    <p>Lengkapi data diri Anda untuk mendaftar</p>
+                    <h2 data-i18n="register.title">Buat Akun Baru</h2>
+                    <p data-i18n="register.subtitle_form">Lengkapi data diri Anda untuk mendaftar</p>
                 </div>
 
                 <% if (error && error.length> 0) { %>
@@ -81,7 +90,8 @@
 
                         <form id="registerForm" action="/auth/register" method="POST" class="login-form">
                             <div class="form-group" style="margin-bottom: 24px;">
-                                <label style="margin-bottom: 8px; display: block; font-weight: 600;">Saya ingin
+                                <label style="margin-bottom: 8px; display: block; font-weight: 600;"
+                                    data-i18n="register.register_as">Saya ingin
                                     mendaftar sebagai:</label>
                                 <div style="display: flex; gap: 12px; margin-bottom: 16px;">
                                     <label class="role-option"
@@ -89,46 +99,53 @@
                                         onclick="selectRegRole(this)">
                                         <input type="radio" name="role" value="customer" checked
                                             style="margin-right: 6px;">
-                                        Pelanggan
+                                        <span data-i18n="register.role_customer">Pelanggan</span>
                                     </label>
                                     <label class="role-option"
                                         style="flex: 1; cursor: pointer; border: 2px solid var(--border); padding: 12px; border-radius: 10px; text-align: center; font-weight: 500; transition: all 0.2s;"
                                         onclick="selectRegRole(this)">
                                         <input type="radio" name="role" value="seller" style="margin-right: 6px;">
-                                        Seller
+                                        <span data-i18n="register.role_seller">Seller</span>
                                     </label>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label>Nama Lengkap / Nama Toko</label>
+                                <label data-i18n="register.fullname">Nama Lengkap / Nama Toko</label>
                                 <div class="input-wrapper">
                                     <span class="input-icon">📝</span>
-                                    <input type="text" name="full_name" required placeholder="Nama Lengkap Anda">
+                                    <input type="text" name="full_name" required
+                                        data-i18n-placeholder="register.fullname_placeholder"
+                                        placeholder="Nama Lengkap Anda">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label>Username</label>
+                                <label data-i18n="register.username">Username</label>
                                 <div class="input-wrapper">
                                     <span class="input-icon">@</span>
-                                    <input type="text" name="username" required placeholder="Buat username unik">
+                                    <input type="text" name="username" required
+                                        data-i18n-placeholder="register.username_placeholder"
+                                        placeholder="Buat username unik">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label>Email</label>
+                                <label data-i18n="register.email">Email</label>
                                 <div class="input-wrapper">
                                     <span class="input-icon">📧</span>
-                                    <input type="email" name="email" required placeholder="nama@email.com">
+                                    <input type="email" name="email" required
+                                        data-i18n-placeholder="register.email_placeholder" placeholder="nama@email.com">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label>Password</label>
+                                <label data-i18n="login.password">Password</label>
                                 <div class="input-wrapper">
                                     <span class="input-icon">🔒</span>
-                                    <input type="password" name="password" required placeholder="Minimal 6 karakter">
+                                    <input type="password" name="password" required
+                                        data-i18n-placeholder="register.password_placeholder"
+                                        placeholder="Minimal 6 karakter">
                                     <button type="button" class="toggle-password" onclick="togglePassword()">
                                         <span id="toggleIcon">👁️</span>
                                     </button>
@@ -136,15 +153,16 @@
                             </div>
 
                             <button type="submit" class="btn-login" style="margin-top: 20px;">
-                                <span>Daftar Sekarang</span>
+                                <span data-i18n="register.submit">Daftar Sekarang</span>
                                 <span class="btn-icon">✨</span>
                             </button>
                         </form>
 
                         <div class="login-footer">
-                            <p>Sudah punya akun? <a href="/login" class="link-register">Login disini</a></p>
+                            <p><span data-i18n="register.has_account">Sudah punya akun?</span> <a href="/login"
+                                    class="link-register" data-i18n="register.login_now">Login disini</a></p>
                             <br>
-                            <a href="/" class="link-register"
+                            <a href="/" class="link-register" data-i18n="register.back_home"
                                 style="color: var(--text-gray); font-weight: normal; font-size: 14px;">← Kembali ke
                                 Beranda</a>
                         </div>

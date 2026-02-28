@@ -132,8 +132,9 @@
 
     <div class="profile-wrapper">
         <div class="profile-header">
-            <h1 class="profile-title">Profil Master Pengguna</h1>
-            <p class="profile-subtitle">Sesuaikan identitas pribadi, avatar, nomor telepon, dan keamanan kata sandi
+            <h1 class="profile-title" data-i18n="profile.title">Profil Master Pengguna</h1>
+            <p class="profile-subtitle" data-i18n="profile.subtitle">Sesuaikan identitas pribadi, avatar, nomor telepon,
+                dan keamanan kata sandi
                 Anda.</p>
         </div>
 
@@ -144,7 +145,8 @@
                     <!-- Left Column: Avatar & Role Info -->
                     <div>
                         <label
-                            style="display: block; font-weight: 700; color: var(--text-dark); margin-bottom: 12px; font-size: 16px;">Foto
+                            style="display: block; font-weight: 700; color: var(--text-dark); margin-bottom: 12px; font-size: 16px;"
+                            data-i18n="profile.photo_label">Foto
                             Profil</label>
                         <div class="avatar-upload-box">
                             <div class="avatar-preview-circle">
@@ -185,7 +187,8 @@
                         <!-- Section: Identitas -->
                         <h3
                             style="font-size: 18px; font-weight: 800; color: var(--text-dark); border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-bottom: 24px;">
-                            Informasi Dasar</h3>
+                            <span data-i18n="profile.basic_info">Informasi Dasar</span>
+                        </h3>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                             <div class="form-group">
@@ -245,7 +248,8 @@
                                         <!-- Section: Keamanan -->
                                         <h3
                                             style="font-size: 18px; font-weight: 800; color: var(--text-dark); border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
-                                            Ganti Sandi Keamanan</h3>
+                                            <span data-i18n="profile.change_password">Ganti Sandi Keamanan</span>
+                                        </h3>
                                         <p style="font-size: 13px; color: var(--text-gray); margin-bottom: 20px;">
                                             Kosongkan kolom
                                             ini
@@ -266,7 +270,7 @@
 
                                         <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
                                             <button type="submit" class="btn-save">
-                                                💾 Terapkan Perubahan Profil
+                                                💾 <span data-i18n="profile.save">Terapkan Perubahan Profil</span>
                                             </button>
                                         </div>
                     </div>

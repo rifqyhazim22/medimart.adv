@@ -8,23 +8,23 @@
             <div class="cart-page-header">
                 <a href="/" class="btn-back">
                     <span>←</span>
-                    <span>Lanjut Belanja</span>
+                    <span data-i18n="cart.continue_shopping">Lanjut Belanja</span>
                 </a>
-                <h1>Keranjang Belanja</h1>
-                <p class="cart-subtitle">Review pesanan Anda sebelum checkout</p>
+                <h1 data-i18n="cart.title">Keranjang Belanja</h1>
+                <p class="cart-subtitle" data-i18n="cart.subtitle">Review pesanan Anda sebelum checkout</p>
             </div>
 
             <!-- Cart Items Section -->
             <div class="cart-main">
                 <div class="cart-items-section">
                     <div class="section-header-cart">
-                        <h2>Item di Keranjang (<span id="itemCount">
+                        <h2><span data-i18n="cart.items_in_cart">Item di Keranjang</span> (<span id="itemCount">
                                 <%= cart.reduce((a, b)=> a + b.quantity, 0) %>
                             </span>)</h2>
                         <form action="/cart/clear" method="POST">
                             <button type="submit" class="btn-clear">
                                 <span>🗑️</span>
-                                <span>Kosongkan</span>
+                                <span data-i18n="cart.clear">Kosongkan</span>
                             </button>
                         </form>
                     </div>
@@ -32,10 +32,11 @@
                     <div id="cartItemsContainer">
                         <% if (cart.length===0) { %>
                             <div style="text-align: center; padding: 40px; color: var(--text-gray);">
-                                <p>Keranjang belanja Anda kosong.</p>
+                                <p data-i18n="cart.empty">Keranjang belanja Anda kosong.</p>
                                 <a href="/" class="btn-primary"
-                                    style="margin-top: 20px; text-decoration: none; display: inline-block;">Mulai
-                                    Belanja</a>
+                                    style="margin-top: 20px; text-decoration: none; display: inline-block;"><span
+                                        data-i18n="cart.start_shopping">Mulai
+                                        Belanja</span></a>
                             </div>
                             <% } else { %>
                                 <% cart.forEach(item=> { %>
@@ -100,7 +101,7 @@
                 <!-- Order Summary Sidebar -->
                 <div class="order-summary">
                     <div class="summary-card">
-                        <h3>Ringkasan Pesanan</h3>
+                        <h3 data-i18n="cart.order_summary">Ringkasan Pesanan</h3>
 
                         <div class="summary-row">
                             <span>Subtotal (<%= cart.reduce((a, b)=> a + b.quantity, 0) %> item)</span>
@@ -108,12 +109,12 @@
                         </div>
 
                         <div class="summary-row">
-                            <span>Ongkos Kirim</span>
-                            <span class="text-primary" id="shipping">GRATIS</span>
+                            <span data-i18n="cart.shipping">Ongkos Kirim</span>
+                            <span class="text-primary" id="shipping" data-i18n="cart.free">GRATIS</span>
                         </div>
 
                         <div class="summary-row">
-                            <span>Diskon</span>
+                            <span data-i18n="cart.discount">Diskon</span>
                             <span class="text-success" id="discount">Rp 0</span>
                         </div>
 
@@ -127,7 +128,7 @@
                         <% if (currentUser) { %>
                             <button onclick="window.location.href='/checkout'" class="btn-checkout-page"
                                 <%=cart.length===0 ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : '' %>>
-                                <span>Checkout Sekarang</span>
+                                <span data-i18n="cart.checkout_now">Checkout Sekarang</span>
                                 <span>→</span>
                             </button>
                             <% } else { %>
@@ -138,7 +139,7 @@
                                 <% } %>
 
                                     <div class="payment-methods">
-                                        <p>Metode Pembayaran:</p>
+                                        <p data-i18n="cart.payment_methods">Metode Pembayaran:</p>
                                         <div class="payment-icons">
                                             <span>💳</span>
                                             <span>🏦</span>
@@ -150,7 +151,7 @@
 
                     <!-- Promo Code -->
                     <div class="promo-card">
-                        <h4>Punya Kode Promo?</h4>
+                        <h4 data-i18n="cart.promo_title">Punya Kode Promo?</h4>
                         <div class="promo-box">
                             <input type="text" placeholder="Masukkan kode promo">
                             <button type="button" class="btn btn-secondary"
@@ -162,15 +163,15 @@
                     <div class="trust-badges">
                         <div class="trust-item">
                             <span class="trust-icon">✅</span>
-                            <span>Produk Original</span>
+                            <span data-i18n="cart.original_product">Produk Original</span>
                         </div>
                         <div class="trust-item">
                             <span class="trust-icon">🚚</span>
-                            <span>Pengiriman Cepat</span>
+                            <span data-i18n="cart.fast_shipping">Pengiriman Cepat</span>
                         </div>
                         <div class="trust-item">
                             <span class="trust-icon">🔒</span>
-                            <span>Transaksi Aman</span>
+                            <span data-i18n="cart.secure_transaction">Transaksi Aman</span>
                         </div>
                     </div>
                 </div>
@@ -178,7 +179,7 @@
 
             <!-- Recommended Products (Static for now to match layout) -->
             <div class="recommended-section">
-                <h2 class="section-title">Mungkin Anda Tertarik</h2>
+                <h2 class="section-title" data-i18n="cart.you_may_like">Mungkin Anda Tertarik</h2>
                 <div class="recommended-grid" id="recommendedProducts"
                     style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
                     <% if (typeof recommendedProducts !=='undefined' && recommendedProducts.length> 0) { %>
@@ -224,7 +225,8 @@
                             </div>
                             <% }); %>
                                 <% } else { %>
-                                    <p style="color: var(--text-gray);">Tidak ada rekomendasi saat ini.</p>
+                                    <p style="color: var(--text-gray);" data-i18n="cart.no_recommendations">Tidak ada
+                                        rekomendasi saat ini.</p>
                                     <% } %>
                 </div>
             </div>
