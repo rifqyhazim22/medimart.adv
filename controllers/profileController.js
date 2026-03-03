@@ -66,10 +66,17 @@ module.exports = {
                 await user.update({ password: hashedPassword });
             }
 
-            // Ganti Avatar
+            // Ganti Avatar (supports Cropper.js crop)
             let profile_image = user.profile_image;
-            if (req.file) {
-                profile_image = await optimizeImage(req.file, 400); // 400px width limit for avatars
+            if (req.files) {
+                // If cropped version exists, use it (400px for avatar display)
+                if (req.files.croppedAvatar && req.files.croppedAvatar[0]) {
+                    profile_image = await optimizeImage(req.files.croppedAvatar[0], 400);
+                }
+                // If only original uploaded (no crop), use original
+                else if (req.files.profile_image && req.files.profile_image[0]) {
+                    profile_image = await optimizeImage(req.files.profile_image[0], 400);
+                }
             }
 
             await user.update({ username, full_name, email, phone, address, profile_image });

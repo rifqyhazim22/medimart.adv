@@ -234,11 +234,17 @@ module.exports = {
                 sellerData.store_address = store_address;
             }
 
-            // Optimize Store Banner
-            if (req.file) {
+            // Optimize Store Banner (supports Cropper.js crop)
+            if (req.files) {
                 const { optimizeImage } = require('../utils/imageOptimizer');
-                const path = await optimizeImage(req.file, 1920); // Maintain large width for banners
-                sellerData.store_banner = path;
+                // If cropped version exists, use it
+                if (req.files.croppedBanner && req.files.croppedBanner[0]) {
+                    sellerData.store_banner = await optimizeImage(req.files.croppedBanner[0], 1920);
+                }
+                // If only original uploaded (no crop), use original
+                else if (req.files.store_banner && req.files.store_banner[0]) {
+                    sellerData.store_banner = await optimizeImage(req.files.store_banner[0], 1920);
+                }
             }
 
             await sellerData.save();

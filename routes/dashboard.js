@@ -44,7 +44,7 @@ const userController = require('../controllers/userController');
 // Seller Settings (Store Identity)
 const upload = require('../middlewares/upload');
 router.get('/seller/settings', ensureSeller, dashboardController.sellerSettings);
-router.post('/seller/settings', ensureSeller, upload.single('store_banner'), dashboardController.sellerSettingsUpdate);
+router.post('/seller/settings', ensureSeller, upload.fields([{ name: 'store_banner', maxCount: 1 }, { name: 'croppedBanner', maxCount: 1 }]), dashboardController.sellerSettingsUpdate);
 
 // Admin Actions
 router.post('/admin/users/:id/delete', ensureAdmin, userController.delete);

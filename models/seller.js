@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     store_name: DataTypes.STRING,
     store_description: DataTypes.TEXT,
     store_address: DataTypes.TEXT,
+    store_banner: DataTypes.STRING,
     bank_account: DataTypes.STRING,
     is_verified: DataTypes.BOOLEAN
   }, {

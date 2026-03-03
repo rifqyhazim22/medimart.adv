@@ -11,9 +11,10 @@ const path = require('path');
  * 
  * @param {Object} file - Multer file object
  * @param {number} maxWidth - Maximum width in pixels
+ * @param {string} subDir - Subdirectory under /uploads/ (e.g. 'products', 'avatars', 'banners')
  * @returns {Promise<string>} - New relative path to the optimized image
  */
-const optimizeImage = async (file, maxWidth = 800) => {
+const optimizeImage = async (file, maxWidth = 800, subDir = null) => {
     if (!file) return null;
 
     try {
@@ -35,14 +36,29 @@ const optimizeImage = async (file, maxWidth = 800) => {
             console.log(`[ImageOptimizer] Deleted original: ${file.path}`);
         }
 
+        // Determine subdirectory from file path or override
+        const detectedSubDir = subDir || detectSubDir(file.path);
+
         // Return relative path for DB
-        return `/uploads/products/${newFilename}`;
+        return `/uploads/${detectedSubDir}/${newFilename}`;
 
     } catch (error) {
         console.error('[ImageOptimizer] Error:', error);
         // Fallback: If optimization fails, return original path but warn
-        return `/uploads/products/${file.filename}`;
+        const detectedSubDir = subDir || detectSubDir(file.path);
+        return `/uploads/${detectedSubDir}/${file.filename}`;
     }
 };
+
+/**
+ * Detects subdirectory from file path.
+ * E.g. 'public/uploads/avatars/file.jpg' → 'avatars'
+ */
+function detectSubDir(filePath) {
+    const normalized = filePath.replace(/\\/g, '/');
+    if (normalized.includes('/uploads/avatars')) return 'avatars';
+    if (normalized.includes('/uploads/banners')) return 'banners';
+    return 'products';
+}
 
 module.exports = { optimizeImage };

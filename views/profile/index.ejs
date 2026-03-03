@@ -164,9 +164,37 @@
                             <p style="font-size: 12px; color: var(--text-gray); margin: 0;"
                                 data-i18n="profile.max_file">Maksimal file 2MB</p>
 
-                            <input type="file" name="profile_image" accept="image/*"
-                                style="opacity: 0; position: absolute; top:0; left:0; width:100%; height:100%; cursor: pointer; z-index: 10;"
-                                onchange="previewAvatar(this)">
+                            <input type="file" id="avatarFileInput" name="profile_image" accept="image/*"
+                                style="opacity: 0; position: absolute; top:0; left:0; width:100%; height:100%; cursor: pointer; z-index: 10;">
+                        </div>
+
+                        <!-- Avatar Crop Container -->
+                        <div id="avatarCropContainer"
+                            style="display:none; margin-top: 16px; background: var(--bg-light); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">
+                            <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--text-dark);"
+                                data-i18n="profile.photo_editor">📷 Editor Foto Profil</h4>
+                            <div style="max-height: 350px; overflow: hidden; background: #333; border-radius: 8px;">
+                                <img id="avatarImageToCrop" style="max-width: 100%; display: block;">
+                            </div>
+                            <div style="margin-top: 12px; display: flex; justify-content: flex-end; gap: 10px;">
+                                <button type="button" id="btnAvatarCropCancel" class="btn-secondary"
+                                    data-i18n="profile.crop_cancel">Batal</button>
+                                <button type="button" id="btnAvatarCropApply" class="btn-primary"
+                                    data-i18n="profile.crop_apply">Terapkan Crop</button>
+                            </div>
+                        </div>
+
+                        <!-- Avatar Crop Preview -->
+                        <div id="avatarCropPreview" style="display:none; margin-top: 12px;">
+                            <p style="font-size: 12px; color: var(--primary); font-weight: bold;"
+                                data-i18n="profile.crop_result">✅ Hasil Crop:</p>
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <img id="avatarPreviewResult"
+                                    style="height: 80px; width: 80px; object-fit: cover; border-radius: 50%; border: 2px solid var(--primary);">
+                                <button type="button" id="btnAvatarReset"
+                                    style="background: none; border: none; color: #d9534f; cursor: pointer; text-decoration: underline; font-size: 13px;"
+                                    data-i18n="profile.crop_reset">Batalkan Ubahan</button>
+                            </div>
                         </div>
 
                         <!-- Readonly Role Display -->
@@ -225,7 +253,7 @@
                         <div class="form-group" style="margin-bottom: 32px;">
                             <label data-i18n="profile.phone_label">Nomor Telepon / WhatsApp Pribadi</label>
                             <input type="text" name="phone" class="form-control" value="<%= user.phone || '' %>"
-                                placeholder="Contoh: 081234...">
+                                placeholder="Contoh: 081234..." data-i18n-placeholder="profile.phone_placeholder">
                         </div>
 
                         <!-- Section: Address & Financial -->
@@ -233,7 +261,8 @@
                             <div class="form-group" style="margin-bottom: 24px;">
                                 <label data-i18n="profile.shipping_address">Alamat Default Pengiriman 📦</label>
                                 <textarea name="address" class="form-control" rows="3"
-                                    placeholder="<%= user.role==='seller' ? 'Alamat domisili pribadi Anda untuk belanja (Beda dari alamat Toko)' : 'Alamat rumah untuk penerimaan paket belanja Anda' %>"><%= user.role === 'customer' && user.buyer && user.buyer.shipping_address ? user.buyer.shipping_address : (user.role === 'seller' ? user.address : '') %></textarea>
+                                    placeholder="<%= user.role==='seller' ? 'Alamat domisili pribadi Anda untuk belanja (Beda dari alamat Toko)' : 'Alamat rumah untuk penerimaan paket belanja Anda' %>"
+                                    data-i18n-placeholder="<%= user.role==='seller' ? 'profile.address_placeholder_seller' : 'profile.address_placeholder_customer' %>"><%= user.role === 'customer' && user.buyer && user.buyer.shipping_address ? user.buyer.shipping_address : (user.role === 'seller' ? user.address : '') %></textarea>
                                 <% if (user.role==='seller' ) { %>
                                     <p style="font-size: 12px; color: var(--text-gray); margin-top: 6px;"
                                         data-i18n="profile.address_hint_seller">Ini adalah
@@ -250,7 +279,8 @@
                                             (Opsional)</label>
                                         <input type="text" name="bank_account" class="form-control"
                                             value="<%= user.seller && user.seller.bank_account ? user.seller.bank_account : '' %>"
-                                            placeholder="Contoh: BCA 1234567890 a.n Anda">
+                                            placeholder="Contoh: BCA 1234567890 a.n Anda"
+                                            data-i18n-placeholder="profile.bank_placeholder">
                                         <p style="font-size: 12px; color: var(--text-gray); margin-top: 6px;"
                                             data-i18n="profile.bank_hint">Nomor
                                             rekening
@@ -273,13 +303,15 @@
                                             <div class="form-group">
                                                 <label data-i18n="profile.new_password">Kata Sandi Baru</label>
                                                 <input type="password" name="new_password" class="form-control"
-                                                    placeholder="Masukan sandi baru">
+                                                    placeholder="Masukan sandi baru"
+                                                    data-i18n-placeholder="profile.new_password_placeholder">
                                             </div>
                                             <div class="form-group">
                                                 <label data-i18n="profile.confirm_password">Konfirmasi Sandi
                                                     Baru</label>
                                                 <input type="password" name="confirm_password" class="form-control"
-                                                    placeholder="Ulangi sandi baru">
+                                                    placeholder="Ulangi sandi baru"
+                                                    data-i18n-placeholder="profile.confirm_password_placeholder">
                                             </div>
                                         </div>
 
@@ -320,21 +352,106 @@
     </div>
     </div>
 
-    <script>
-        function previewAvatar(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const img = document.getElementById('avatarImgPreview');
-                    const fallback = document.getElementById('avatarFallback');
+    <!-- CropperJS CSS & JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
-                    img.src = e.target.result;
-                    img.style.display = 'block';
-                    if (fallback) fallback.style.display = 'none';
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const avatarFileInput = document.getElementById('avatarFileInput');
+            const avatarCropContainer = document.getElementById('avatarCropContainer');
+            const avatarImageToCrop = document.getElementById('avatarImageToCrop');
+            const btnAvatarCropCancel = document.getElementById('btnAvatarCropCancel');
+            const btnAvatarCropApply = document.getElementById('btnAvatarCropApply');
+            const avatarCropPreview = document.getElementById('avatarCropPreview');
+            const avatarPreviewResult = document.getElementById('avatarPreviewResult');
+            const btnAvatarReset = document.getElementById('btnAvatarReset');
+            const avatarImgPreview = document.getElementById('avatarImgPreview');
+            const avatarFallback = document.getElementById('avatarFallback');
+            const profileForm = document.querySelector('form[action="/profile/edit"]');
+
+            let avatarCropper = null;
+            let avatarCroppedBlob = null;
+
+            // Handle file selection → open cropper
+            avatarFileInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    avatarImageToCrop.src = evt.target.result;
+                    avatarCropContainer.style.display = 'block';
+                    avatarCropPreview.style.display = 'none';
+
+                    if (avatarCropper) avatarCropper.destroy();
+                    avatarCropper = new Cropper(avatarImageToCrop, {
+                        aspectRatio: 1,  // 1:1 square (for round avatar)
+                        viewMode: 1,
+                        autoCropArea: 0.9,
+                    });
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Cancel crop
+            btnAvatarCropCancel.addEventListener('click', function () {
+                avatarCropContainer.style.display = 'none';
+                avatarFileInput.value = '';
+                avatarCroppedBlob = null;
+                if (avatarCropper) { avatarCropper.destroy(); avatarCropper = null; }
+            });
+
+            // Apply crop
+            btnAvatarCropApply.addEventListener('click', function () {
+                if (!avatarCropper) return;
+                const canvas = avatarCropper.getCroppedCanvas({ width: 400, height: 400 });
+                canvas.toBlob(function (blob) {
+                    avatarCroppedBlob = blob;
+                    avatarPreviewResult.src = canvas.toDataURL();
+
+                    // Update main preview
+                    avatarImgPreview.src = canvas.toDataURL();
+                    avatarImgPreview.style.display = 'block';
+                    if (avatarFallback) avatarFallback.style.display = 'none';
+
+                    avatarCropContainer.style.display = 'none';
+                    avatarCropPreview.style.display = 'block';
+
+                    avatarCropper.destroy();
+                    avatarCropper = null;
+                }, 'image/jpeg', 0.9);
+            });
+
+            // Reset
+            btnAvatarReset.addEventListener('click', function () {
+                avatarCropContainer.style.display = 'none';
+                avatarCropPreview.style.display = 'none';
+                avatarFileInput.value = '';
+                avatarCroppedBlob = null;
+                if (avatarCropper) { avatarCropper.destroy(); avatarCropper = null; }
+            });
+
+            // Form submission with cropped blob
+            profileForm.addEventListener('submit', function (e) {
+                if (avatarCroppedBlob) {
+                    e.preventDefault();
+                    const formData = new FormData(profileForm);
+                    formData.append('croppedAvatar', avatarCroppedBlob, 'avatar-cropped.jpg');
+
+                    fetch('/profile/edit', { method: 'POST', body: formData })
+                        .then(response => {
+                            if (response.redirected) window.location.href = response.url;
+                            else if (response.ok) window.location.href = '/profile';
+                            else throw new Error('Upload failed');
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            window.showToast && window.showToast('Upload gagal', 'error');
+                        });
                 }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+                // If no crop, normal form submit proceeds
+            });
+        });
     </script>
 
     <%- include('../partials/footer') %>

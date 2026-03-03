@@ -16,3 +16,5 @@ debug_user.js
 revert_status.js
 index_response*.html
 .vercel
+.env*.local
+.env.production

@@ -21,7 +21,7 @@ const upload = require('../middlewares/upload');
 
 // Profile Routes
 router.get('/profile', isAuthenticated, profileController.index);
-router.post('/profile/edit', isAuthenticated, upload.single('profile_image'), profileController.editPost);
+router.post('/profile/edit', isAuthenticated, upload.fields([{ name: 'profile_image', maxCount: 1 }, { name: 'croppedAvatar', maxCount: 1 }]), profileController.editPost);
 router.post('/profile/delete', isAuthenticated, profileController.deleteAccount);
 
 module.exports = router;
