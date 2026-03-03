@@ -484,6 +484,8 @@ const translations = {
     'store.empty_title': { id: 'Etalase Masih Kosong', en: 'Store is Empty' },
     'store.empty_desc': { id: 'Penjual belum mengunggah produk apapun di tokonya saat ini.', en: 'This seller has not uploaded any products yet.' },
     'store.own_product': { id: 'Barang Anda', en: 'Your Product' },
+    'store.remaining': { id: 'Sisa', en: 'Remaining' },
+    'store.stock': { id: 'Stok', en: 'Stock' },
     'cart.add_cart': { id: '+ Keranjang', en: '+ Cart' },
 
     // ========== USER (BUYER) DASHBOARD ==========
@@ -552,6 +554,16 @@ const translations = {
     'product_form.cancel': { id: 'Batal', en: 'Cancel' },
     'product_form.submit': { id: 'Simpan Produk', en: 'Save Product' },
     'product_form.back': { id: '← Kembali', en: '← Back' },
+    'product_form.select_category': { id: 'Pilih Kategori', en: 'Select Category' },
+    'product_form.store_preview': { id: 'Tampilan di Toko:', en: 'Store Preview:' },
+    'product_form.original_source': { id: 'Sumber Asli:', en: 'Original Source:' },
+    'product_form.recrop': { id: '✂️ Crop Ulang dari Asli', en: '✂️ Re-Crop from Original' },
+    'product_form.apply_crop': { id: 'Terapkan Crop', en: 'Apply Crop' },
+    'product_form.crop_result': { id: 'Hasil Crop Baru:', en: 'New Crop Result:' },
+    'product_form.reset_upload': { id: 'Batalkan Ubahan', en: 'Reset Changes' },
+    'product_form.upload_replace': { id: 'Upload gambar baru untuk mengganti.', en: 'Upload a new image to replace.' },
+    'product_form.upload_new': { id: 'Upload gambar produk.', en: 'Upload product image.' },
+    'product_form.upload_format': { id: 'Format: JPG, PNG. Maks 5MB.', en: 'Format: JPG, PNG. Max 5MB.' },
 
     // ========== PROFILE EDIT ==========
     'profile_edit.title': { id: 'Edit Profil', en: 'Edit Profile' },
@@ -566,6 +578,7 @@ const translations = {
     'seller_products.edit': { id: 'Edit', en: 'Edit' },
     'seller_products.delete': { id: 'Hapus', en: 'Delete' },
     'seller_products.no_products': { id: 'Belum ada produk. Mulai tambahkan produk pertama Anda!', en: 'No products yet. Start adding your first product!' },
+    'seller_products.stock_label': { id: 'Stok', en: 'Stock' },
 
     // ========== LEGACY DASHBOARD ==========
     'legacy.store_title': { id: 'Dashboard Toko', en: 'Store Dashboard' },

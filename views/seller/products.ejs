@@ -159,19 +159,18 @@
                                                 data-i18n="cart.out_of_stock">Habis</span>
                                             <% } else if (product.stock <=5) { %>
                                                 <span class="stock-badge warning"
-                                                    style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Sisa:
+                                                    style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;"><span
+                                                        data-i18n="store.remaining">Sisa</span>:
                                                     <%= product.stock %>
                                                 </span>
                                                 <% } else { %>
                                                     <span class="stock-badge"
-                                                        style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Stok:
+                                                        style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;"><span
+                                                            data-i18n="store.stock">Stok</span>:
                                                         <%= product.stock %>
                                                     </span>
                                                     <% } %>
                                     </div>
-                                    <p style="color: var(--text-gray); font-size: 14px;"><span
-                                            data-i18n="seller_products.stock_label">Stok</span>: <%= product.stock %>
-                                    </p>
                                     <div class="product-footer">
                                         <div class="product-price">Rp <%=
                                                 parseInt(product.price).toLocaleString('id-ID') %>
