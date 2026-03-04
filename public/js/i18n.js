@@ -563,7 +563,11 @@ const translations = {
     'chat.chat_seller': { id: 'Chat Penjual', en: 'Chat Seller' },
     'chat.chat_buyer': { id: 'Chat Pembeli', en: 'Chat Buyer' },
     'chat.conversation_started': { id: 'Percakapan dimulai', en: 'Conversation started' },
+    'chat.just_now': { id: 'Baru saja', en: 'Just now' },
+    'chat.msg_ready': { id: 'Gambar siap dikirim', en: 'Image ready to send' },
+    'chat.upload_failed': { id: 'Gagal upload gambar', en: 'Failed to upload image' },
     // Context option chips (product)
+
     'chat.chip_available': { id: '💬 Apakah masih tersedia?', en: '💬 Is this still available?' },
     'chat.chip_available_msg': { id: 'Halo, saya tertarik dengan produk ini. Apakah masih tersedia?', en: 'Hi, I\'m interested in this product. Is it still available?' },
     'chat.chip_nett': { id: '💰 Berapa harga nett?', en: '💰 What\'s the nett price?' },

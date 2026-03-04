@@ -6,7 +6,7 @@
         || otherUser.username); } else { displayName=otherUser.full_name || otherUser.username; } %>
 
         <div class="main-container">
-            <div class="chat-layout" style="padding: 16px 20px;">
+            <div class="chat-layout">
                 <div class="chat-room-container">
 
                     <!-- Room Header -->
@@ -45,11 +45,12 @@
                             <% } else { %>
                                 <% var lastDate='' ; %>
                                     <% messages.forEach(function(msg, idx) { var msgDateStr=msg.createdAt ||
-                                        msg.created_at; var msgDate=new Date(msgDateStr).toLocaleDateString('id-ID', {
-                                        day: 'numeric' , month: 'long' , year: 'numeric' }); var msgTime=new
-                                        Date(msgDateStr).toLocaleTimeString('id-ID', { hour: '2-digit' ,
-                                        minute: '2-digit' }); var isMine=msg.sender_id===currentUser.id; if (msgDate
-                                        !==lastDate) { lastDate=msgDate; %>
+                                        msg.created_at; var locale=(lang==='en' ? 'en-US' : 'id-ID' ); var msgDate=new
+                                        Date(msgDateStr).toLocaleDateString(locale, { day: 'numeric' , month: 'long' ,
+                                        year: 'numeric' }); var msgTime=new Date(msgDateStr).toLocaleTimeString(locale,
+                                        { hour: '2-digit' , minute: '2-digit' }); var
+                                        isMine=msg.sender_id===currentUser.id; if (msgDate !==lastDate) {
+                                        lastDate=msgDate; %>
                                         <div class="date-divider"><span>
                                                 <%= msgDate %>
                                             </span></div>
@@ -204,9 +205,11 @@
                                             <button onclick="clearImagePreview()"
                                                 style="position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; border-radius: 50%; background: #ef4444; color: white; border: none; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1;">✕</button>
                                         </div>
-                                        <span style="font-size: 12px; color: var(--text-gray);">📎 Gambar siap
+                                        <span style="font-size: 12px; color: var(--text-gray);"
+                                            data-i18n="chat.msg_ready">📎 Gambar siap
                                             dikirim</span>
                                     </div>
+
                                     <div class="chat-input-area">
                                         <input type="file" id="chatImageInput" accept="image/*" style="display: none;">
                                         <button class="chat-attach-btn" id="attachBtn" title="Lampirkan Gambar"
@@ -331,19 +334,19 @@
                             pendingImageUrl = d.image_url;
                         } else {
                             clearImagePreview();
-                            if (window.showToast) window.showToast('Gagal upload gambar', 'error');
+                            if (window.showToast) window.showToast(t('chat.upload_failed'), 'error');
                         }
                     })
                     .catch(function () {
                         clearImagePreview();
-                        if (window.showToast) window.showToast('Gagal upload gambar', 'error');
+                        if (window.showToast) window.showToast(t('chat.upload_failed'), 'error');
                     });
             });
 
             (function () {
                 var socket = io({ transports: ['polling', 'websocket'] });
-                var conversationId = <%= conversation.id %>;
-                var currentUserId = <%= currentUser.id %>;
+                var conversationId = Number('<%= conversation.id %>');
+                var currentUserId = Number('<%= currentUser.id %>');
                 var messagesArea = document.getElementById('messagesArea');
                 var messageInput = document.getElementById('messageInput');
                 var sendBtn = document.getElementById('sendBtn');
@@ -442,7 +445,9 @@
                     }
 
                     var timeStr = data.createdAt || data.created_at || new Date();
-                    var time = new Date(timeStr).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    var locale = (typeof lang !== 'undefined' ? (lang === 'en' ? 'en-US' : 'id-ID') : (localStorage.getItem('medimart_lang') === 'en' ? 'en-US' : 'id-ID'));
+                    var time = new Date(timeStr).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+
 
                     // Image in bubble
                     if (data.image_url && data.image_url !== 'null' && data.image_url.trim() !== '') {

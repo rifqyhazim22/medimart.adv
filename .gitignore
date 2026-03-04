@@ -18,3 +18,5 @@ index_response*.html
 .vercel
 .env*.local
 .env.production
+public/uploads/
+tmp_*.js

@@ -28,10 +28,10 @@
                             ; if (conv.last_message_at) { var now=new Date(); var msgDate=new
                             Date(conv.last_message_at); var diffMs=now - msgDate; var diffMins=Math.floor(diffMs /
                             60000); var diffHrs=Math.floor(diffMs / 3600000); var diffDays=Math.floor(diffMs /
-                            86400000); if (diffMins < 1) timeAgo='Baru saja' ; else if (diffMins < 60) timeAgo=diffMins
-                            + 'm' ; else if (diffHrs < 24) timeAgo=diffHrs + 'h' ; else timeAgo=diffDays + 'd' ; } var
-                            currentUserId=typeof currentUser !=='undefined' && currentUser ? currentUser.id : 0; var
-                            iSentLast=conv.last_sender_id===currentUserId; %>
+                            86400000); if (diffMins < 1) { timeAgo=t('chat.just_now') ; } else if (diffMins < 60)
+                            timeAgo=diffMins + 'm' ; else if (diffHrs < 24) timeAgo=diffHrs + 'h' ; else
+                            timeAgo=diffDays + 'd' ; } var currentUserId=typeof currentUser !=='undefined' &&
+                            currentUser ? currentUser.id : 0; var iSentLast=conv.last_sender_id===currentUserId; %>
                             <a href="/chat/<%= conv.id %>"
                                 class="conversation-item <%= unread > 0 ? 'has-unread' : '' %>">
                                 <% if (otherUser.profile_image) { %>
@@ -56,9 +56,10 @@
                                                                     <% } %>
                                                         </span>
                                                         <% } %>
-                                                            <%= conv.last_message || 'Percakapan dimulai' %>
+                                                            <%= conv.last_message || t('chat.conversation_started') %>
                                                 </div>
                                             </div>
+
 
                                             <div class="conv-meta">
                                                 <span class="conv-time">

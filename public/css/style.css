@@ -457,7 +457,7 @@ body {
 }
 
 .product-image {
-    width: 80%;
+    width: 100%;
     aspect-ratio: 1 / 1;
     background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
     display: flex;
@@ -465,7 +465,6 @@ body {
     justify-content: center;
     font-size: 64px;
     position: relative;
-    margin-left: 30px;
 }
 
 .product-badge {
@@ -504,7 +503,8 @@ body {
     font-weight: 500;
 }
 
-.product-name {
+.product-name,
+.product-title {
     font-weight: 700;
     font-size: 16px;
     color: var(--text-dark);
@@ -514,13 +514,23 @@ body {
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    line-height: 1.4;
+    min-height: 2.8em;
 }
 
 .product-price {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 800;
     color: var(--primary);
-    margin-bottom: 12px;
+    margin-bottom: 0px;
+}
+
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
 }
 
 .product-stock {
@@ -1037,23 +1047,85 @@ body {
    ========================================== */
 @media (max-width: 768px) {
     .header-top {
-        flex-wrap: wrap;
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 0;
     }
 
     .search-bar {
-        order: 3;
         width: 100%;
         max-width: none;
+        order: 2;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        order: 1;
+    }
+
+    .user-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
     }
 
     .nav-tabs {
         overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 8px;
     }
 
     .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 12px;
+        padding: 0 4px;
     }
+
+    .recommendation-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 0 4px;
+    }
+
+    .product-info {
+        padding: 10px;
+    }
+
+    .product-title,
+    .product-name {
+        font-size: 14px;
+        margin-bottom: 6px;
+        min-height: 2.8em;
+    }
+
+    .product-price {
+        font-size: 16px;
+    }
+
+    .product-category {
+        font-size: 10px;
+    }
+
+    .stock-badge {
+        font-size: 9px !important;
+        padding: 2px 6px !important;
+    }
+
+    .product-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .btn-add-cart {
+        width: 100%;
+        padding: 8px 4px !important;
+        font-size: 12px !important;
+    }
+
 
     .dashboard-header h1 {
         font-size: 24px;
@@ -1220,4 +1292,35 @@ body {
     border-color: var(--text-gray);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+/* Recommendation Section Responsive Styles */
+.recommendation-container {
+    margin: 24px 0;
+    padding: 32px;
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    border-radius: 24px;
+    color: white;
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.recommendation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .recommendation-container {
+        margin: 16px 0;
+        padding: 16px 10px;
+        border-radius: 16px;
+    }
+
+    .recommendation-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+    }
 }

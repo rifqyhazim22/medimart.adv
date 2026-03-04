@@ -7,7 +7,6 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 24px 20px;
-    min-height: calc(100vh - 200px);
 }
 
 .chat-header-bar {
@@ -144,7 +143,7 @@
 .chat-room-container {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 150px);
+    height: calc(100vh - 180px);
     background: var(--bg-white);
     border: 1px solid var(--border);
     border-radius: 16px;
@@ -253,6 +252,11 @@
     flex-direction: column;
     gap: 12px;
     scroll-behavior: smooth;
+}
+
+.messages-area::before {
+    content: "";
+    flex: 1;
 }
 
 .message-bubble {
@@ -435,14 +439,19 @@
 
 .chat-input-area input {
     flex: 1;
-    padding: 12px 20px;
-    border-radius: 24px;
+    padding: 0 18px;
+    height: 42px;
+    border-radius: 21px;
     border: 1px solid var(--border);
     background: var(--bg-light);
     color: var(--text-dark);
     font-size: 14px;
     outline: none;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
+    line-height: normal;
+    /* Back to normal, use flex for centering */
+    display: flex;
+    align-items: center;
 }
 
 .chat-input-area input:focus {
@@ -482,8 +491,10 @@
 /* Empty state */
 .chat-empty {
     text-align: center;
-    padding: 80px 20px;
+    padding: 20px;
     color: var(--text-gray);
+    margin-top: auto;
+    /* Ensure it stays in the middle/bottom area */
 }
 
 .chat-empty-icon {
@@ -553,20 +564,73 @@
 /* Responsive */
 @media (max-width: 768px) {
     .chat-layout {
-        padding: 12px;
+        padding: 0;
+        height: calc(100dvh - 60px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
     }
 
     .chat-room-container {
-        height: calc(100vh - 120px);
+        flex: 1;
+        height: 100%;
         border-radius: 0;
+        border: none;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-room-header {
+        padding: 12px 16px;
+        gap: 12px;
+    }
+
+    .messages-area {
+        padding: 16px;
+        gap: 10px;
     }
 
     .message-bubble {
-        max-width: 85%;
+        max-width: 90%;
+        padding: 10px 14px;
     }
 
-    .conv-preview {
-        max-width: 200px;
+    .chat-input-area {
+        padding: 12px 14px;
+        gap: 8px;
+        background: var(--bg-white);
+        align-items: center;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .chat-input-area input {
+        height: 40px;
+        line-height: normal;
+        padding: 0 16px;
+        font-size: 14px;
+        border-radius: 20px;
+        border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-send-btn {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding-left: 2px;
+        /* Visual center for the plane icon */
+    }
+
+    .chat-attach-btn {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: rgba(0, 0, 0, 0.03);
     }
 }
 

@@ -346,6 +346,24 @@ const translations = {
         id: 'Pesanan tidak ditemukan atau akses ditolak.',
         en: 'Order not found or access denied.'
     },
+
+    // ========== CHAT (SERVER) ==========
+    'chat.just_now': {
+        id: 'Baru saja',
+        en: 'Just now'
+    },
+    'chat.msg_ready': {
+        id: 'Gambar siap dikirim',
+        en: 'Image ready to send'
+    },
+    'chat.upload_failed': {
+        id: 'Gagal upload gambar',
+        en: 'Failed to upload image'
+    },
+    'chat.conversation_started': {
+        id: 'Percakapan dimulai',
+        en: 'Conversation started'
+    },
 };
 
 /**
@@ -366,7 +384,12 @@ function i18nMiddleware(req, res, next) {
         return value;
     };
 
+    // Expose to templates
+    res.locals.t = req.t;
+    res.locals.lang = lang;
+
     next();
 }
 
 module.exports = { i18nMiddleware, translations };
+
