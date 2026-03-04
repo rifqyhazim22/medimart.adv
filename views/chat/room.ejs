@@ -44,10 +44,10 @@
                             </div>
                             <% } else { %>
                                 <% var lastDate='' ; %>
-                                    <% messages.forEach(function(msg, idx) { var msgDate=new
-                                        Date(msg.created_at).toLocaleDateString('id-ID', { day: 'numeric' ,
-                                        month: 'long' , year: 'numeric' }); var msgTime=new
-                                        Date(msg.created_at).toLocaleTimeString('id-ID', { hour: '2-digit' ,
+                                    <% messages.forEach(function(msg, idx) { var msgDateStr=msg.createdAt ||
+                                        msg.created_at; var msgDate=new Date(msgDateStr).toLocaleDateString('id-ID', {
+                                        day: 'numeric' , month: 'long' , year: 'numeric' }); var msgTime=new
+                                        Date(msgDateStr).toLocaleTimeString('id-ID', { hour: '2-digit' ,
                                         minute: '2-digit' }); var isMine=msg.sender_id===currentUser.id; if (msgDate
                                         !==lastDate) { lastDate=msgDate; %>
                                         <div class="date-divider"><span>
@@ -90,11 +90,11 @@
                                                                         </div>
                                                                     </div>
                                                                     <% } %>
-                                                                        <% if (msg.image_url) { %>
+                                                                        <% if (msg.image_url && msg.image_url !=='null'
+                                                                            && msg.image_url.trim() !=='' ) { %>
                                                                             <div class="chat-image-wrap"><img
                                                                                     src="<%= msg.image_url %>" alt="📷"
-                                                                                    class="chat-bubble-image"
-                                                                                    onclick="window.open(this.src,'_blank')">
+                                                                                    class="chat-bubble-image">
                                                                             </div>
                                                                             <% } %>
                                                                                 <div>
@@ -140,15 +140,15 @@
                                         title="Tutup">✕</button>
                                 </div>
                                 <div class="quick-chips">
-                                    <button class="chip" onclick="pickChip(this)" data-i18n="chat.chip_available"
+                                    <button class="chip" onclick="window.pickChip(this)" data-i18n="chat.chip_available"
                                         data-i18n-msg="chat.chip_available_msg">💬 Apakah masih tersedia?</button>
-                                    <button class="chip" onclick="pickChip(this)" data-i18n="chat.chip_nett"
+                                    <button class="chip" onclick="window.pickChip(this)" data-i18n="chat.chip_nett"
                                         data-i18n-msg="chat.chip_nett_msg">💰 Berapa harga nett?</button>
-                                    <button class="chip" onclick="pickChip(this)" data-i18n="chat.chip_discount"
+                                    <button class="chip" onclick="window.pickChip(this)" data-i18n="chat.chip_discount"
                                         data-i18n-msg="chat.chip_discount_msg">🏷️ Ada diskon?</button>
-                                    <button class="chip" onclick="pickChip(this)" data-i18n="chat.chip_usage"
+                                    <button class="chip" onclick="window.pickChip(this)" data-i18n="chat.chip_usage"
                                         data-i18n-msg="chat.chip_usage_msg">📋 Cara pemakaian?</button>
-                                    <button class="chip" onclick="pickChip(this)" data-i18n="chat.chip_shipping"
+                                    <button class="chip" onclick="window.pickChip(this)" data-i18n="chat.chip_shipping"
                                         data-i18n-msg="chat.chip_shipping_msg">🚚 Lama pengiriman?</button>
                                 </div>
                             </div>
@@ -176,17 +176,18 @@
                                                 title="Tutup">✕</button>
                                         </div>
                                         <div class="quick-chips">
-                                            <button class="chip" onclick="pickChip(this)"
+                                            <button class="chip" onclick="window.pickChip(this)"
                                                 data-i18n="chat.chip_ask_order"
                                                 data-i18n-msg="chat.chip_ask_order_msg">💬 Tanya pesanan ini</button>
-                                            <button class="chip" onclick="pickChip(this)"
+                                            <button class="chip" onclick="window.pickChip(this)"
                                                 data-i18n="chat.chip_when_ship"
                                                 data-i18n-msg="chat.chip_when_ship_msg">🚚 Kapan dikirim?</button>
-                                            <button class="chip" onclick="pickChip(this)"
+                                            <button class="chip" onclick="window.pickChip(this)"
                                                 data-i18n="chat.chip_processed"
                                                 data-i18n-msg="chat.chip_processed_msg">⏳ Sudah diproses?</button>
-                                            <button class="chip" onclick="pickChip(this)" data-i18n="chat.chip_change"
-                                                data-i18n-msg="chat.chip_change_msg">✏️ Ubah pesanan?</button>
+                                            <button class="chip" onclick="window.pickChip(this)"
+                                                data-i18n="chat.chip_change" data-i18n-msg="chat.chip_change_msg">✏️
+                                                Ubah pesanan?</button>
                                         </div>
                                     </div>
                                 </div>
@@ -195,13 +196,16 @@
 
 
                                     <!-- Chat Input -->
-                                    <div id="imagePreviewContainer" class="image-preview-strip" style="display: none;">
-                                        <div id="imagePreviewInner" style="position: relative; display: inline-block;">
+                                    <div id="imagePreviewContainer"
+                                        style="display: none; padding: 8px 16px; background: var(--bg-light); border-top: 1px solid var(--border); align-items: center; gap: 8px;">
+                                        <div style="position: relative; display: inline-block;">
                                             <img id="imagePreviewImg" src=""
-                                                style="max-height: 80px; border-radius: 8px; border: 1px solid var(--border);">
+                                                style="height: 56px; width: 56px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); display: block;">
                                             <button onclick="clearImagePreview()"
-                                                style="position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%; background: #ef4444; color: white; border: none; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+                                                style="position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; border-radius: 50%; background: #ef4444; color: white; border: none; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1;">✕</button>
                                         </div>
+                                        <span style="font-size: 12px; color: var(--text-gray);">📎 Gambar siap
+                                            dikirim</span>
                                     </div>
                                     <div class="chat-input-area">
                                         <input type="file" id="chatImageInput" accept="image/*" style="display: none;">
@@ -233,38 +237,60 @@
 
         <!-- Socket.IO Client -->
         <script src="/socket.io/socket.io.js"></script>
+
+        <!-- Hidden Data Div for Context Data -->
+        <div id="server-context-data" style="display:none;" <% if (typeof contextProduct !=='undefined' &&
+            contextProduct) { %>
+            data-type="product" data-json="<%= JSON.stringify({ productId: contextProduct.id, name: contextProduct.name,
+                price: parseFloat(contextProduct.price), image_url: contextProduct.image_url || '' }) %>"
+                <% } else if (typeof contextOrder !=='undefined' && contextOrder) { %>
+                    data-type="order" data-json="<%= JSON.stringify({ orderId: contextOrder.id, status:
+                        contextOrder.status || '' }) %>"
+                        <% } %>
+                            ></div>
+
         <script>
             // Context data (from server)
             var pendingContext = null;
-            <% if (typeof contextProduct !== 'undefined' && contextProduct) { %>
-                pendingContext = {
-                    type: 'product',
-                        data: <% - JSON.stringify({ productId: contextProduct.id, name: contextProduct.name, price: parseFloat(contextProduct.price), image_url: contextProduct.image_url || '' }) %>
-                };
-            <% } %>
-            <% if (typeof contextOrder !== 'undefined' && contextOrder) { %>
-                pendingContext = {
-                    type: 'order',
-                        data: <% - JSON.stringify({ orderId: contextOrder.id, status: contextOrder.status || '' }) %>
-                };
-            <% } %>
+            var ctxDataEl = document.getElementById('server-context-data');
+            if (ctxDataEl && ctxDataEl.getAttribute('data-type') && ctxDataEl.getAttribute('data-json')) {
+                try {
+                    pendingContext = {
+                        type: ctxDataEl.getAttribute('data-type'),
+                        data: JSON.parse(ctxDataEl.getAttribute('data-json'))
+                    };
+                } catch (e) {
+                    console.error('Failed to parse context data', e);
+                }
+            }
 
-                function pickChip(btn) {
+            window.pickChip = function (btn) {
+                try {
                     var msgKey = btn.getAttribute('data-i18n-msg');
                     var msg = '';
-                    if (typeof t === 'function') {
+                    if (msgKey && typeof t === 'function') {
                         var translated = t(msgKey);
-                        // t() returns the key itself as fallback — in that case use button text
-                        msg = (translated !== msgKey) ? translated : btn.textContent.trim();
-                    } else {
-                        msg = btn.textContent.trim();
+                        if (translated && translated !== msgKey && typeof translated !== 'object') {
+                            msg = translated;
+                        }
                     }
-                    document.getElementById('messageInput').value = msg;
-                    document.getElementById('messageInput').focus();
-                    // Highlight selected chip
+
+                    if (!msg) {
+                        msg = btn.textContent.trim().replace(/^[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '').trim();
+                        if (!msg) msg = btn.textContent.trim();
+                    }
+                    var messageInput = document.getElementById('messageInput');
+                    if (messageInput) {
+                        messageInput.value = msg;
+                        messageInput.focus();
+                    }
+
                     document.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('selected'); });
                     btn.classList.add('selected');
+                } catch (e) {
+                    console.error('Error in chip click:', e);
                 }
+            };
 
             function dismissContext() {
                 var el = document.getElementById('contextOptions');
@@ -352,7 +378,7 @@
                     }
 
                     // Attach image if present
-                    if (pendingImageUrl) {
+                    if (pendingImageUrl && pendingImageUrl !== 'null' && pendingImageUrl.trim() !== '') {
                         payload.image_url = pendingImageUrl;
                         clearImagePreview();
                     }
@@ -415,11 +441,12 @@
                         html += '</div></div>';
                     }
 
-                    var time = new Date(data.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    var timeStr = data.createdAt || data.created_at || new Date();
+                    var time = new Date(timeStr).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
                     // Image in bubble
-                    if (data.image_url) {
-                        html += '<div class="chat-image-wrap"><img src="' + data.image_url + '" alt="📷" class="chat-bubble-image" onclick="window.open(this.src,\'_blank\')"></div>';
+                    if (data.image_url && data.image_url !== 'null' && data.image_url.trim() !== '') {
+                        html += '<div class="chat-image-wrap"><img src="' + data.image_url + '" alt="📷" class="chat-bubble-image"></div>';
                     }
 
                     html += '<div>' + escapeHtml(data.message) + '</div>';
