@@ -324,7 +324,7 @@
             </div>
 
 
-            <% if (recentOrders.length === 0) { %>
+            <% if (recentOrders.length===0) { %>
                 <div class="empty-state">
                     <span class="empty-icon">🛍️</span>
                     <h3 style="color: var(--text-dark); margin: 0 0 8px 0;" data-i18n="user.no_orders">
@@ -333,47 +333,56 @@
                         mulai belanja kebutuhan kesehatanmu sekarang!</p>
                     <a href="/" class="btn-detail" data-i18n="user.shop_again">🛍️ Belanja Sekarang</a>
                 </div>
-            <% } else { %>
-                <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px;">
-                    <% recentOrders.forEach(order => { %>
-                        <div class="order-card" style="margin-bottom: 0;">
-                            <div class="order-header" style="margin-bottom: 12px; padding-bottom: 12px;">
-                                <div class="order-info">
-                                    <div class="order-icon-box">📦</div>
-                                    <div class="order-details">
-                                        <h3>#ORD-<%= order.id %></h3>
-                                        <p class="order-date"><%= new Date(order.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %></p>
+                <% } else { %>
+                    <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px;">
+                        <% recentOrders.forEach(order=> { %>
+                            <div class="order-card" style="margin-bottom: 0;">
+                                <div class="order-header" style="margin-bottom: 12px; padding-bottom: 12px;">
+                                    <div class="order-info">
+                                        <div class="order-icon-box">📦</div>
+                                        <div class="order-details">
+                                            <h3>#ORD-<%= order.id %>
+                                            </h3>
+                                            <p class="order-date">
+                                                <%= new Date(order.createdAt).toLocaleDateString('id-ID', {
+                                                    day: 'numeric' , month: 'short' , year: 'numeric' }) %>
+                                            </p>
+                                        </div>
                                     </div>
+                                    <% var badgeClass=order.status; var i18nStatusKey='user.status_' + order.status
+                                        + '_short' ; var badgeText=order.status; if (order.status==='paid' )
+                                        badgeText='✅ Menunggu Dikemas' ; else if (order.status==='processing' )
+                                        badgeText='⏳ Diproses' ; else if (order.status==='shipped' )
+                                        badgeText='🚚 Dikirim' ; else if (order.status==='completed' )
+                                        badgeText='🎉 Selesai' ; else if (order.status==='cancelled' )
+                                        badgeText='❌ Dibatalkan' ; else if (order.status==='rejected' )
+                                        badgeText='⛔ Ditolak' ; %>
+                                        <span class="status-badge <%= badgeClass %>" data-i18n="<%= i18nStatusKey %>">
+                                            <%= badgeText %>
+                                        </span>
                                 </div>
-                                <%
-                                    let badgeClass = order.status;
-                                    let badgeText = order.status;
-                                    if (order.status === 'paid') badgeText = '✅ Menunggu Dikemas';
-                                    else if (order.status === 'processing') badgeText = '⏳ Diproses';
-                                    else if (order.status === 'shipped') badgeText = '🚚 Dikirim';
-                                    else if (order.status === 'completed') badgeText = '🎉 Selesai';
-                                    else if (order.status === 'cancelled') badgeText = '❌ Dibatalkan';
-                                    else if (order.status === 'rejected') badgeText = '⛔ Ditolak';
-                                %>
-                                <span class="status-badge <%= badgeClass %>"><%= badgeText %></span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <span style="font-size: 13px; color: var(--text-gray);" data-i18n="user.items_count">Item:</span>
-                                    <strong><%= order.items ? order.items.length : 0 %></strong>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <span style="font-size: 13px; color: var(--text-gray);"
+                                            data-i18n="user.items_count">Item:</span>
+                                        <strong>
+                                            <%= order.items ? order.items.length : 0 %>
+                                        </strong>
+                                    </div>
+                                    <a href="/orders/<%= order.id %>" class="btn-detail"
+                                        style="padding: 8px 16px; font-size: 13px;"
+                                        data-i18n="user.detail_invoice">Detail Invoice</a>
                                 </div>
-                                <a href="/orders/<%= order.id %>" class="btn-detail" style="padding: 8px 16px; font-size: 13px;"
-                                    data-i18n="user.detail_invoice">Detail Invoice</a>
                             </div>
-                        </div>
-                    <% }); %>
-                </div>
+                            <% }); %>
+                    </div>
 
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <a href="/user/orders" style="color: #00B09B; font-weight: 600; text-decoration: none; font-size: 15px;"
-                        data-i18n="user.see_full_history">Lihat Riwayat Lengkap →</a>
-                </div>
-            <% } %>
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <a href="/user/orders"
+                            style="color: #00B09B; font-weight: 600; text-decoration: none; font-size: 15px;"
+                            data-i18n="user.see_full_history">Lihat Riwayat Lengkap →</a>
+                    </div>
+                    <% } %>
         </div>
     </div>
 

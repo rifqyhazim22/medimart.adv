@@ -162,12 +162,18 @@
                                                             <div style="flex: 1;">
                                                                 <div
                                                                     style="font-weight: 500; color: var(--text-dark); font-size: 14px;">
-                                                                    <%= item.Product ? item.Product.name
-                                                                        : 'Produk Terhapus' %>
+                                                                    <% if (item.Product) { %>
+                                                                        <%= item.Product.name %>
+                                                                            <% } else { %>
+                                                                                <span
+                                                                                    data-i18n="user.product_deleted">Produk
+                                                                                    Terhapus</span>
+                                                                                <% } %>
                                                                 </div>
                                                                 <div style="font-size: 12px; color: var(--text-gray);">
-                                                                    <%= item.quantity %>x @ Rp <%=
-                                                                            parseInt(item.price_at_purchase).toLocaleString('id-ID')
+                                                                    <%= item.quantity %>x @ <span
+                                                                            data-i18n="user.currency_prefix">Rp</span>
+                                                                        <%= parseInt(item.price_at_purchase).toLocaleString('id-ID')
                                                                             %>
                                                                 </div>
                                                                 <% if (item.seller) { %>
@@ -208,11 +214,13 @@
                                                 %>
                                                 <div
                                                     style="font-weight: 700; font-size: 15px; color: var(--text-dark);">
-                                                    Rp <%= parseInt(orderTotal).toLocaleString('id-ID') %>
+                                                    <span data-i18n="user.currency_prefix">Rp</span>
+                                                    <%= parseInt(orderTotal).toLocaleString('id-ID') %>
                                                 </div>
                                                 <% if (order.items && order.items.length> 1) { %>
                                                     <span style="font-size: 11px; color: var(--text-gray);">(<%=
-                                                            order.items.length %> item)</span>
+                                                            order.items.length %> <span
+                                                                data-i18n="user.item_suffix">item</span>)</span>
                                                     <% } %>
                                         </td>
 
@@ -220,10 +228,9 @@
                                         <td
                                             style="padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top;">
                                             <% var badgeClass=order.status; var badgeText=order.status; var
-                                                hasActive=order.items && order.items.some(function(i) { return
-                                                ['paid', 'processing' , 'shipped' ].indexOf(i.status) !==-1; }); var
-                                                hasCompleted=order.items && order.items.some(function(i) { return
-                                                i.status==='completed' ; }); var hasCancelled=order.items &&
+                                                i18nKey='user.status_' + order.status; var hasActive=order.items &&
+                                                order.items.some(function(i) { return ['paid', 'processing' , 'shipped'
+                                                ].indexOf(i.status) !==-1; }); var hasCancelled=order.items &&
                                                 order.items.some(function(i) { return i.status==='cancelled' ; }); var
                                                 hasRejected=order.items && order.items.some(function(i) { return
                                                 i.status==='rejected' ; }); if (order.status==='paid' ) {
@@ -233,13 +240,18 @@
                                                 (order.status==='completed' ) { badgeText='🎉 Pesanan Selesai' ; } else
                                                 if (order.status==='cancelled' || order.status==='rejected' ) { if
                                                 (hasCancelled && hasRejected) { badgeText='⛔ Batal (Pembeli & Penjual)'
-                                                ; badgeClass='cancelled' ; } else if (order.status==='cancelled' ) {
-                                                badgeText='❌ Dibatalkan Pembeli' ; } else {
-                                                badgeText='⛔ Ditolak Penjual' ; } } if (hasActive && (hasCancelled ||
-                                                hasRejected)) { badgeText +=' (Parsial)' ; } %>
-                                                <span class="status-badge <%= badgeClass %>">
+                                                ; badgeClass='cancelled' ; i18nKey='user.status_cancelled_both' ; } else
+                                                if (order.status==='cancelled' ) { badgeText='❌ Dibatalkan Pembeli' ; }
+                                                else { badgeText='⛔ Ditolak Penjual' ; } } var partialSuffix='' ; if
+                                                (hasActive && (hasCancelled || hasRejected)) {
+                                                partialSuffix=' (Parsial)' ; } %>
+                                                <span class="status-badge <%= badgeClass %>" data-i18n="<%= i18nKey %>">
                                                     <%= badgeText %>
                                                 </span>
+                                                <% if (partialSuffix) { %>
+                                                    <span style="font-size: 11px; color: var(--text-gray);"
+                                                        data-i18n="user.status_partial">(<%= partialSuffix %>)</span>
+                                                    <% } %>
                                         </td>
 
                                         <!-- Aksi -->
