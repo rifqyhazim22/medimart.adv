@@ -1,0 +1,80 @@
+<%- include('../partials/header', { activeTab: 'chat' }) %>
+    <link rel="stylesheet" href="/css/chat.css">
+
+    <div class="main-container">
+        <div class="chat-layout">
+            <div class="chat-header-bar">
+                <h1 data-i18n="chat.inbox_title">💬 Pesan</h1>
+                <% if (totalUnread> 0) { %>
+                    <span class="conv-unread-badge" style="font-size: 13px; padding: 4px 12px;">
+                        <%= totalUnread %> <span data-i18n="chat.unread">belum dibaca</span>
+                    </span>
+                    <% } %>
+            </div>
+
+            <% if (conversations.length===0) { %>
+                <div class="chat-empty">
+                    <div class="chat-empty-icon">💬</div>
+                    <h3 data-i18n="chat.no_conversations">Belum ada percakapan</h3>
+                    <p data-i18n="chat.no_conversations_desc">Mulai chat dengan penjual dari halaman produk!</p>
+                </div>
+                <% } else { %>
+                    <div class="conversation-list">
+                        <% conversations.forEach(function(conv) { var unread=userRole==='seller' ? conv.seller_unread :
+                            conv.buyer_unread; var otherUser=userRole==='seller' ? conv.buyer : conv.seller; var
+                            displayName='' ; if (userRole==='seller' ) { displayName=otherUser.full_name ||
+                            otherUser.username; } else { displayName=(otherUser.seller && otherUser.seller.store_name) ?
+                            otherUser.seller.store_name : (otherUser.full_name || otherUser.username); } var timeAgo=''
+                            ; if (conv.last_message_at) { var now=new Date(); var msgDate=new
+                            Date(conv.last_message_at); var diffMs=now - msgDate; var diffMins=Math.floor(diffMs /
+                            60000); var diffHrs=Math.floor(diffMs / 3600000); var diffDays=Math.floor(diffMs /
+                            86400000); if (diffMins < 1) timeAgo='Baru saja' ; else if (diffMins < 60) timeAgo=diffMins
+                            + 'm' ; else if (diffHrs < 24) timeAgo=diffHrs + 'h' ; else timeAgo=diffDays + 'd' ; } var
+                            currentUserId=typeof currentUser !=='undefined' && currentUser ? currentUser.id : 0; var
+                            iSentLast=conv.last_sender_id===currentUserId; %>
+                            <a href="/chat/<%= conv.id %>"
+                                class="conversation-item <%= unread > 0 ? 'has-unread' : '' %>">
+                                <% if (otherUser.profile_image) { %>
+                                    <img src="<%= otherUser.profile_image %>" alt="" class="conv-avatar">
+                                    <% } else { %>
+                                        <div class="conv-avatar-placeholder">
+                                            <%= displayName.charAt(0).toUpperCase() %>
+                                        </div>
+                                        <% } %>
+
+                                            <div class="conv-content">
+                                                <div class="conv-name">
+                                                    <%= displayName %>
+                                                </div>
+                                                <div class="conv-preview">
+                                                    <% if (iSentLast && conv.last_message) { %>
+                                                        <span class="read-receipt-inline">
+                                                            <% if (conv.last_message_read) { %><span
+                                                                    style="color: #00B09B;">✓✓</span>
+                                                                <% } else { %><span
+                                                                        style="color: var(--text-gray);">✓✓</span>
+                                                                    <% } %>
+                                                        </span>
+                                                        <% } %>
+                                                            <%= conv.last_message || 'Percakapan dimulai' %>
+                                                </div>
+                                            </div>
+
+                                            <div class="conv-meta">
+                                                <span class="conv-time">
+                                                    <%= timeAgo %>
+                                                </span>
+                                                <% if (unread> 0) { %>
+                                                    <span class="conv-unread-badge">
+                                                        <%= unread %>
+                                                    </span>
+                                                    <% } %>
+                                            </div>
+                            </a>
+                            <% }); %>
+                    </div>
+                    <% } %>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>

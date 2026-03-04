@@ -1,0 +1,414 @@
+<%- include('../partials/header', { activeTab: 'chat' }) %>
+    <link rel="stylesheet" href="/css/chat.css">
+
+    <% var isBuyer=conversation.buyer_id===currentUser.id; var displayName='' ; if (isBuyer) {
+        displayName=otherUser.seller && otherUser.seller.store_name ? otherUser.seller.store_name : (otherUser.full_name
+        || otherUser.username); } else { displayName=otherUser.full_name || otherUser.username; } %>
+
+        <div class="main-container">
+            <div class="chat-layout" style="padding: 16px 20px;">
+                <div class="chat-room-container">
+
+                    <!-- Room Header -->
+                    <div class="chat-room-header">
+                        <a href="/chat" class="back-btn" title="Kembali">←</a>
+                        <% if (otherUser.profile_image) { %>
+                            <img src="<%= otherUser.profile_image %>" alt="" class="conv-avatar"
+                                style="width: 40px; height: 40px;">
+                            <% } else { %>
+                                <div class="conv-avatar-placeholder"
+                                    style="width: 40px; height: 40px; font-size: 16px;">
+                                    <%= displayName.charAt(0).toUpperCase() %>
+                                </div>
+                                <% } %>
+                                    <div class="chat-user-info">
+                                        <div class="name">
+                                            <%= displayName %>
+                                        </div>
+                                        <% if (isBuyer && otherUser.seller && otherUser.seller.store_name) { %>
+                                            <div class="store-name">🏪 <%= otherUser.full_name || otherUser.username %>
+                                            </div>
+                                            <% } %>
+                                                <div class="typing-indicator" id="typingIndicator"
+                                                    data-i18n="chat.typing">sedang mengetik...</div>
+                                    </div>
+                    </div>
+
+                    <!-- Messages Area -->
+                    <div class="messages-area" id="messagesArea">
+                        <% if (messages.length===0) { %>
+                            <div class="chat-empty" style="padding: 40px;">
+                                <div class="chat-empty-icon">👋</div>
+                                <h3 data-i18n="chat.start_conversation">Mulai percakapan!</h3>
+                                <p data-i18n="chat.start_conversation_desc">Kirim pesan untuk memulai obrolan.</p>
+                            </div>
+                            <% } else { %>
+                                <% var lastDate='' ; %>
+                                    <% messages.forEach(function(msg, idx) { var msgDate=new
+                                        Date(msg.created_at).toLocaleDateString('id-ID', { day: 'numeric' ,
+                                        month: 'long' , year: 'numeric' }); var msgTime=new
+                                        Date(msg.created_at).toLocaleTimeString('id-ID', { hour: '2-digit' ,
+                                        minute: '2-digit' }); var isMine=msg.sender_id===currentUser.id; if (msgDate
+                                        !==lastDate) { lastDate=msgDate; %>
+                                        <div class="date-divider"><span>
+                                                <%= msgDate %>
+                                            </span></div>
+                                        <% } %>
+
+                                            <div class="message-bubble <%= isMine ? 'sent' : 'received' %>"
+                                                data-msg-id="<%= msg.id %>">
+                                                <% /* Context card inside bubble (product) */ %>
+                                                    <% if (msg.context_type==='product' && msg.context_data) { %>
+                                                        <div class="message-context-card">
+                                                            <img src="<%= msg.context_data.image_url || '/img/placeholder.png' %>"
+                                                                alt="">
+                                                            <div class="mcc-info">
+                                                                <div class="mcc-name">
+                                                                    <%= msg.context_data.name %>
+                                                                </div>
+                                                                <div class="mcc-price">Rp <%=
+                                                                        parseInt(msg.context_data.price ||
+                                                                        0).toLocaleString('id-ID') %>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <% } %>
+                                                            <% /* Context card inside bubble (order) */ %>
+                                                                <% if (msg.context_type==='order' && msg.context_data) {
+                                                                    %>
+                                                                    <div class="message-context-card">
+                                                                        <div
+                                                                            style="width: 40px; height: 40px; border-radius: 6px; background: var(--bg-light); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                                                                            📋</div>
+                                                                        <div class="mcc-info">
+                                                                            <div class="mcc-name">#ORD-<%=
+                                                                                    msg.context_data.orderId %>
+                                                                            </div>
+                                                                            <div class="mcc-price">
+                                                                                <%= msg.context_data.status %>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <% } %>
+                                                                        <div>
+                                                                            <%= msg.message %>
+                                                                        </div>
+                                                                        <div class="message-time">
+                                                                            <%= msgTime %>
+                                                                                <% if (isMine) { %>
+                                                                                    <span class="read-tick"
+                                                                                        data-msg-id="<%= msg.id %>">
+                                                                                        <% if (msg.is_read) { %><span
+                                                                                                style="color: #34b7f1;">✓✓</span>
+                                                                                            <% } else { %><span
+                                                                                                    class="unread-tick">✓✓</span>
+                                                                                                <% } %>
+                                                                                    </span>
+                                                                                    <% } %>
+                                                                        </div>
+                                            </div>
+                                            <% }); %>
+                                                <% } %>
+                    </div>
+
+                    <!-- Context Options Section -->
+                    <% if (typeof contextProduct !=='undefined' && contextProduct) { %>
+                        <div class="context-options" id="contextOptions">
+                            <div class="context-banner">
+                                <div class="context-banner-card">
+                                    <img src="<%= contextProduct.image_url || '/img/placeholder.png' %>" alt=""
+                                        style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover;">
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div
+                                            style="font-weight: 700; font-size: 13px; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            <%= contextProduct.name %>
+                                        </div>
+                                        <div style="font-size: 12px; color: #00B09B; font-weight: 600;">Rp <%=
+                                                parseInt(contextProduct.price).toLocaleString('id-ID') %>
+                                        </div>
+                                    </div>
+                                    <button onclick="dismissContext()"
+                                        style="background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-gray); padding: 4px;"
+                                        title="Tutup">✕</button>
+                                </div>
+                                <div class="quick-chips">
+                                    <button class="chip" onclick="pickChip(this)" data-i18n="chat.chip_available"
+                                        data-i18n-msg="chat.chip_available_msg">💬 Apakah masih tersedia?</button>
+                                    <button class="chip" onclick="pickChip(this)" data-i18n="chat.chip_nett"
+                                        data-i18n-msg="chat.chip_nett_msg">💰 Berapa harga nett?</button>
+                                    <button class="chip" onclick="pickChip(this)" data-i18n="chat.chip_discount"
+                                        data-i18n-msg="chat.chip_discount_msg">🏷️ Ada diskon?</button>
+                                    <button class="chip" onclick="pickChip(this)" data-i18n="chat.chip_usage"
+                                        data-i18n-msg="chat.chip_usage_msg">📋 Cara pemakaian?</button>
+                                    <button class="chip" onclick="pickChip(this)" data-i18n="chat.chip_shipping"
+                                        data-i18n-msg="chat.chip_shipping_msg">🚚 Lama pengiriman?</button>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+
+                            <% if (typeof contextOrder !=='undefined' && contextOrder) { %>
+                                <div class="context-options" id="contextOptions">
+                                    <div class="context-banner">
+                                        <div class="context-banner-card">
+                                            <div
+                                                style="width: 44px; height: 44px; border-radius: 8px; background: var(--bg-light); display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                                                📋</div>
+                                            <div style="flex: 1; min-width: 0;">
+                                                <div
+                                                    style="font-weight: 700; font-size: 13px; color: var(--text-dark);">
+                                                    Pesanan #ORD-<%= contextOrder.id %>
+                                                </div>
+                                                <div style="font-size: 12px; color: #f59e0b; font-weight: 600;">
+                                                    <%= contextOrder.status %>
+                                                </div>
+                                            </div>
+                                            <button onclick="dismissContext()"
+                                                style="background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-gray); padding: 4px;"
+                                                title="Tutup">✕</button>
+                                        </div>
+                                        <div class="quick-chips">
+                                            <button class="chip" onclick="pickChip(this)"
+                                                data-i18n="chat.chip_ask_order"
+                                                data-i18n-msg="chat.chip_ask_order_msg">💬 Tanya pesanan ini</button>
+                                            <button class="chip" onclick="pickChip(this)"
+                                                data-i18n="chat.chip_when_ship"
+                                                data-i18n-msg="chat.chip_when_ship_msg">🚚 Kapan dikirim?</button>
+                                            <button class="chip" onclick="pickChip(this)"
+                                                data-i18n="chat.chip_processed"
+                                                data-i18n-msg="chat.chip_processed_msg">⏳ Sudah diproses?</button>
+                                            <button class="chip" onclick="pickChip(this)" data-i18n="chat.chip_change"
+                                                data-i18n-msg="chat.chip_change_msg">✏️ Ubah pesanan?</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+
+
+                                    <!-- Chat Input -->
+                                    <div class="chat-input-area">
+                                        <input type="text" id="messageInput" placeholder="Ketik pesan..."
+                                            data-i18n-placeholder="chat.type_message" autocomplete="off"
+                                            maxlength="1000">
+                                        <button class="chat-send-btn" id="sendBtn" title="Kirim">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Socket.IO Client -->
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            // Context data (from server)
+            var pendingContext = null;
+            <% if (typeof contextProduct !== 'undefined' && contextProduct) { %>
+                pendingContext = {
+                    type: 'product',
+                        data: <% - JSON.stringify({ productId: contextProduct.id, name: contextProduct.name, price: parseFloat(contextProduct.price), image_url: contextProduct.image_url || '' }) %>
+                };
+            <% } %>
+            <% if (typeof contextOrder !== 'undefined' && contextOrder) { %>
+                pendingContext = {
+                    type: 'order',
+                        data: <% - JSON.stringify({ orderId: contextOrder.id, status: contextOrder.status || '' }) %>
+                };
+            <% } %>
+
+                function pickChip(btn) {
+                    var msgKey = btn.getAttribute('data-i18n-msg');
+                    var msg = (typeof t === 'function') ? t(msgKey) : btn.getAttribute('data-msg') || btn.textContent.trim();
+                    document.getElementById('messageInput').value = msg;
+                    document.getElementById('messageInput').focus();
+                    // Highlight selected chip
+                    document.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('selected'); });
+                    btn.classList.add('selected');
+                }
+
+            function dismissContext() {
+                var el = document.getElementById('contextOptions');
+                if (el) el.remove();
+                pendingContext = null;
+                // Clean URL
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+
+            (function () {
+                var socket = io({ transports: ['polling', 'websocket'] });
+                var conversationId = <%= conversation.id %>;
+                var currentUserId = <%= currentUser.id %>;
+                var messagesArea = document.getElementById('messagesArea');
+                var messageInput = document.getElementById('messageInput');
+                var sendBtn = document.getElementById('sendBtn');
+                var typingIndicator = document.getElementById('typingIndicator');
+                var typingTimeout = null;
+
+                // Join conversation room
+                socket.emit('join-conversation', conversationId);
+
+                // Scroll to bottom
+                function scrollToBottom() {
+                    messagesArea.scrollTop = messagesArea.scrollHeight;
+                }
+                scrollToBottom();
+
+                // Send message (with optional context)
+                function sendMessage() {
+                    var msg = messageInput.value.trim();
+                    if (!msg) return;
+
+                    var payload = {
+                        conversationId: conversationId,
+                        message: msg
+                    };
+
+                    // Attach pending context if present
+                    if (pendingContext) {
+                        payload.contextType = pendingContext.type;
+                        payload.contextData = pendingContext.data;
+                        // Clear context after sending
+                        pendingContext = null;
+                        dismissContext();
+                    }
+
+                    socket.emit('send-message', payload);
+
+                    messageInput.value = '';
+                    socket.emit('stop-typing', conversationId);
+                }
+
+                sendBtn.addEventListener('click', sendMessage);
+                messageInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+
+                // Typing
+                messageInput.addEventListener('input', function () {
+                    socket.emit('typing', conversationId);
+                    clearTimeout(typingTimeout);
+                    typingTimeout = setTimeout(function () {
+                        socket.emit('stop-typing', conversationId);
+                    }, 2000);
+                });
+
+                // Receive message
+                socket.on('new-message', function (data) {
+                    if (data.conversation_id !== conversationId) return;
+
+                    // Remove empty state if exists
+                    var emptyState = messagesArea.querySelector('.chat-empty');
+                    if (emptyState) emptyState.remove();
+
+                    var isMine = data.sender_id === currentUserId;
+
+                    var bubble = document.createElement('div');
+                    bubble.className = 'message-bubble ' + (isMine ? 'sent' : 'received');
+                    bubble.setAttribute('data-msg-id', data.id);
+
+                    var html = '';
+
+                    // Context card in bubble
+                    if (data.context_type === 'product' && data.context_data) {
+                        html += '<div class="message-context-card">';
+                        html += '<img src="' + (data.context_data.image_url || '/img/placeholder.png') + '" alt="">';
+                        html += '<div class="mcc-info">';
+                        html += '<div class="mcc-name">' + escapeHtml(data.context_data.name) + '</div>';
+                        html += '<div class="mcc-price">Rp ' + parseInt(data.context_data.price || 0).toLocaleString('id-ID') + '</div>';
+                        html += '</div></div>';
+                    }
+
+                    if (data.context_type === 'order' && data.context_data) {
+                        html += '<div class="message-context-card">';
+                        html += '<div style="width:40px;height:40px;border-radius:6px;background:var(--bg-light);display:flex;align-items:center;justify-content:center;font-size:18px;">📋</div>';
+                        html += '<div class="mcc-info">';
+                        html += '<div class="mcc-name">#ORD-' + data.context_data.orderId + '</div>';
+                        html += '<div class="mcc-price">' + escapeHtml(data.context_data.status || '') + '</div>';
+                        html += '</div></div>';
+                    }
+
+                    var time = new Date(data.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    html += '<div>' + escapeHtml(data.message) + '</div>';
+                    html += '<div class="message-time">' + time;
+                    if (isMine) {
+                        html += ' <span class="read-tick" data-msg-id="' + data.id + '"><span class="unread-tick">✓✓</span></span>';
+                    }
+                    html += '</div>';
+
+                    bubble.innerHTML = html;
+                    messagesArea.appendChild(bubble);
+                    scrollToBottom();
+
+                    // Mark as read if not mine
+                    if (!isMine) {
+                        socket.emit('mark-read', conversationId);
+                    }
+                });
+
+                // Read receipt — other user read my messages
+                socket.on('messages-read', function (data) {
+                    if (data.conversationId === conversationId) {
+                        // Turn all unread ticks to blue
+                        var unreadTicks = document.querySelectorAll('.unread-tick');
+                        for (var i = 0; i < unreadTicks.length; i++) {
+                            unreadTicks[i].style.color = '#34b7f1';
+                            unreadTicks[i].className = '';
+                        }
+                    }
+                });
+
+                // Typing indicator
+                socket.on('user-typing', function (data) {
+                    if (data.userId !== currentUserId) {
+                        typingIndicator.style.display = 'block';
+                    }
+                });
+
+                socket.on('user-stop-typing', function (data) {
+                    if (data.userId !== currentUserId) {
+                        typingIndicator.style.display = 'none';
+                    }
+                });
+
+                // Unread badge update — update the header badge
+                socket.on('unread-update', function (data) {
+                    var badge = document.getElementById('chatBadge');
+                    if (badge) {
+                        // Fetch total unread
+                        fetch('/api/chat/unread')
+                            .then(function (r) { return r.json(); })
+                            .then(function (d) {
+                                if (d.unread > 0) {
+                                    badge.innerText = d.unread;
+                                    badge.style.display = 'flex';
+                                } else {
+                                    badge.style.display = 'none';
+                                }
+                            })
+                            .catch(function () { });
+                    }
+                });
+
+                // Mark as read on entry
+                socket.emit('mark-read', conversationId);
+
+                // Escape HTML
+                function escapeHtml(str) {
+                    if (!str) return '';
+                    var div = document.createElement('div');
+                    div.textContent = str;
+                    return div.innerHTML;
+                }
+            })();
+        </script>
+
+        <%- include('../partials/footer') %>

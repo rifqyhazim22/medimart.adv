@@ -90,9 +90,23 @@
     </style>
 
     <div class="detail-container">
-        <a href="/seller/orders" class="btn-back">
-            <span>←</span> <span data-i18n="order_detail.back_seller">Kembali ke Orderan Masuk</span>
-        </a>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <a href="/seller/orders" class="btn-back" style="margin-bottom: 0;">
+                <span>←</span> <span data-i18n="order_detail.back_seller">Kembali ke Orderan Masuk</span>
+            </a>
+            <% if (order.User) { %>
+                <form action="/chat/start" method="POST" style="margin: 0;">
+                    <input type="hidden" name="sellerId" value="<%= order.User.id %>">
+                    <input type="hidden" name="orderId" value="<%= order.id %>">
+                    <button type="submit"
+                        style="padding: 8px 16px; border-radius: 8px; background: transparent; color: #00B09B; border: 1.5px solid #00B09B; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"
+                        onmouseover="this.style.background='rgba(0,176,155,0.05)'"
+                        onmouseout="this.style.background='transparent'">
+                        💬 <span data-i18n="chat.chat_buyer">Chat Pembeli</span>
+                    </button>
+                </form>
+                <% } %>
+        </div>
 
         <div class="detail-card">
             <!-- Header -->

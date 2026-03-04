@@ -187,7 +187,7 @@
                 </div>
 
                 <div class="search-bar">
-                    <% let searchAction="/" ; let searchPlaceholder="Cari obat, vitamin..." ; let
+                    <% let searchAction="/" ; let searchPlaceholder="Cari obat, vitamin, toko..." ; let
                         searchI18nKey="header.search_placeholder" ; if (typeof currentUser !=='undefined' &&
                         currentUser) { if (currentUser.role==='seller' ) { searchAction="/seller/products" ;
                         searchPlaceholder="Cari inventaris saya..." ; searchI18nKey="header.search_seller" ; } else if
@@ -215,62 +215,76 @@
                         </a>
                         <% } %>
 
-                            <!-- Theme Toggle Global -->
-                            <button id="themeToggleBtn" onclick="toggleTheme()"
-                                style="background: var(--bg-light); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px;"
-                                data-i18n-title="header.theme_title" title="Ganti Layar Siang/Malam">
-                                🌙
-                            </button>
-
-                            <!-- Language Toggle Global -->
-                            <button id="langToggleBtn" onclick="toggleLanguage()"
-                                style="background: var(--bg-light); border: 1px solid var(--border); border-radius: 8px; min-width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 13px; font-weight: 700; color: var(--text-dark); letter-spacing: 0.5px;"
-                                data-i18n-title="header.lang_title" title="Ganti Bahasa">
-                                ID
-                            </button>
-
-                            <!-- 2. User Menu / Auth Buttons -->
+                            <!-- Chat Icon: Show for logged-in users -->
                             <% if (currentUser) { %>
-                                <div class="user-menu" style="display: flex; align-items: center; gap: 12px;">
-                                    <a href="/profile"
-                                        style="text-decoration: none; display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 99px; <%= (typeof activeTab !== 'undefined' && activeTab === 'profile') ? 'background: var(--bg-light); border: 1px solid var(--border);' : 'background: transparent; border: 1px solid transparent;' %> transition: all 0.2s;"
-                                        title="Manajemen Profil Akun">
-                                        <div class="user-info" style="display: flex; align-items: center; gap: 8px;">
-                                            <% if (currentUser.profile_image) { %>
-                                                <img src="<%= currentUser.profile_image %>" alt="Avatar"
-                                                    style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-white); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                                <% } else { %>
-                                                    <div class="user-avatar"
-                                                        style="background-color: #FF6B35; color: white; display: flex; justify-content: center; align-items: center; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 14px;">
-                                                        <%= currentUser.username.charAt(0).toUpperCase() %>
-                                                    </div>
-                                                    <% } %>
-                                                        <div style="display: flex; flex-direction: column;">
-                                                            <span class="user-name"
-                                                                style="font-weight: 600; font-size: 14px; color: var(--text-dark);">
-                                                                <%= currentUser.username %>
-                                                            </span>
-                                                            <span
-                                                                style="font-size: 11px; color: var(--text-gray); text-transform: uppercase;">
-                                                                <%= currentUser.role %>
-                                                            </span>
-                                                        </div>
+                                <a href="/chat"
+                                    style="text-decoration: none; color: inherit; position: relative; background: var(--bg-light); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s;"
+                                    title="Chat" id="chatHeaderBtn">
+                                    💬
+                                    <span class="cart-badge" id="chatBadge"
+                                        style="<%= typeof chatUnread !== 'undefined' && chatUnread > 0 ? 'display:flex' : 'display:none' %>">
+                                        <%= typeof chatUnread !=='undefined' ? chatUnread : 0 %>
+                                    </span>
+                                </a>
+                                <% } %>
+
+                                    <!-- Theme Toggle Global -->
+                                    <button id="themeToggleBtn" onclick="toggleTheme()"
+                                        style="background: var(--bg-light); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 16px;"
+                                        data-i18n-title="header.theme_title" title="Ganti Layar Siang/Malam">
+                                        🌙
+                                    </button>
+
+                                    <!-- Language Toggle Global -->
+                                    <button id="langToggleBtn" onclick="toggleLanguage()"
+                                        style="background: var(--bg-light); border: 1px solid var(--border); border-radius: 8px; min-width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 13px; font-weight: 700; color: var(--text-dark); letter-spacing: 0.5px;"
+                                        data-i18n-title="header.lang_title" title="Ganti Bahasa">
+                                        ID
+                                    </button>
+
+                                    <!-- 2. User Menu / Auth Buttons -->
+                                    <% if (currentUser) { %>
+                                        <div class="user-menu" style="display: flex; align-items: center; gap: 12px;">
+                                            <a href="/profile"
+                                                style="text-decoration: none; display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 99px; <%= (typeof activeTab !== 'undefined' && activeTab === 'profile') ? 'background: var(--bg-light); border: 1px solid var(--border);' : 'background: transparent; border: 1px solid transparent;' %> transition: all 0.2s;"
+                                                title="Manajemen Profil Akun">
+                                                <div class="user-info"
+                                                    style="display: flex; align-items: center; gap: 8px;">
+                                                    <% if (currentUser.profile_image) { %>
+                                                        <img src="<%= currentUser.profile_image %>" alt="Avatar"
+                                                            style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-white); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                                        <% } else { %>
+                                                            <div class="user-avatar"
+                                                                style="background-color: #FF6B35; color: white; display: flex; justify-content: center; align-items: center; width: 36px; height: 36px; border-radius: 50%; font-weight: bold; font-size: 14px;">
+                                                                <%= currentUser.username.charAt(0).toUpperCase() %>
+                                                            </div>
+                                                            <% } %>
+                                                                <div style="display: flex; flex-direction: column;">
+                                                                    <span class="user-name"
+                                                                        style="font-weight: 600; font-size: 14px; color: var(--text-dark);">
+                                                                        <%= currentUser.username %>
+                                                                    </span>
+                                                                    <span
+                                                                        style="font-size: 11px; color: var(--text-gray); text-transform: uppercase;">
+                                                                        <%= currentUser.role %>
+                                                                    </span>
+                                                                </div>
+                                                </div>
+                                            </a>
+                                            <a href="/logout" class="auth-btn btn-logout"
+                                                style="text-decoration: none; font-size: 12px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; color: var(--text-dark); background: var(--bg-white); transition: all 0.2s;"><span
+                                                    data-i18n="auth.logout">Logout</span></a>
                                         </div>
-                                    </a>
-                                    <a href="/logout" class="auth-btn btn-logout"
-                                        style="text-decoration: none; font-size: 12px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; color: var(--text-dark); background: var(--bg-white); transition: all 0.2s;"><span
-                                            data-i18n="auth.logout">Logout</span></a>
-                                </div>
-                                <% } else { %>
-                                    <div class="user-menu" style="display: flex; gap: 8px;">
-                                        <a href="/login" class="auth-btn btn-login"
-                                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; font-weight: 600;"><span
-                                                data-i18n="auth.login">Masuk</span></a>
-                                        <a href="/register" class="auth-btn"
-                                            style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; background: var(--border); color: var(--text-dark); font-weight: 600;"><span
-                                                data-i18n="auth.register">Daftar</span></a>
-                                    </div>
-                                    <% } %>
+                                        <% } else { %>
+                                            <div class="user-menu" style="display: flex; gap: 8px;">
+                                                <a href="/login" class="auth-btn btn-login"
+                                                    style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; font-weight: 600;"><span
+                                                        data-i18n="auth.login">Masuk</span></a>
+                                                <a href="/register" class="auth-btn"
+                                                    style="text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 8px; background: var(--border); color: var(--text-dark); font-weight: 600;"><span
+                                                        data-i18n="auth.register">Daftar</span></a>
+                                            </div>
+                                            <% } %>
                 </div>
             </div>
 

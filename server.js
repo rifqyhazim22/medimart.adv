@@ -1,4 +1,5 @@
 const express = require('express');
+const http = require('http');
 const session = require('express-session');
 const flash = require('connect-flash');
 const path = require('path');
@@ -6,7 +7,15 @@ const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
 const { i18nMiddleware } = require('./utils/serverI18n');
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 3001;
+
+// Socket.IO Setup
+const { Server } = require('socket.io');
+const io = new Server(server, {
+    transports: ['polling', 'websocket'],
+    cors: { origin: '*' }
+});
 
 // Import Routes
 const routes = require('./routes');
@@ -18,7 +27,7 @@ app.use(cookieParser());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const { sequelize, Cart, CartItem, Product } = require('./models');
+const { sequelize, Cart, CartItem, Product, Conversation } = require('./models');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const sessionStore = new SequelizeStore({
@@ -30,8 +39,8 @@ if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
     app.set('trust proxy', 1);
 }
 
-// Session Configuration
-app.use(session({
+// Session Configuration — stored as a reusable middleware for Socket.IO sharing
+const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET || 'medimart_secret_key',
     resave: false,
     saveUninitialized: false,
@@ -40,7 +49,9 @@ app.use(session({
         secure: process.env.NODE_ENV === 'production' || !!process.env.VERCEL,
         maxAge: 24 * 60 * 60 * 1000
     }
-}));
+});
+
+app.use(sessionMiddleware);
 
 // IMPORTANT VERCEL FIX: Do not run .sync() on every serverless function cold-start!
 // We already ran migration/creation for the Sessions table locally or via CLI.
@@ -64,6 +75,7 @@ app.use(async (req, res, next) => {
 
     res.locals.cartCount = 0;
     res.locals.cartTotal = 0;
+    res.locals.chatUnread = 0;
 
     // Persistent Cart Integration for Global Header Badges
     if (req.session.user) {
@@ -78,6 +90,23 @@ app.use(async (req, res, next) => {
             }
         } catch (err) {
             console.error('Error fetching global cart:', err);
+        }
+
+        // Chat unread count for header badge
+        try {
+            const userRole = req.session.user.role;
+            const whereClause = userRole === 'seller'
+                ? { seller_id: req.session.user.id }
+                : { buyer_id: req.session.user.id };
+
+            const conversations = await Conversation.findAll({ where: whereClause, attributes: ['buyer_unread', 'seller_unread'] });
+            let totalUnread = 0;
+            conversations.forEach(c => {
+                totalUnread += userRole === 'seller' ? c.seller_unread : c.buyer_unread;
+            });
+            res.locals.chatUnread = totalUnread;
+        } catch (err) {
+            console.error('Error fetching chat unread:', err);
         }
     } else {
         const cart = req.session.cart || [];
@@ -96,8 +125,12 @@ app.use((req, res) => {
     res.status(404).send('Page Not Found');
 });
 
+// Initialize Socket.IO with session sharing
+const initChat = require('./socket/chat');
+initChat(io, sessionMiddleware);
+
 if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+    server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 }
 
 module.exports = app;

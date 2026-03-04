@@ -180,25 +180,39 @@
                                 <% } %>
                     </form>
 
-                    <div
-                        style="margin-top: 16px; display: flex; align-items: center; gap: 6px; justify-content: center; font-family: 'DM Sans', sans-serif;">
-                        <span id="stockStatusText" data-stock="<%= product.stock %>"
-                            style="font-size: 13px; font-weight: 600;
+                    <!-- Chat Seller Button -->
+                    <% if (typeof currentUser !=='undefined' && currentUser && currentUser.id !==product.seller_id) { %>
+                        <form action="/chat/start" method="POST" style="margin-top: 8px;">
+                            <input type="hidden" name="sellerId" value="<%= product.seller_id %>">
+                            <input type="hidden" name="productId" value="<%= product.id %>">
+                            <button type="submit"
+                                style="width: 100%; padding: 12px; border-radius: 10px; background: transparent; color: #00B09B; border: 1.5px solid #00B09B; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;"
+                                onmouseover="this.style.background='rgba(0,176,155,0.05)'"
+                                onmouseout="this.style.background='transparent'">
+                                <span style="font-size: 16px;">💬</span>
+                                <span data-i18n="chat.chat_seller">Chat Penjual</span>
+                            </button>
+                        </form>
+                        <% } %>
+                            <div
+                                style="margin-top: 16px; display: flex; align-items: center; gap: 6px; justify-content: center; font-family: 'DM Sans', sans-serif;">
+                                <span id="stockStatusText" data-stock="<%= product.stock %>"
+                                    style="font-size: 13px; font-weight: 600;
                             <% if (product.stock > 10) { %>color: #059669;<% } else if (product.stock > 0) { %>color: #d97706;<% } else { %>color: #dc2626;<% } %>"></span>
-                    </div>
-                    <script>
-                        (function () {
-                            const el = document.getElementById('stockStatusText');
-                            const stock = parseInt(el.dataset.stock);
-                            if (stock > 10) {
-                                el.textContent = '✅ ' + t('detail.stock_available') + ' (' + stock + ')';
-                            } else if (stock > 0) {
-                                el.textContent = '⚠️ ' + t('detail.stock_remaining') + ' ' + stock + ' ' + t('detail.stock_remaining_suffix');
-                            } else {
-                                el.textContent = '❌ ' + t('detail.stock_empty');
-                            }
-                        })();
-                    </script>
+                            </div>
+                            <script>
+                                (function () {
+                                    const el = document.getElementById('stockStatusText');
+                                    const stock = parseInt(el.dataset.stock);
+                                    if (stock > 10) {
+                                        el.textContent = '✅ ' + t('detail.stock_available') + ' (' + stock + ')';
+                                    } else if (stock > 0) {
+                                        el.textContent = '⚠️ ' + t('detail.stock_remaining') + ' ' + stock + ' ' + t('detail.stock_remaining_suffix');
+                                    } else {
+                                        el.textContent = '❌ ' + t('detail.stock_empty');
+                                    }
+                                })();
+                            </script>
                 </div>
             </div>
         </div>

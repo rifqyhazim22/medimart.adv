@@ -42,6 +42,8 @@ db.Order = require('./order.js')(sequelize, Sequelize.DataTypes);
 db.OrderItem = require('./orderitem.js')(sequelize, Sequelize.DataTypes);
 db.Cart = require('./cart.js')(sequelize, Sequelize.DataTypes);
 db.CartItem = require('./cartitem.js')(sequelize, Sequelize.DataTypes);
+db.Conversation = require('./conversation.js')(sequelize, Sequelize.DataTypes);
+db.Message = require('./message.js')(sequelize, Sequelize.DataTypes);
 db.TempMigration = require('./temp_migration.js')(sequelize, Sequelize.DataTypes);
 
 Object.keys(db).forEach(modelName => {

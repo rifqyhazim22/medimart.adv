@@ -1,4 +1,4 @@
-const { Product, User, Order, OrderItem, sequelize } = require('../models');
+const { Product, User, Order, OrderItem, Seller, sequelize } = require('../models');
 const { Op } = require('sequelize');
 const { optimizeImage } = require('../utils/imageOptimizer');
 
@@ -9,12 +9,30 @@ module.exports = {
             const { category, search } = req.query;
             const where = {};
             if (category && category !== 'all') where.category = category;
-            if (search) where.name = { [Op.iLike]: `%${search}%` };
+
+            // Search across product name AND seller username/store name
+            let sellerInclude = {
+                model: User, as: 'seller',
+                include: [{ model: Seller, as: 'seller', attributes: ['store_name'] }]
+            };
+
+            if (search) {
+                where[Op.or] = [
+                    { name: { [Op.iLike]: `%${search}%` } },
+                    { '$seller.username$': { [Op.iLike]: `%${search}%` } },
+                    { '$seller.full_name$': { [Op.iLike]: `%${search}%` } },
+                    sequelize.where(
+                        sequelize.col('"seller->seller"."store_name"'),
+                        { [Op.iLike]: `%${search}%` }
+                    )
+                ];
+            }
 
             const products = await Product.findAll({
                 where,
-                include: [{ model: User, as: 'seller' }],
-                order: [['createdAt', 'DESC']]
+                include: [sellerInclude],
+                order: [['createdAt', 'DESC']],
+                subQuery: false
             });
 
             // Recommendation Engine Logic

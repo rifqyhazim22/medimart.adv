@@ -7,12 +7,14 @@ const productRoutes = require('./products');
 const orderRoutes = require('./orders');
 const cartRoutes = require('./cart');
 const dashboardRoutes = require('./dashboard');
+const chatRoutes = require('./chat');
 
 router.use('/', authRoutes);
 router.use('/', productRoutes);
 router.use('/', orderRoutes);
 router.use('/', cartRoutes);
 router.use('/', dashboardRoutes);
+router.use('/', chatRoutes);
 
 const profileController = require('../controllers/profileController');
 const upload = require('../middlewares/upload');
