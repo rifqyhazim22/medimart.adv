@@ -34,6 +34,7 @@ router.get('/dashboard', ensureAuthenticated, (req, res) => {
 });
 
 router.get('/user/dashboard', ensureAuthenticated, dashboardController.userDashboard);
+router.get('/user/orders', ensureAuthenticated, dashboardController.userOrders);
 router.get('/seller/dashboard', ensureSeller, dashboardController.sellerDashboard);
 router.get('/seller/products', ensureSeller, dashboardController.sellerProducts);
 router.get('/seller/orders', ensureSeller, dashboardController.sellerOrders);

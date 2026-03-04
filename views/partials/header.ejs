@@ -312,10 +312,16 @@
                                     </div>
                                     <% } else { %>
                                         <!-- Customer -->
-                                        <button
-                                            class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'dashboard') ? 'active' : '' %>"
-                                            onclick="window.location.href='/user/dashboard'">📦 <span
-                                                data-i18n="nav.my_orders">Pesanan Saya</span></button>
+                                        <div style="display: flex; gap: 8px;">
+                                            <button
+                                                class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'dashboard') ? 'active' : '' %>"
+                                                onclick="window.location.href='/user/dashboard'">📊 <span
+                                                    data-i18n="nav.user_dashboard">Dashboard</span></button>
+                                            <button
+                                                class="nav-tab <%= (typeof activeTab !== 'undefined' && activeTab === 'orders') ? 'active' : '' %>"
+                                                onclick="window.location.href='/user/orders'">📦 <span
+                                                    data-i18n="nav.my_orders">Riwayat Pesanan</span></button>
+                                        </div>
                                         <% } %>
                                             <% } %>
             </div>

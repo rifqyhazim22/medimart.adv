@@ -2,26 +2,10 @@ const { User, Product, Order, OrderItem, sequelize } = require('../models');
 const { Op } = require('sequelize');
 
 module.exports = {
-    // User Dashboard
+    // User Dashboard (Stats Only)
     userDashboard: async (req, res) => {
         try {
             const user = req.session.user;
-
-            // Fetch Orders instead of OrderItems to show grouped list
-            const orders = await Order.findAll({
-                where: { user_id: user.id, visible_to_customer: true },
-                include: [
-                    {
-                        model: OrderItem,
-                        as: 'items',
-                        include: [
-                            { model: Product },
-                            { model: User, as: 'seller' }
-                        ]
-                    }
-                ],
-                order: [['id', 'DESC']]
-            });
 
             // Calculate Stats accurately based on authentic Order counts
             const totalOrders = await Order.count({ where: { user_id: user.id, visible_to_customer: true } });
@@ -40,13 +24,44 @@ module.exports = {
             });
             const totalSpent = validItems.reduce((sum, item) => sum + (parseFloat(item.price_at_purchase) * item.quantity), 0);
 
-            const stats = {
-                totalOrders,
-                activeOrders,
-                totalSpent
-            };
+            // Recent 3 orders for quick preview
+            const recentOrders = await Order.findAll({
+                where: { user_id: user.id, visible_to_customer: true },
+                include: [{ model: OrderItem, as: 'items', include: [{ model: Product }] }],
+                order: [['id', 'DESC']],
+                limit: 3
+            });
 
-            res.render('user/dashboard', { orders, stats });
+            const stats = { totalOrders, activeOrders, totalSpent };
+
+            res.render('user/dashboard', { stats, recentOrders });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server Error');
+        }
+    },
+
+    // User Order History (Full)
+    userOrders: async (req, res) => {
+        try {
+            const user = req.session.user;
+
+            const orders = await Order.findAll({
+                where: { user_id: user.id, visible_to_customer: true },
+                include: [
+                    {
+                        model: OrderItem,
+                        as: 'items',
+                        include: [
+                            { model: Product },
+                            { model: User, as: 'seller' }
+                        ]
+                    }
+                ],
+                order: [['id', 'DESC']]
+            });
+
+            res.render('user/orders', { orders });
         } catch (err) {
             console.error(err);
             res.status(500).send('Server Error');
