@@ -47,7 +47,7 @@ module.exports = {
 
     add: async (req, res) => {
         const { productId } = req.body;
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const isAjax = req.xhr || (req.headers.accept || '').indexOf('json') > -1;
 
         try {
             const product = await Product.findByPk(productId);
@@ -141,7 +141,7 @@ module.exports = {
 
     update: async (req, res) => {
         const { productId, action } = req.body;
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const isAjax = req.xhr || (req.headers.accept || '').indexOf('json') > -1;
 
         try {
             const product = await Product.findByPk(productId);
@@ -227,7 +227,7 @@ module.exports = {
 
     remove: async (req, res) => {
         const { productId } = req.body;
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const isAjax = req.xhr || (req.headers.accept || '').indexOf('json') > -1;
 
         try {
             if (req.session.user) {
@@ -266,7 +266,7 @@ module.exports = {
     },
 
     clear: async (req, res) => {
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const isAjax = req.xhr || (req.headers.accept || '').indexOf('json') > -1;
 
         try {
             if (req.session.user) {

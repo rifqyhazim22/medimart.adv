@@ -212,18 +212,16 @@
                                                 </span>
                                                 <% } %>
                                 </div>
-                                <%= product.name %>
-                                    </h3>
-                                    <div style="font-weight: 700; color: #FF6B35; margin-bottom: 12px;">Rp <%=
-                                            parseInt(product.price).toLocaleString('id-ID') %>
-                                    </div>
-                                    <form action="/cart/add" method="POST">
-                                        <input type="hidden" name="productId" value="<%= product.id %>">
-                                        <button type="submit" class="btn-add-cart" <%=product.stock===0 ? 'disabled'
-                                            : '' %>>
-                                            <%= product.stock===0 ? 'Habis' : '+ Keranjang' %>
-                                        </button>
-                                    </form>
+                                <div style="font-weight: 700; color: #FF6B35; margin-bottom: 12px;">Rp <%=
+                                        parseInt(product.price).toLocaleString('id-ID') %>
+                                </div>
+                                <form action="/cart/add" method="POST">
+                                    <input type="hidden" name="productId" value="<%= product.id %>">
+                                    <button type="submit" class="btn-add-cart" <%=product.stock===0 ? 'disabled' : ''
+                                        %>>
+                                        <%= product.stock===0 ? 'Habis' : '+ Keranjang' %>
+                                    </button>
+                                </form>
                             </div>
                             <% }); %>
                                 <% } else { %>

@@ -258,7 +258,7 @@ module.exports = {
 
     // Customer Cancel Single Item
     cancelItem: async (req, res) => {
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const isAjax = req.xhr || (req.headers.accept || '').indexOf('json') > -1;
         const t = await sequelize.transaction();
         try {
             const item = await OrderItem.findOne({
@@ -342,7 +342,7 @@ module.exports = {
 
     // Seller Actions
     sellerProcess: async (req, res) => {
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const isAjax = req.xhr || (req.headers.accept || '').indexOf('json') > -1;
         const t = await sequelize.transaction();
         try {
             const item = await OrderItem.findOne({
@@ -395,7 +395,7 @@ module.exports = {
     },
 
     sellerShip: async (req, res) => {
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const isAjax = req.xhr || (req.headers.accept || '').indexOf('json') > -1;
         try {
             const item = await OrderItem.findOne({
                 where: { id: req.params.id, seller_id: req.session.user.id }
@@ -427,7 +427,7 @@ module.exports = {
     },
 
     sellerReject: async (req, res) => {
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const isAjax = req.xhr || (req.headers.accept || '').indexOf('json') > -1;
         const t = await sequelize.transaction();
         try {
             const item = await OrderItem.findOne({
@@ -507,7 +507,7 @@ module.exports = {
 
     // Customer Hide History (Soft Delete)
     hideHistory: async (req, res) => {
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const isAjax = req.xhr || (req.headers.accept || '').indexOf('json') > -1;
         try {
             const order = await Order.findOne({
                 where: { id: req.params.id, user_id: req.session.user.id }
@@ -545,7 +545,7 @@ module.exports = {
 
     // Seller Hide History (Soft Delete)
     hideSellerHistory: async (req, res) => {
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const isAjax = req.xhr || (req.headers.accept || '').indexOf('json') > -1;
         try {
             const item = await OrderItem.findOne({
                 where: { id: req.params.id, seller_id: req.session.user.id }
@@ -583,7 +583,7 @@ module.exports = {
 
     // Admin Hard Delete
     adminDelete: async (req, res) => {
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const isAjax = req.xhr || (req.headers.accept || '').indexOf('json') > -1;
         try {
             const order = await Order.findByPk(req.params.id);
             if (!order) {

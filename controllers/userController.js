@@ -2,7 +2,7 @@ const { User } = require('../models');
 
 module.exports = {
     delete: async (req, res) => {
-        const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
+        const isAjax = req.xhr || (req.headers.accept || '').indexOf('json') > -1;
         try {
             const targetId = req.params.id;
             // Prevent deleting self
