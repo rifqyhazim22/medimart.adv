@@ -36,6 +36,7 @@ module.exports = function (io, sessionMiddleware) {
                     var message = data.message;
                     var contextType = data.contextType;
                     var contextData = data.contextData;
+                    var imageUrl = data.image_url || null;
 
                     // Verify user is part of this conversation
                     var conversation = await Conversation.findByPk(conversationId);
@@ -48,7 +49,8 @@ module.exports = function (io, sessionMiddleware) {
                         sender_id: userId,
                         message: message,
                         context_type: contextType || 'text',
-                        context_data: contextData || null
+                        context_data: contextData || null,
+                        image_url: imageUrl
                     });
 
                     // Update conversation — track last sender for read receipts
@@ -77,6 +79,7 @@ module.exports = function (io, sessionMiddleware) {
                         id: newMessage.id,
                         conversation_id: conversationId,
                         sender_id: userId,
+                        image_url: newMessage.image_url,
                         sender: {
                             id: sender.id,
                             username: sender.username,

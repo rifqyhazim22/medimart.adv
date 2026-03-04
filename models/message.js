@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
         is_read: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
+        },
+        image_url: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     }, {
         sequelize,

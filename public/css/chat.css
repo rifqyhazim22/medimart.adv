@@ -563,3 +563,54 @@
         max-width: 200px;
     }
 }
+
+/* Chat Attach Button */
+.chat-attach-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: var(--bg-light);
+    color: var(--text-gray);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.chat-attach-btn:hover {
+    background: rgba(0, 176, 155, 0.1);
+    color: #00B09B;
+}
+
+/* Image Preview Strip */
+.image-preview-strip {
+    padding: 8px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideUp 0.2s ease;
+}
+
+/* Chat Bubble Image */
+.chat-image-wrap {
+    margin-bottom: 6px;
+}
+
+.chat-bubble-image {
+    max-width: 220px;
+    max-height: 200px;
+    border-radius: 10px;
+    cursor: pointer;
+    object-fit: cover;
+    transition: transform 0.2s;
+}
+
+.chat-bubble-image:hover {
+    transform: scale(1.02);
+    opacity: 0.9;
+}

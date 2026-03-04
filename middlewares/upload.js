@@ -13,6 +13,8 @@ function getUploadDir(fieldname) {
         return 'public/uploads/avatars';
     } else if (fieldname === 'store_banner' || fieldname === 'croppedBanner') {
         return 'public/uploads/banners';
+    } else if (fieldname === 'chat_image') {
+        return 'public/uploads/chat';
     }
     return 'public/uploads/products';
 }
