@@ -41,7 +41,7 @@
                                                 , 'Obat Nyeri' : '💊' , 'Vitamin' : '🍊' , 'Alat Kesehatan' : '🩹'
                                                 , 'Herbal' : '🌿' }; const recoIcon=recoIcons[product.category] || '💊'
                                                 ; const catKey='category.' +
-                                                product.category.toLowerCase().split(' ').join(' _'); const
+                                                product.category.toLowerCase().split(' ').join('_'); const
                                                 catText=typeof t !=='undefined' ? (t(catKey) !==catKey ? t(catKey) :
                                                 product.category) : product.category; %>
                                                 <%= recoIcon %>
@@ -169,7 +169,7 @@
                                                     , 'Obat Nyeri' : '💊' , 'Vitamin' : '🍊' , 'Alat Kesehatan' : '🩹'
                                                     , 'Herbal' : '🌿' }; const icon=icons[product.category] || '💊' ;
                                                     const pgCatKey='category.' +
-                                                    product.category.toLowerCase().split(' ').join(' _'); const
+                                                    product.category.toLowerCase().split(' ').join('_'); const
                                                     pgCatText=typeof t !=='undefined' ? (t(pgCatKey) !==pgCatKey ?
                                                     t(pgCatKey) : product.category) : product.category; %>
                                                     <%= icon %>

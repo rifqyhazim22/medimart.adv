@@ -208,7 +208,7 @@
                                                         , 'Obat Nyeri' : '💊' , 'Vitamin' : '🍊' , 'Alat Kesehatan'
                                                         : '🩹' , 'Herbal' : '🌿' }; const icon=icons[tp.category]
                                                         || '💊' ; const catKey=tp.category ? 'category.' +
-                                                        tp.category.toLowerCase().split(' ').join(' _') : '' ; ; const
+                                                        tp.category.toLowerCase().split(' ').join('_') : '' ; ; const
                                                         catText=typeof t !=='undefined' && catKey ? (t(catKey) !==catKey
                                                         ? t(catKey) : tp.category) : tp.category; %>
                                                         <% if (tp.category) { %>
