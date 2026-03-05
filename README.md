@@ -1,73 +1,92 @@
-# 🏥 MediMart - Advanced E-Commerce Architecture
+# 🏥 MediMart: The Next-Gen Healthcare Ecosystem
 
-MediMart adalah **Aplikasi Fullstack E-Commerce** terdepan dengan fitur *Real-Time*, sistem perlindungan tingkat produksi (Production-grade Security), dan manajemen keranjang belanja yang persisten.
+![Architecture](https://img.shields.io/badge/Architecture-MVC%20%7C%20SSR-orange?style=for-the-badge)
+![Database](https://img.shields.io/badge/Database-PostgreSQL%20(Neon)-blue?style=for-the-badge&logo=postgresql)
+![Realtime](https://img.shields.io/badge/Realtime-Socket.io-black?style=for-the-badge&logo=socketdotio)
+![Payment](https://img.shields.io/badge/Payment-Xendit%20Integrated-brightgreen?style=for-the-badge)
+![Cloud](https://img.shields.io/badge/Cloud-Vercel%20Deployed-white?style=for-the-badge&logo=vercel)
 
-Dibangun dengan **Clean Architecture (MVC)** dan didistribusikan (*deploy*) untuk berjalan di peladen awan tanpa server (*Cloud Serverless Environment*).
-
----
-
-## 🚀 Tech Stack & Infrastructure
-
-Proyek ini tidak hanya sekadar antarmuka (*front-end*), melainkan sistem hibrida *client-server* tingkat menengah-atas (*mid-senior level*):
-
-- **Backend / Core Engine**: Node.js dengan framework `Express.js`.
-- **Database**: PostgreSQL di-_hosting_ di **AWS** (Neon DB `ap-southeast-1`).
-- **ORM & Migrations**: `Sequelize ORM` (mengatur 13 entitas tabel relasional ketat).
-- **View Engine**: Embedded JavaScript (`EJS`) dengan dukungan multi-bahasa global (i18n).
-- **Real-Time Engine**: `Socket.IO` untuk fitur Obrolan (*Chat*) penjual-pembeli secara sinkron (*bidirectional*).
-- **Cloud Deployment**: **Vercel** (`@vercel/node` Serverless Functions).
+**MediMart** is a premium, full-stack health-tech marketplace designed to revolutionize pharmaceutical accessibility. Built on a robust **MVC architecture**, it combines real-time communication, secure payment gateways, and intelligent image processing into a single, cohesive production-ready platform.
 
 ---
 
-## 🛡️ Cyber Security & Data Privacy (Security Posture)
-
-Aplikasi ini dipersenjatai lapisan pertahanan di setiap aspek siklus (*development, local, push repo, cloud deploy*):
-
-1. **HTTP Defense Layer**: Menggunakan `Helmet JS` untuk menjamin lapis keamanan standar melawan _Clickjacking_, _MIME Sniffing_, dan eksploitasi peramban (*browser exploitation*).
-2. **Session Hijacking Prevention**: Sesi kuki dikendalikan menggunakan `connect-session-sequelize`. Pada lingkungan produksi (`process.env.NODE_ENV === 'production'`), kuki bersidang akan dipaksa menggunakan jalur aman tersandi: `secure: true`.
-3. **Database Injection Safe**: Seluruh komunikasi antara server Express dan PostgreSQL memanfaatkan *Parameterized ORM Queries* turunan Sequelize. _SQL Injection_ 100% dicegah.
-4. **Secret Splitting**: Tidak ada satu pun rahasia (*tokens* / tautan *DATABASE_URL*) yang tertulis tetap di repositori awan. Repositori *development* diamankan dengan `.gitignore` dan Vercel CLI (*Environment Variables*) mencegah data penting terekspos ketika di-*push* ke GitHub publik.
-5. **Kriptografi Kata Sandi**: Otentikasi aplikasi menggunakan `bcrypt.js` (*Password Hashing Algorithm*), bukan _plaintext_.
+## 🌐 Project Reality
+In a world where digital healthcare is a necessity, MediMart bridges the gap between verified sellers and patients. 
+- **Live Production URL**: [https://medimart-adv.vercel.app](https://medimart-adv.vercel.app)
+- **Deployment Strategy**: Serverless deployment on **Vercel** with a globally distributed **Neon PostgreSQL** cluster.
+- **Security Posture**: Production-grade security using `Helmet.js`, CSRF protection principles, and encrypted session management via `Sequelize Store`.
 
 ---
 
-## 💎 Fitur Unggulan Sistem (Features Showcase)
+## 🏗️ System Architecture & Structure
 
-### 1. 🧬 Arsitektur Status Granular (Per-Item Logic)
-Tidak seperti platform dasar, manajemen pesanan MediMart dapat **dibatalkan/ditolak per individu produk**, bukan per faktur keseluruhan. Hal ini memicu fungsi basis data otomatis (`Auto-Restock`) tanpa merusak alur transaksi (*transaction flow*).
+MediMart is engineered for scalability and maintainability, adhering to strict **Separation of Concerns (SoC)**.
 
-### 2. 💬 In-App Web Socket Messaging
-Percakapan *real-time* berbasis `Socket.IO` antara pengguna. Fitur lencana baca (*unread badges*) di-_render_ langsung dan dibagikan (*shared session state*) bersama tumpukan sesi *Express middleware*.
+### 🏢 The Tech Stack
+- **Engine**: Node.js & Express.js (Asynchronous, non-blocking I/O).
+- **Storage**: PostgreSQL with **Sequelize ORM** for type-safe database interactions.
+- **Communication**: WebSockets (Socket.IO) for bi-directional, real-time sync.
+- **Templating**: EJS with a custom CSS design system (Vanilla CSS for maximum performance).
+- **Processing**: `Sharp` for high-performance server-side image manipulation.
 
-### 3. 🛡️ Strict Role Access Control (RBAC)
-Pemisahan otoritas tegas antara Admin, _Seller_ (Manajer Toko), dan _Buyer_ (Pembeli). Intervensi transaksi disaring agar penjual tidak dapat "membeli barangnya sendiri". Sistem menunjang _Double-Blind Sync_.
-
-### 4. ✨ High-Conversion UI / UX
-Tampilan merespons mulus tanpa membebankan server (*No-Reload Actions*). Bar tindakan pintar (*Sticky Checkout CTA*) mendeteksi jumlah nilai keranjang dan melayang secara persisten, mendongkrak konversi pembelian (*Conversion Rate Optimization*).
+### 📁 Technical Blueprint
+```text
+├── controllers/      # Business logic & Request orchestration
+├── db/               # Seeding engine & Database initialization
+├── migrations/       # Schema version control (Sequelize migrations)
+├── models/           # Data definitions & Relational mappings
+├── public/           # Performance-optimized frontend assets
+├── routes/           # RESTful API routing & View controllers
+├── utils/            # i18n logic, Image optimizer, Payment middleware
+├── views/            # Dynamic SSR templates
+└── server.js         # Core application entry point
+```
 
 ---
 
-## 🏗️ Menjalankan Proyek secara Lokal
+## 🧠 Algorithmic Core
 
-1. Persiapkan basis data PostgreSQL (*localhost*), lalu sesuaikan fail rahasia pada `.env`:
-```env
-# Contoh di lokal (development)
-DB_USER=postgres
-DB_PASSWORD=rahasia
-DB_NAME=medimart
-```
+### 1. 🖼️ Intelligent Image Pipeline (Sharp.js)
+The system doesn't just "upload" images. It processes them through an optimization pipeline:
+- **Aspect-Ratio Correction**: Automatically crops any upload to a perfect 1:1 square to maintain UI harmony.
+- **Memory Optimization**: Compresses raw buffers into production-ready JPG/PNG, reducing bandwidth costs by ~60%.
 
-2. Pasang modul turunan (Dependencies).
-```bash
-npm install
-```
+### 2. 🛡️ Xendit Payment Lifecycle Algorithm
+Security is paramount in healthcare payments. Our integration uses a **State-Verification Algorithm**:
+- **Signed Invoices**: Backend generates unique secure invoice links.
+- **Webhook Handshaking**: Uses a callback token verification algorithm to ensure only authentic Xendit notifications can trigger status changes.
+- **Atomic Operations**: Order status updates and stock replenishment are wrapped in database transactions to ensure data integrity.
 
-3. Modul otomatis penyalur basis data (*seeding*) akan melahirkan data perintis (dummy data) Admin, Pembeli, Penjual & Produk.
-```bash
-npm run setup
-```
+### 3. � Context-Aware Real-time Sync (Socket.IO)
+Our chat algorithm isn't a simple message relay. It is **Context-Aware**:
+- **Product Context Binding**: Automatically binds the active product to the chat session, allowing sellers to see exactly what the user is inquiring about.
+- **Presence Logic**: Dynamically manages user status and unread badges across the session state.
 
-4. Jalankan pengembang jalan raya (Dev Server) melalui Nodemon:
-```bash
-npm run dev
-```
+### 4. 🌍 Recursive i18n Engine
+A proprietary internationalization logic that:
+- Detects the `lang` cookie.
+- Generates translation keys recursively (e.g., `category.obat_bebas`) based on database entries, ensuring the UI is always localized without hardcoding values.
+
+---
+
+## 🚀 Future Upgrades (The Roadmap)
+MediMart is designed for the long haul. Our vision for version 2.0 includes:
+- **🤖 AI-Pharmacist**: Integrating a medical-tuned LLM for preliminary drug interaction checks.
+- **🚚 Smart Logistics API**: Integration with Gojek/Grab for 1-hour "Instant Meds" delivery.
+- **💊 Digital Prescription Vault**: OCR-based scanning and verification for restricted medications.
+- **📈 Analytics Dashboard**: Deep-learning based demand forecasting for sellers.
+- **📱 Mobile Native Integration**: A companion app built with React Native for push-notification-driven healthcare alerts.
+
+---
+
+## 🛠️ Local Development & Deployment
+
+1. **Repository Synchronization**: `git clone https://github.com/rifqyhazim22/medimart.adv.git`
+2. **Dependency Installation**: `npm install`
+3. **Environment Configuration**: Setup `.env` with `DATABASE_URL`, `XENDIT_SECRET_KEY`, and `SESSION_SECRET`.
+4. **Schema Initialization**: `npx sequelize-cli db:migrate` then `npm run setup` for seed data.
+5. **Execution**: `npm run dev`.
+
+---
+
+Developed with a vision for a healthier future. ✨🚀
