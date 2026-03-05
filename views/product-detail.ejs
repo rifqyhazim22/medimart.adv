@@ -7,7 +7,10 @@
             <span>&rsaquo;</span>
             <a href="/?category=<%= product.category %>"
                 style="color: #FF6B35; text-decoration: none; font-weight: 500;">
-                <%= product.category %>
+                <% const breadCatKey='category.' + product.category.toLowerCase().split(' ').join('_'); const
+                    breadCatText=typeof t !=='undefined' ? (t(breadCatKey) !==breadCatKey ? t(breadCatKey) :
+                    product.category) : product.category; %>
+                    <%= breadCatText %>
             </a>
             <span>&rsaquo;</span>
             <span
@@ -41,12 +44,15 @@
             <div style="display: flex; flex-direction: column; gap: 24px;">
                 <!-- Header Info -->
                 <div>
-                    <% const icons={ 'Obat Bebas' : '💊' , 'Obat Keras' : '💉' , 'Vitamin' : '🍊' , 'Alat Kesehatan'
-                        : '🩹' , 'Herbal' : '🌿' }; const icon=icons[product.category] || '💊' ; %>
+                    <% const icons={ 'Obat Bebas' : '🟢' , 'Obat Keras' : '💉' , 'Obat Nyeri' : '💊' , 'Vitamin' : '🍊'
+                        , 'Alat Kesehatan' : '🩹' , 'Herbal' : '🌿' }; const icon=icons[product.category] || '💊' ;
+                        const badgeCatKey='category.' + product.category.toLowerCase().split(' ').join('_'); const
+                        badgeCatText=typeof t !=='undefined' ? (t(badgeCatKey) !==badgeCatKey ? t(badgeCatKey) :
+                        product.category) : product.category; %>
                         <div
                             style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--bg-light); color: #FF6B35; border-radius: 99px; font-size: 13px; font-weight: 700; margin-bottom: 12px;">
                             <%= icon %>
-                                <%= product.category %>
+                                <span <%- badgeCatKey ? `data-i18n="${badgeCatKey}" ` : '' %>><%= badgeCatText %></span>
                         </div>
                         <h1
                             style="font-size: 24px; font-weight: 800; color: var(--text-dark); margin: 0 0 12px 0; line-height: 1.3;">
@@ -73,7 +79,10 @@
 
                         <div style="color: var(--text-gray);" data-i18n="detail.category">Kategori</div>
                         <div style="font-weight: 600; color: #FF6B35;">
-                            <%= product.category %>
+                            <% const infoCatKey='category.' + product.category.toLowerCase().split(' ').join('_'); const
+                                infoCatText=typeof t !=='undefined' ? (t(infoCatKey) !==infoCatKey ? t(infoCatKey) :
+                                product.category) : product.category; %>
+                                <%= infoCatText %>
                         </div>
 
                         <div style="color: var(--text-gray);" data-i18n="detail.min_order">Min. Pemesanan</div>
@@ -162,9 +171,9 @@
                         <% if (typeof currentUser !=='undefined' && currentUser && currentUser.id===product.seller_id) {
                             %>
                             <button type="button" onclick="window.location.href='/products/<%= product.id %>/edit'"
-                                style="width: 100%; padding: 14px; border-radius: 10px; background: var(--bg-white); color: #3b82f6; border: 1px solid #3b82f6; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);"
-                                onmouseover="this.style.background='#eff6ff'"
-                                onmouseout="this.style.background='white'">
+                                style="width: 100%; padding: 14px; border-radius: 10px; background: transparent; color: #3b82f6; border: 1.5px solid #3b82f6; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);"
+                                onmouseover="this.style.background='rgba(59, 130, 246, 0.05)'"
+                                onmouseout="this.style.background='transparent'">
                                 <span data-i18n="detail.edit_own">✏️ Menu Edit Produk Pribadi</span>
                             </button>
                             <% } else { %>

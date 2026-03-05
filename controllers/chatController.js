@@ -8,8 +8,8 @@ const chatController = {
             const userId = req.session.user.id;
             const userRole = req.session.user.role;
 
-            const whereClause = userRole === 'seller'
-                ? { seller_id: userId }
+            const whereClause = userRole === 'seller' || userRole === 'admin'
+                ? { [Op.or]: [{ seller_id: userId }, { buyer_id: userId }] }
                 : { buyer_id: userId };
 
             const conversations = await Conversation.findAll({
@@ -27,7 +27,11 @@ const chatController = {
             // Get total unread
             var totalUnread = 0;
             conversations.forEach(function (c) {
-                totalUnread += userRole === 'seller' ? c.seller_unread : c.buyer_unread;
+                if (c.seller_id === userId) {
+                    totalUnread += c.seller_unread;
+                } else {
+                    totalUnread += c.buyer_unread;
+                }
             });
 
             res.render('chat/inbox', {
@@ -145,6 +149,17 @@ const chatController = {
             if (userRole === 'seller') {
                 sellerUserId = userId;
                 buyerId = parseInt(sellerId);
+            } else if (userRole === 'admin') {
+                const targetUser = await User.findByPk(parseInt(sellerId));
+                if (targetUser && targetUser.role === 'seller') {
+                    // Target is seller -> Admin acts as buyer
+                    buyerId = userId;
+                    sellerUserId = parseInt(sellerId);
+                } else {
+                    // Target is customer (or admin) -> target acts as buyer, Admin acts as seller
+                    buyerId = parseInt(sellerId);
+                    sellerUserId = userId;
+                }
             } else {
                 buyerId = userId;
                 sellerUserId = parseInt(sellerId);
@@ -183,15 +198,19 @@ const chatController = {
             const userId = req.session.user.id;
             const userRole = req.session.user.role;
 
-            const whereClause = userRole === 'seller'
-                ? { seller_id: userId }
+            const whereClause = userRole === 'seller' || userRole === 'admin'
+                ? { [Op.or]: [{ seller_id: userId }, { buyer_id: userId }] }
                 : { buyer_id: userId };
 
             const conversations = await Conversation.findAll({ where: whereClause });
 
             var totalUnread = 0;
             conversations.forEach(function (c) {
-                totalUnread += userRole === 'seller' ? c.seller_unread : c.buyer_unread;
+                if (c.seller_id === userId) {
+                    totalUnread += c.seller_unread;
+                } else {
+                    totalUnread += c.buyer_unread;
+                }
             });
 
             res.json({ unread: totalUnread });

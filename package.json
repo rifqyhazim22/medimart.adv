@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yuzzaf/medimart.git"
+    "url": "git+https://github.com/rifqy/medimart.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "rifqy",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/yuzzaf/medimart/issues"
+    "url": "https://github.com/rifqy/medimart/issues"
   },
-  "homepage": "https://github.com/yuzzaf/medimart#readme",
+  "homepage": "https://github.com/rifqy/medimart#readme",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "connect-flash": "^0.1.1",
@@ -30,13 +30,15 @@
     "ejs": "^4.0.1",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
+    "helmet": "^8.1.0",
     "method-override": "^3.0.0",
     "multer": "^2.0.2",
     "pg": "^8.18.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",
     "sharp": "^0.34.5",
-    "socket.io": "^4.8.3"
+    "socket.io": "^4.8.3",
+    "xendit-node": "^7.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.11",

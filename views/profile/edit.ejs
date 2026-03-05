@@ -13,7 +13,7 @@
 
                 <div style="padding: 30px;">
                     <!-- Edit Info Form -->
-                    <form action="/profile/update" method="POST" enctype="multipart/form-data"
+                    <form id="profileForm" action="/profile/update" method="POST" enctype="multipart/form-data"
                         style="margin-bottom: 40px;">
                         <h3 style="font-size: 16px; margin-bottom: 20px; color: var(--text-dark);">Informasi Pribadi
                         </h3>
@@ -108,7 +108,7 @@
                     <hr style="border: 0; border-top: 1px solid var(--border); margin: 30px 0;">
 
                     <!-- Change Password Form -->
-                    <form action="/profile/change-password" method="POST">
+                    <form id="passwordForm" action="/profile/change-password" method="POST">
                         <h3 style="font-size: 16px; margin-bottom: 20px; color: var(--text-dark);">Ganti Password</h3>
 
                         <div class="form-group" style="margin-bottom: 16px;">
@@ -168,5 +168,57 @@
             </div>
         </div>
     </div>
+
+    <!-- Script Interceptors for Loading Animations -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const profileForm = document.getElementById('profileForm');
+            const passwordForm = document.getElementById('passwordForm');
+
+            if (profileForm) {
+                profileForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    Swal.fire({
+                        title: t('profile.saving') || 'Menyimpan Perubahan...',
+                        html: `<span style="color: var(--text-gray); font-size:15px;">${t('profile.saving_desc') || 'Mohon tunggu sebentar selagi kami mengamankan data Anda.'}</span>`,
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: () => Swal.showLoading(),
+                        showClass: { popup: 'animate__animated animate__fadeIn animate__faster' },
+                        customClass: { popup: 'psych-modal' }
+                    });
+
+                    setTimeout(() => this.submit(), 1200);
+                });
+            }
+
+            if (passwordForm) {
+                passwordForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    // Validate password match quickly before modal
+                    const newPw = this.querySelector('input[name="newPassword"]').value;
+                    const confirmPw = this.querySelector('input[name="confirmNewPassword"]').value;
+
+                    if (newPw !== confirmPw) {
+                        window.showToast(t('auth.password_mismatch') || 'Password baru tidak cocok!', 'error');
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: t('profile.updating_password') || 'Memperbarui Sandi...',
+                        html: `<span style="color: var(--text-gray); font-size:15px;">${t('profile.updating_password_desc') || 'Mohon tunggu, kami sedang mengamankan akses akun Anda.'}</span>`,
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: () => Swal.showLoading(),
+                        showClass: { popup: 'animate__animated animate__zoomIn animate__faster' },
+                        customClass: { popup: 'psych-modal' }
+                    });
+
+                    setTimeout(() => this.submit(), 1500);
+                });
+            }
+        });
+    </script>
 
     <%- include('../partials/footer') %>

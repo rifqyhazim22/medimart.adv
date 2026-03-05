@@ -75,174 +75,193 @@
 
         <!-- Right Side: Form -->
         <div class="login-right">
-            <div class="login-box">
+            <div class="login-box animate__animated animate__zoomIn animate__fast">
                 <div class="login-header">
                     <h2 data-i18n="register.title">Buat Akun Baru</h2>
                     <p data-i18n="register.subtitle_form">Lengkapi data diri Anda untuk mendaftar</p>
                 </div>
 
-                <% if (error && error.length> 0) { %>
-                    <div class="alert alert-error"
-                        style="background-color: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-                        <%= error %>
-                    </div>
-                    <% } %>
-
-                        <form id="registerForm" action="/auth/register" method="POST" class="login-form">
-                            <div class="form-group" style="margin-bottom: 24px;">
-                                <label style="margin-bottom: 8px; display: block; font-weight: 600;"
-                                    data-i18n="register.register_as">Saya ingin
-                                    mendaftar sebagai:</label>
-                                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
-                                    <label class="role-option"
-                                        style="flex: 1; cursor: pointer; border: 2px solid var(--border); padding: 12px; border-radius: 10px; text-align: center; font-weight: 500; transition: all 0.2s; position: relative;"
-                                        onclick="selectRegRole(this)">
-                                        <input type="radio" name="role" value="customer" checked
-                                            style="margin-right: 6px;">
-                                        <span data-i18n="register.role_customer">Pelanggan</span>
-                                    </label>
-                                    <label class="role-option"
-                                        style="flex: 1; cursor: pointer; border: 2px solid var(--border); padding: 12px; border-radius: 10px; text-align: center; font-weight: 500; transition: all 0.2s;"
-                                        onclick="selectRegRole(this)">
-                                        <input type="radio" name="role" value="seller" style="margin-right: 6px;">
-                                        <span data-i18n="register.role_seller">Seller</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label data-i18n="register.fullname">Nama Lengkap / Nama Toko</label>
-                                <div class="input-wrapper">
-                                    <span class="input-icon">📝</span>
-                                    <input type="text" name="full_name" required
-                                        data-i18n-placeholder="register.fullname_placeholder"
-                                        placeholder="Nama Lengkap Anda">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label data-i18n="register.username">Username</label>
-                                <div class="input-wrapper">
-                                    <span class="input-icon">@</span>
-                                    <input type="text" name="username" required
-                                        data-i18n-placeholder="register.username_placeholder"
-                                        placeholder="Buat username unik">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label data-i18n="register.email">Email</label>
-                                <div class="input-wrapper">
-                                    <span class="input-icon">📧</span>
-                                    <input type="email" name="email" required
-                                        data-i18n-placeholder="register.email_placeholder" placeholder="nama@email.com">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label data-i18n="login.password">Password</label>
-                                <div class="input-wrapper">
-                                    <span class="input-icon">🔒</span>
-                                    <input type="password" name="password" required
-                                        data-i18n-placeholder="register.password_placeholder"
-                                        placeholder="Minimal 6 karakter">
-                                    <button type="button" class="toggle-password" onclick="togglePassword()">
-                                        <span id="toggleIcon">👁️</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn-login" style="margin-top: 20px;">
-                                <span data-i18n="register.submit">Daftar Sekarang</span>
-                                <span class="btn-icon">✨</span>
-                            </button>
-                        </form>
-
-                        <div class="login-footer">
-                            <p><span data-i18n="register.has_account">Sudah punya akun?</span> <a href="/login"
-                                    class="link-register" data-i18n="register.login_now">Login disini</a></p>
-                            <br>
-                            <a href="/" class="link-register" data-i18n="register.back_home"
-                                style="color: var(--text-gray); font-weight: normal; font-size: 14px;">← Kembali ke
-                                Beranda</a>
+                <form id="registerForm" action="/auth/register" method="POST" class="login-form">
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label style="margin-bottom: 8px; display: block; font-weight: 600;"
+                            data-i18n="register.register_as">Saya ingin
+                            mendaftar sebagai:</label>
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                            <label class="role-option"
+                                style="flex: 1; cursor: pointer; border: 2px solid var(--border); padding: 12px; border-radius: 10px; text-align: center; font-weight: 500; transition: all 0.2s; position: relative;"
+                                onclick="selectRegRole(this)">
+                                <input type="radio" name="role" value="customer" checked style="margin-right: 6px;">
+                                <span data-i18n="register.role_customer">Pelanggan</span>
+                            </label>
+                            <label class="role-option"
+                                style="flex: 1; cursor: pointer; border: 2px solid var(--border); padding: 12px; border-radius: 10px; text-align: center; font-weight: 500; transition: all 0.2s;"
+                                onclick="selectRegRole(this)">
+                                <input type="radio" name="role" value="seller" style="margin-right: 6px;">
+                                <span data-i18n="register.role_seller">Seller</span>
+                            </label>
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="register.fullname">Nama Lengkap / Nama Toko</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📝</span>
+                            <input type="text" name="full_name" required
+                                data-i18n-placeholder="register.fullname_placeholder" placeholder="Nama Lengkap Anda">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="register.username">Username</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">@</span>
+                            <input type="text" name="username" required
+                                data-i18n-placeholder="register.username_placeholder" placeholder="Buat username unik">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="register.email">Email</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📧</span>
+                            <input type="email" name="email" required data-i18n-placeholder="register.email_placeholder"
+                                placeholder="nama@email.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="login.password">Password</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" name="password" required
+                                data-i18n-placeholder="register.password_placeholder" placeholder="Minimal 6 karakter">
+                            <button type="button" class="toggle-password" onclick="togglePassword()">
+                                <span id="toggleIcon">👁️</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-login" style="margin-top: 20px;">
+                        <span data-i18n="register.submit">Daftar Sekarang</span>
+                        <span class="btn-icon">✨</span>
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    <p><span data-i18n="register.has_account">Sudah punya akun?</span> <a href="/login"
+                            class="link-register" data-i18n="register.login_now">Login disini</a></p>
+                    <br>
+                    <a href="/" class="link-register" data-i18n="register.back_home"
+                        style="color: var(--text-gray); font-weight: normal; font-size: 14px;">← Kembali ke
+                        Beranda</a>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        function togglePassword() {
-            const passwordInput = document.querySelector('input[name="password"]');
-            const toggleIcon = document.getElementById('toggleIcon');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleIcon.textContent = '🙈';
-            } else {
-                passwordInput.type = 'password';
-                toggleIcon.textContent = '👁️';
-            }
-        }
-
-        // Initialize styling for checked radio
-        function updateRoleStyles() {
-            document.querySelectorAll('.role-option').forEach(label => {
-                const radio = label.querySelector('input');
-                if (radio.checked) {
-                    label.style.borderColor = '#FF6B35';
-                    label.style.backgroundColor = 'rgba(255, 107, 53, 0.08)';
-                    label.style.color = '#FF6B35';
-                } else {
-                    label.style.borderColor = 'var(--border)';
-                    label.style.backgroundColor = 'transparent';
-                    label.style.color = 'var(--text-dark)';
-                }
-            });
-        }
-
-        function selectRegRole(label) {
-            // Radio button click propagates, so we just update styles
-            // Use setTimeout to allow the event to process the check state
-            setTimeout(updateRoleStyles, 0);
-        }
-
-        // Run on load
-        updateRoleStyles();
-
-        // Theme Toggle Function
-        function toggleTheme() {
-            const current = document.documentElement.getAttribute('data-theme');
-            const target = current === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', target);
-            localStorage.setItem('medimart_theme', target);
-            document.getElementById('themeToggleBtn').innerHTML = target === 'dark' ? '☀️' : '🌙';
-        }
-
-        // Set correct toggle icon on load
-        document.addEventListener('DOMContentLoaded', () => {
-            const current = document.documentElement.getAttribute('data-theme');
-            const btn = document.getElementById('themeToggleBtn');
-            if (btn) btn.innerHTML = current === 'dark' ? '☀️' : '🌙';
-        });
-
-        // 🧠 Intersepsi Pendaftaran Eksklusif (Efek Kehebatan IT)
-        const regForm = document.getElementById('registerForm');
-        if (regForm) {
-            regForm.addEventListener('submit', function (e) {
-                e.preventDefault();
+    <!-- Inject Server Messages to SweetAlert -->
+    <% if (error && error.length> 0) { %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
                 Swal.fire({
-                    title: t('swal.creating_account'),
-                    html: `<span style="color: var(--text-gray); font-size:15px;">${t('swal.creating_account_desc')}</span>`,
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    willOpen: () => Swal.showLoading(),
-                    showClass: { popup: 'animate__animated animate__zoomIn animate__faster' },
+                    icon: 'error',
+                    title: "<%= typeof t !== 'undefined' && t('swal.error_title') !== 'swal.error_title' ? t('swal.error_title') : 'Gagal' %>",
+                    text: "<%= error %>",
+                    confirmButtonColor: '#FF6B35',
                     customClass: { popup: 'psych-modal' }
                 });
-
-                setTimeout(() => this.submit(), 1500);
             });
-        }
-    </script>
+        </script>
+        <% } %>
+            <% if (typeof success_msg !=='undefined' && success_msg.length> 0) { %>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: "<%= typeof t !== 'undefined' ? t('swal.success_title') : 'Berhasil' %>",
+                            text: "<%= success_msg %>",
+                            confirmButtonColor: '#00B09B',
+                            customClass: { popup: 'psych-modal' },
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+                    });
+                </script>
+                <% } %>
+
+                    <script>
+                        function togglePassword() {
+                            const passwordInput = document.querySelector('input[name="password"]');
+                            const toggleIcon = document.getElementById('toggleIcon');
+                            if (passwordInput.type === 'password') {
+                                passwordInput.type = 'text';
+                                toggleIcon.textContent = '🙈';
+                            } else {
+                                passwordInput.type = 'password';
+                                toggleIcon.textContent = '👁️';
+                            }
+                        }
+
+                        // Initialize styling for checked radio
+                        function updateRoleStyles() {
+                            document.querySelectorAll('.role-option').forEach(label => {
+                                const radio = label.querySelector('input');
+                                if (radio.checked) {
+                                    label.style.borderColor = '#FF6B35';
+                                    label.style.backgroundColor = 'rgba(255, 107, 53, 0.08)';
+                                    label.style.color = '#FF6B35';
+                                } else {
+                                    label.style.borderColor = 'var(--border)';
+                                    label.style.backgroundColor = 'transparent';
+                                    label.style.color = 'var(--text-dark)';
+                                }
+                            });
+                        }
+
+                        function selectRegRole(label) {
+                            // Radio button click propagates, so we just update styles
+                            // Use setTimeout to allow the event to process the check state
+                            setTimeout(updateRoleStyles, 0);
+                        }
+
+                        // Run on load
+                        updateRoleStyles();
+
+                        // Theme Toggle Function
+                        function toggleTheme() {
+                            const current = document.documentElement.getAttribute('data-theme');
+                            const target = current === 'dark' ? 'light' : 'dark';
+                            document.documentElement.setAttribute('data-theme', target);
+                            localStorage.setItem('medimart_theme', target);
+                            document.getElementById('themeToggleBtn').innerHTML = target === 'dark' ? '☀️' : '🌙';
+                        }
+
+                        // Set correct toggle icon on load
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const current = document.documentElement.getAttribute('data-theme');
+                            const btn = document.getElementById('themeToggleBtn');
+                            if (btn) btn.innerHTML = current === 'dark' ? '☀️' : '🌙';
+                        });
+
+                        // 🧠 Intersepsi Pendaftaran Eksklusif (Efek Kehebatan IT)
+                        const regForm = document.getElementById('registerForm');
+                        if (regForm) {
+                            regForm.addEventListener('submit', function (e) {
+                                e.preventDefault();
+                                Swal.fire({
+                                    title: t('swal.creating_account'),
+                                    html: `<span style="color: var(--text-gray); font-size:15px;">${t('swal.creating_account_desc')}</span>`,
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false,
+                                    willOpen: () => Swal.showLoading(),
+                                    showClass: { popup: 'animate__animated animate__zoomIn animate__faster' },
+                                    customClass: { popup: 'psych-modal' }
+                                });
+
+                                setTimeout(() => this.submit(), 1500);
+                            });
+                        }
+                    </script>
 </body>
 
 </html>

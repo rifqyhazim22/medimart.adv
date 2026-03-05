@@ -37,31 +37,6 @@
             border-radius: 9999px;
             font-size: 12px;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .status-badge.completed,
-        .status-badge.paid {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-badge.cancelled,
-        .status-badge.rejected {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .status-badge.processing,
-        .status-badge.shipped {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .status-badge.pending {
-            background: #fef3c7;
-            color: #92400e;
         }
 
         .btn-detail {
@@ -107,12 +82,14 @@
                 style="background: var(--bg-white); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); overflow: hidden; margin-bottom: 40px;">
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
-                        <tr style="background: var(--bg-light); text-align: left;">
-                            <th style="padding: 16px; width: 120px;" data-i18n="user.th_date">Tanggal</th>
-                            <th colspan="3" style="padding: 16px;" data-i18n="user.th_items">Rincian Barang</th>
-                            <th style="padding: 16px;" data-i18n="user.th_total">Total Tagihan</th>
-                            <th style="padding: 16px;" data-i18n="user.th_status">Status</th>
-                            <th style="padding: 16px;" data-i18n="user.th_action">Aksi</th>
+                        <tr style="background: var(--bg-light);">
+                            <th style="padding: 16px; width: 120px; text-align: center;" data-i18n="user.th_date">
+                                Tanggal</th>
+                            <th colspan="3" style="padding: 16px; text-align: left;" data-i18n="user.th_items">Rincian
+                                Barang</th>
+                            <th style="padding: 16px; text-align: center;" data-i18n="user.th_total">Total Tagihan</th>
+                            <th style="padding: 16px; text-align: center;" data-i18n="user.th_status">Status</th>
+                            <th style="padding: 16px; text-align: center;" data-i18n="user.th_action">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -131,14 +108,15 @@
                                     <tr>
                                         <!-- Tanggal -->
                                         <td
-                                            style="padding: 16px; border-bottom: 1px solid var(--border); white-space: nowrap; vertical-align: top;">
+                                            style="padding: 16px; border-bottom: 1px solid var(--border); white-space: nowrap; vertical-align: middle; text-align: center;">
                                             <div style="font-weight: 500; color: var(--text-dark);">
-                                                <%= new Date(order.createdAt).toLocaleDateString('id-ID', {
-                                                    day: 'numeric' , month: 'short' , year: 'numeric' }) %>
+                                                <%= new Date(order.createdAt).toLocaleDateString(typeof lang
+                                                    !=='undefined' && lang==='en' ? 'en-US' : 'id-ID' , { day: 'numeric'
+                                                    , month: 'short' , year: 'numeric' , timeZone: userTz }) %>
                                             </div>
                                             <div style="font-size: 12px; color: var(--text-gray);">
                                                 <%= new Date(order.createdAt).toLocaleTimeString('id-ID', {
-                                                    hour: '2-digit' , minute: '2-digit' }) %>
+                                                    hour: '2-digit' , minute: '2-digit' , timeZone: userTz }) %>
                                             </div>
                                             <div style="font-size: 11px; color: var(--text-gray); margin-top: 4px;">
                                                 #ORD-<%= order.id %>
@@ -184,13 +162,7 @@
                                                                     <% } %>
                                                             </div>
                                                             <div>
-                                                                <% var itemStatusMap={ paid: '✅' , processing: '⏳' ,
-                                                                    shipped: '🚚' , completed: '🎉' , cancelled: '❌' ,
-                                                                    rejected: '⛔' }; %>
-                                                                    <span title="<%= item.status %>"
-                                                                        style="font-size: 16px;">
-                                                                        <%= itemStatusMap[item.status] || '⏳' %>
-                                                                    </span>
+                                                                <%- renderItemInlineStatus(item.status, t) %>
                                                             </div>
                                                         </div>
                                                         <% }); %>
@@ -204,7 +176,7 @@
 
                                         <!-- Total Tagihan -->
                                         <td
-                                            style="padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top;">
+                                            style="padding: 16px; border-bottom: 1px solid var(--border); vertical-align: middle; text-align: center;">
                                             <% var orderTotal=0; if (order.items && order.items.length> 0) {
                                                 var validItemsCalc = order.items.filter(function(i) { return i.status
                                                 !== 'cancelled' && i.status !== 'rejected'; });
@@ -226,38 +198,15 @@
 
                                         <!-- Status -->
                                         <td
-                                            style="padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top;">
-                                            <% var badgeClass=order.status; var badgeText=order.status; var
-                                                i18nKey='user.status_' + order.status; var hasActive=order.items &&
-                                                order.items.some(function(i) { return ['paid', 'processing' , 'shipped'
-                                                ].indexOf(i.status) !==-1; }); var hasCancelled=order.items &&
-                                                order.items.some(function(i) { return i.status==='cancelled' ; }); var
-                                                hasRejected=order.items && order.items.some(function(i) { return
-                                                i.status==='rejected' ; }); if (order.status==='paid' ) {
-                                                badgeText='✅ Menunggu Dikemas' ; } else if (order.status==='processing'
-                                                ) { badgeText='⏳ Sedang Diproses Penjual' ; } else if
-                                                (order.status==='shipped' ) { badgeText='🚚 Sedang Dikirim' ; } else if
-                                                (order.status==='completed' ) { badgeText='🎉 Pesanan Selesai' ; } else
-                                                if (order.status==='cancelled' || order.status==='rejected' ) { if
-                                                (hasCancelled && hasRejected) { badgeText='⛔ Batal (Pembeli & Penjual)'
-                                                ; badgeClass='cancelled' ; i18nKey='user.status_cancelled_both' ; } else
-                                                if (order.status==='cancelled' ) { badgeText='❌ Dibatalkan Pembeli' ; }
-                                                else { badgeText='⛔ Ditolak Penjual' ; } } var partialSuffix='' ; if
-                                                (hasActive && (hasCancelled || hasRejected)) {
-                                                partialSuffix=' (Parsial)' ; } %>
-                                                <span class="status-badge <%= badgeClass %>" data-i18n="<%= i18nKey %>">
-                                                    <%= badgeText %>
-                                                </span>
-                                                <% if (partialSuffix) { %>
-                                                    <span style="font-size: 11px; color: var(--text-gray);"
-                                                        data-i18n="user.status_partial">(<%= partialSuffix %>)</span>
-                                                    <% } %>
+                                            style="padding: 16px; border-bottom: 1px solid var(--border); vertical-align: middle; text-align: center;">
+                                            <%- renderOrderBadge(order.status, 'buyer' , order.items, t) %>
                                         </td>
 
                                         <!-- Aksi -->
                                         <td
-                                            style="padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top;">
-                                            <div style="display: flex; gap: 8px; flex-direction: column;">
+                                            style="padding: 16px; border-bottom: 1px solid var(--border); vertical-align: middle; text-align: center;">
+                                            <div
+                                                style="display: flex; gap: 8px; flex-direction: column; align-items: center;">
                                                 <a href="/orders/<%= order.id %>" class="btn-small btn-secondary"
                                                     style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; padding: 6px 12px; font-size: 13px; border-radius: 6px; background: var(--border); color: var(--text-dark); font-weight: 500;"
                                                     data-i18n="user.detail_invoice">Detail Invoice</a>

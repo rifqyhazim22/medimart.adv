@@ -1,90 +1,10 @@
 <%- include('partials/header', { activeTab: 'orders' }) %>
-    <!-- CSS -->
-    <link rel="stylesheet" href="/css/cart.css">
+
     <style>
         .detail-container {
             max-width: 900px;
             margin: 40px auto;
             padding: 0 20px;
-        }
-
-        .detail-card {
-            background: var(--bg-white);
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .detail-header {
-            padding: 24px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg-light);
-        }
-
-        .detail-section {
-            padding: 24px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-        }
-
-        .info-group {
-            margin-bottom: 16px;
-        }
-
-        .info-label {
-            font-size: 13px;
-            color: var(--text-gray);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-
-        .info-value {
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--text-dark);
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 9999px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .status-paid {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-cancelled {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .item-row {
-            display: flex;
-            align-items: center;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .item-row:last-child {
-            border-bottom: none;
         }
 
         .btn-back {
@@ -93,279 +13,541 @@
             gap: 8px;
             color: var(--text-gray);
             text-decoration: none;
+            margin-bottom: 24px;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 99px;
+            background: var(--bg-white);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            color: #FF6B35;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .detail-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .detail-header {
+            padding: 32px;
+            background: linear-gradient(to right, rgba(255, 107, 53, 0.03), rgba(224, 64, 251, 0.03));
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        /* Modern Progress Tracker */
+        .progress-tracker {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 32px 40px;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .step-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-gray);
+            border: 4px solid var(--bg-white);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0 2px var(--border);
+        }
+
+        .step-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-align: center;
+        }
+
+        .progress-step.completed .step-icon {
+            background: #d1fae5;
+            color: #059669;
+            box-shadow: 0 0 0 2px #34d399;
+        }
+
+        .progress-step.completed .step-label {
+            color: #059669;
+        }
+
+        .progress-step.active .step-icon {
+            background: #FF6B35;
+            color: white;
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.2);
+            animation: pulse-ring 2s infinite;
+        }
+
+        .progress-step.active .step-label {
+            color: #FF6B35;
+        }
+
+        .progress-step.rejected .step-icon {
+            background: #fee2e2;
+            color: #dc2626;
+            box-shadow: 0 0 0 2px #f87171;
+        }
+
+        .progress-step.rejected .step-label {
+            color: #dc2626;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 56px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+            border-radius: 4px;
+        }
+
+        .progress-line-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: #34d399;
+            transition: width 1s ease-in-out;
+            border-radius: 4px;
+        }
+
+        /* Detailed Content Grids */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            padding: 32px;
+            background: var(--bg-light);
+        }
+
+        .info-panel {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .info-panel h3 {
+            margin-top: 0;
             margin-bottom: 20px;
+            font-size: 16px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .info-group {
+            margin-bottom: 16px;
+        }
+
+        .info-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: var(--text-gray);
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: var(--text-dark);
             font-weight: 500;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-tracker {
+                padding: 24px 16px;
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+
+            .step-label {
+                font-size: 11px;
+            }
+
+            .progress-line {
+                top: 48px;
+                left: 15%;
+                right: 15%;
+            }
+
+            .detail-header {
+                flex-direction: column;
+                gap: 16px;
+            }
         }
     </style>
 
-    <div class="detail-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <a href="/user/orders" class="btn-back" style="margin-bottom: 0;">
-                <span>←</span> <span data-i18n="order_detail.back">Kembali ke Riwayat Pesanan</span>
-            </a>
-            <% if (order.items && order.items.length> 0 && order.items[0].seller) { %>
-                <form action="/chat/start" method="POST" style="margin: 0;">
-                    <input type="hidden" name="sellerId" value="<%= order.items[0].seller.id %>">
-                    <input type="hidden" name="orderId" value="<%= order.id %>">
-                    <button type="submit"
-                        style="padding: 8px 16px; border-radius: 8px; background: transparent; color: #00B09B; border: 1.5px solid #00B09B; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"
-                        onmouseover="this.style.background='rgba(0,176,155,0.05)'"
-                        onmouseout="this.style.background='transparent'">
-                        💬 <span data-i18n="chat.chat_seller">Chat Penjual</span>
-                    </button>
-                </form>
-                <% } %>
-        </div>
+    <% let overallStatus=order.status; let step1='' , step2='' , step3='' , step4='' , step5='' ; let fillWidth='0%' ;
+        /* Map buyer global order status to 5 steps */ if (overallStatus==='pending' ) { step1='active' ;
+        fillWidth='10%' ; } else if (overallStatus==='paid' ) { step1='completed' ; step2='active' ; fillWidth='30%' ; }
+        else if (overallStatus==='processing' ) { step1='completed' ; step2='completed' ; step3='active' ;
+        fillWidth='55%' ; } else if (overallStatus==='shipped' ) { step1='completed' ; step2='completed' ;
+        step3='completed' ; step4='active' ; fillWidth='80%' ; } else if (overallStatus==='completed' ) {
+        step1='completed' ; step2='completed' ; step3='completed' ; step4='completed' ; step5='completed' ;
+        fillWidth='100%' ; } %>
 
-        <div class="detail-card">
-            <!-- Header -->
-            <div class="detail-header">
-                <div>
-                    <h1 style="font-size: 24px; margin: 0 0 4px 0;">Order #ORD-<%= order.id %>
-                    </h1>
-                    <p style="color: var(--text-gray); margin: 0;">
-                        <%= new Date(order.createdAt).toLocaleDateString('id-ID', { weekday: 'long' , day: 'numeric' ,
-                            month: 'long' , year: 'numeric' , hour: '2-digit' , minute: '2-digit' }) %>
-                    </p>
-                </div>
-                <div>
-                    <span class="status-badge <%= 
-                    order.status === 'paid' ? 'status-pending' : 
-                    order.status === 'completed' ? 'status-paid' : 
-                    order.status === 'shipped' || order.status === 'processing' ? 'status-paid' :
-                    order.status === 'cancelled' || order.status === 'rejected' ? 'status-cancelled' : 'status-pending' 
-                %>">
-                        <% if (order.status==='paid' || order.status==='pending' ) { %>
-                            🟡 <span data-i18n="order_detail.status_waiting">Menunggu Konfirmasi</span>
-                            <% } else if (order.status==='processing' ) { %>
-                                🔵 <span data-i18n="order_detail.status_processing">Sedang Diproses</span>
-                                <% } else if (order.status==='shipped' ) { %>
-                                    🚚 <span data-i18n="order_detail.status_shipped">Sedang Dikirim</span>
-                                    <% } else if (order.status==='completed' ) { %>
-                                        ✅ <span data-i18n="order_detail.status_completed">Pesanan Selesai</span>
-                                        <% } else if (order.status==='cancelled' ) { %>
-                                            ❌ <span data-i18n="order_detail.status_cancelled">Dibatalkan Pembeli</span>
-                                            <% } else if (order.status==='rejected' ) { %>
-                                                ⛔ <span data-i18n="order_detail.status_rejected">Ditolak
-                                                    Keseluruhan</span>
-                                                <% } else { %>
-                                                    <%= order.status.toUpperCase() %>
-                                                        <% } %>
-                    </span>
-                </div>
+        <div class="detail-container">
+            <!-- Back Button & Actions Route -->
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="/user/orders" class="btn-back">
+                    <span>←</span> <span data-i18n="order_detail.back">Kembali ke Riwayat Pesanan</span>
+                </a>
             </div>
 
-            <!-- Info Grid -->
-            <div class="detail-section">
+            <div class="detail-card">
+                <!-- Header -->
+                <div class="detail-header">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <h2
+                            style="margin: 0; font-size: 24px; color: var(--text-dark); display: flex; align-items: center; gap: 12px;">
+                            <span>Invoice</span> #ORD-<%= order.id %>
+                        </h2>
+                        <div class="transaction-date">
+                            <span
+                                style="color: var(--text-gray); font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                                📅 <%= new Date(order.createdAt).toLocaleDateString(typeof lang !=='undefined' &&
+                                    lang==='en' ? 'en-US' : 'id-ID' , { weekday: 'long' , day: 'numeric' , month: 'long'
+                                    , year: 'numeric' , hour: '2-digit' , minute: '2-digit' , timeZone: userTz }) %>
+                            </span>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px;">
+                        <%- renderOrderBadge(order.status, 'buyer' , order.items, t) %>
+                            <% if (order.status==='pending' ) { %>
+                                <a href="/orders/<%= order.id %>/resume-payment" class="btn-primary"
+                                    style="text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; display: flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #FF6B35 0%, #E040FB 100%); color: white; border: none; box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);">
+                                    💳 <span data-i18n="order_detail.pay_now">Bayar Sekarang</span>
+                                </a>
+                                <% } %>
+                    </div>
+                </div>
+
+                <!-- Visual Progress Tracker -->
+                <div class="progress-tracker">
+                    <div class="progress-line">
+                        <div class="progress-line-fill" style="width: <%= fillWidth %>;"></div>
+                    </div>
+
+                    <% if (overallStatus==='cancelled' || overallStatus==='rejected' ) { %>
+                        <div class="progress-step rejected" style="flex: unset; width: 100%;">
+                            <div class="step-icon">❌</div>
+                            <div class="step-label" data-i18n="user.status_cancelled_both">Pesanan Dibatalkan / Ditolak
+                            </div>
+                        </div>
+                        <% } else { %>
+                            <div class="progress-step <%= step1 %>">
+                                <div class="step-icon">💳</div>
+                                <div class="step-label" data-i18n="user.status_pending_short">Bayar</div>
+                            </div>
+                            <div class="progress-step <%= step2 %>">
+                                <div class="step-icon">⏳</div>
+                                <div class="step-label" data-i18n="user.status_paid_short">Konfirmasi</div>
+                            </div>
+                            <div class="progress-step <%= step3 %>">
+                                <div class="step-icon">📦</div>
+                                <div class="step-label" data-i18n="user.status_processing_short">Diproses</div>
+                            </div>
+                            <div class="progress-step <%= step4 %>">
+                                <div class="step-icon">🚚</div>
+                                <div class="step-label" data-i18n="user.status_shipped_short">Dikirim</div>
+                            </div>
+                            <div class="progress-step <%= step5 %>">
+                                <div class="step-icon">✅</div>
+                                <div class="step-label" data-i18n="user.status_completed_short">Selesai</div>
+                            </div>
+                            <% } %>
+                </div>
+
+                <!-- Detailed Grid Info -->
                 <div class="info-grid">
-                    <!-- Shipping Info -->
-                    <div>
-                        <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 18px;">📍 <span
-                                data-i18n="order_detail.shipping_info">Informasi Pengiriman</span></h3>
+
+                    <!-- Shipping Panel -->
+                    <div class="info-panel">
+                        <h3>📍 <span data-i18n="order_detail.shipping_info">Informasi Pengiriman</span></h3>
+
                         <div class="info-group">
-                            <div class="info-label" data-i18n="order_detail.recipient">Penerima</div>
-                            <div class="info-value">
+                            <div class="info-label" data-i18n="order_detail.recipient_at_address">Penerima & Kontak
+                            </div>
+                            <div class="info-value" style="font-weight: 700;">
                                 <%= order.recipient_name || '-' %>
+                                    <span
+                                        style="color: var(--text-gray); font-weight: 500; font-size: 14px; margin-left: 8px;">(
+                                        <%= order.recipient_phone || '-' %>)
+                                    </span>
                             </div>
                         </div>
-                        <div class="info-group">
-                            <div class="info-label" data-i18n="order_detail.phone">Telepon</div>
-                            <div class="info-value">
-                                <%= order.recipient_phone || '-' %>
-                            </div>
-                        </div>
-                        <div class="info-group">
-                            <div class="info-label" data-i18n="order_detail.address">Alamat</div>
-                            <div class="info-value" style="line-height: 1.5;">
-                                <%= order.shipping_address || '-' %>
+
+                        <div class="info-group" style="margin-top: 16px;">
+                            <div class="info-label" data-i18n="order_detail.shipping_address">Alamat Tujuan</div>
+                            <div class="info-value"
+                                style="line-height: 1.6; color: var(--text-gray); font-size: 14px; background: var(--bg-light); padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+                                📍 <%= order.shipping_address || '-' %>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Payment Info -->
-                    <div>
-                        <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 18px;">💳 <span
-                                data-i18n="order_detail.payment">Pembayaran</span></h3>
+                    <!-- Payment Panel -->
+                    <div class="info-panel">
+                        <h3>💳 <span data-i18n="order_detail.payment">Pembayaran</span></h3>
+
                         <div class="info-group">
                             <div class="info-label" data-i18n="order_detail.payment_method">Metode Pembayaran</div>
-                            <div class="info-value">
-                                <%= order.payment_method || 'Transfer Bank' %>
+                            <div class="info-value" style="display: flex; align-items: center; gap: 8px;">
+                                <span
+                                    style="background: var(--bg-light); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px; font-weight: 700; color: var(--text-dark);">
+                                    <%= order.payment_method || 'Transfer Bank' %>
+                                </span>
                             </div>
                         </div>
-                        <div class="info-group">
+
+                        <div class="info-group" style="margin-top: 16px;">
                             <div class="info-label" data-i18n="order_detail.payment_status">Status Pembayaran</div>
-                            <div class="info-value"
-                                style="color: <%= order.status === 'cancelled' ? '#dc2626' : '#059669' %>">
+                            <div class="info-value">
                                 <span
-                                    data-i18n="<%= order.status==='cancelled' ? 'order_detail.refunded' : 'order_detail.paid' %>">
-                                    <%= order.status==='cancelled' ? 'Dana Dikembalikan' : 'Lunas' %>
+                                    style="font-weight: 600; font-size: 13px; padding: 4px 10px; border-radius: 6px; <%= order.status === 'cancelled' ? 'background: #fee2e2; color: #dc2626;' : 'background: #d1fae5; color: #059669;' %>">
+                                    <span
+                                        data-i18n="<%= order.status === 'cancelled' ? 'order_detail.refunded' : 'order_detail.paid' %>">
+                                        <%= order.status==='cancelled' ? 'Dana Dikembalikan' : 'Lunas' %>
+                                    </span>
                                 </span>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Items -->
-            <div class="detail-section">
-                <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 18px;">📦 <span
-                        data-i18n="order_detail.product_details">Rincian Produk</span></h3>
-                <% items.forEach(item=> { %>
-                    <div class="item-row"
-                        style="transition: all 0.3s; <%= item.status === 'cancelled' || item.status === 'rejected' ? 'opacity: 0.5; background: var(--bg-light);' : 'opacity: 1;' %>">
-                        <img src="<%= item.image_url || '/img/default-product.svg' %>"
-                            style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; margin-right: 16px;">
-
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; font-size: 16px; margin-bottom: 4px;">
-                                <%= item.product_name %>
-                                    <% if (item.status==='cancelled' || item.status==='rejected' ) { %>
-                                        <span
-                                            style="font-size: 10px; color: #dc2626; background: #fee2e2; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">
-                                            <span
-                                                data-i18n="<%= item.status==='rejected' ? 'order_detail.item_rejected' : 'order_detail.item_cancelled' %>">
-                                                <%= item.status==='rejected' ? '⛔ Ditolak Penjual' : '❌ Dibatalkan' %>
-                                            </span>
-                                        </span>
-                                        <% } else if (item.status==='shipped' ) { %>
-                                            <span
-                                                style="font-size: 10px; color: #1e40af; background: #dbeafe; padding: 2px 6px; border-radius: 4px; margin-left: 8px;"
-                                                data-i18n="order_detail.item_shipped">
-                                                🚚 Dalam Perjalanan Kurir
-                                            </span>
-                                            <% } else if (item.status==='completed' ) { %>
-                                                <span
-                                                    style="font-size: 10px; color: #065f46; background: #d1fae5; padding: 2px 6px; border-radius: 4px; margin-left: 8px;"
-                                                    data-i18n="order_detail.item_received">
-                                                    ✅ Barang Diterima
-                                                </span>
-                                                <% } else if (item.status==='processed' ) { %>
-                                                    <span
-                                                        style="font-size: 10px; color: #0d9488; background: #ccfbf1; padding: 2px 6px; border-radius: 4px; margin-left: 8px;"
-                                                        data-i18n="order_detail.item_packing">
-                                                        🔵 Sedang Dikemas Penjual
-                                                    </span>
-                                                    <% } else { %>
-                                                        <span
-                                                            style="font-size: 10px; color: #92400e; background: #fef3c7; padding: 2px 6px; border-radius: 4px; margin-left: 8px;"
-                                                            data-i18n="order_detail.item_waiting">
-                                                            🟡 Menunggu Lapak Diproses
-                                                        </span>
-                                                        <% } %>
-                            </div>
-                            <div style="font-size: 14px; color: var(--text-gray);">
-                                <%= item.quantity %> x Rp <%= parseFloat(item.price_at_purchase).toLocaleString('id-ID')
-                                        %>
-                            </div>
-                            <div style="font-size: 12px; color: var(--primary); margin-top: 4px;">
-                                🏪 <%= item.seller_name %>
-                                    <span style="color: var(--text-gray); font-weight: normal;"> • <span
-                                            data-i18n="order_detail.shipped_from">Dikirim dari</span>: <%=
-                                            item.seller_address || '-' %></span>
-                            </div>
+                    <!-- Products Panel (Full Width) -->
+                    <div class="info-panel" style="grid-column: 1 / -1; padding: 32px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 16px; margin-bottom: 24px;">
+                            <h3 style="margin: 0; border: none; padding: 0;">📦 <span
+                                    data-i18n="order_detail.product_ordered">Rincian Produk</span></h3>
                         </div>
 
-                        <div style="text-align: right;">
-                            <div style="font-weight: 600; font-size: 16px;">
-                                Rp <%= (item.price_at_purchase * item.quantity).toLocaleString('id-ID') %>
-                            </div>
-                            <% if (item.status==='shipped' ) { %>
-                                <form action="/orders/items/<%= item.id %>/complete" method="POST"
-                                    style="margin-top: 8px;">
-                                    <button type="submit" class="btn-small btn-success"
-                                        data-i18n="order_detail.btn_received">
-                                        ✅ Diterima
-                                    </button>
-                                </form>
-                                <% } else if (item.status==='completed' ) { %>
-                                    <div style="margin-top: 4px; color: #059669; font-size: 12px; font-weight: 600;"
-                                        data-i18n="order_detail.done">Selesai</div>
-                                    <% } else if (item.status==='processed' ) { %>
-                                        <div style="margin-top: 4px; color: #3b82f6; font-size: 12px;"
-                                            data-i18n="order_detail.processing">Diproses</div>
-                                        <% } %>
+                        <% let actualTotal=0; let originalTotal=0; let hasRefund=false; %>
 
-                                            <!-- Partial Cancel Button for Customer -->
-                                            <% if ((item.status==='pending' || item.status==='paid' ) && order.status
-                                                !=='cancelled' ) { %>
-                                                <form action="/orders/items/<%= item.id %>/cancel" method="POST"
-                                                    style="margin-top: 8px;"
-                                                    onsubmit="return confirmAction(event, t('order.cancel_item_confirm'), t('order.yes_cancel_item'), '#dc2626');">
-                                                    <button type="submit"
-                                                        style="background: none; border: 1px solid #dc2626; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s;"
-                                                        data-i18n="order_detail.btn_cancel_item">❌ Batalkan
-                                                    </button>
-                                                </form>
-                                                <% } %>
-                        </div>
-                    </div>
-                    <% }); %>
-            </div>
-
-            <!-- Total -->
-            <div class="detail-section" style="background: var(--bg-light);">
-                <div style="display: flex; justify-content: flex-end;">
-                    <div style="width: 300px;">
-                        <% let actualTotal=0; let originalTotal=0; let hasRefund=false; items.forEach(item=> {
-                            const itemTotal = (item.price_at_purchase * item.quantity);
-                            originalTotal += itemTotal;
-
-                            if (item.status !== 'cancelled' && item.status !== 'rejected') {
-                            actualTotal += itemTotal;
-                            } else {
-                            hasRefund = true;
-                            }
-                            });
-                            %>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span style="color: var(--text-gray);" data-i18n="order_detail.subtotal">Subtotal
-                                    Awal</span>
-                                <span
-                                    style="<%= hasRefund ? 'text-decoration: line-through; color: var(--text-gray);' : 'font-weight: 600;' %>">
-                                    Rp <%= originalTotal.toLocaleString('id-ID') %>
-                                </span>
-                            </div>
-
-                            <% if (hasRefund) { %>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                    <span style="color: #dc2626; font-weight: 500;"
-                                        data-i18n="order_detail.refund_label">Barang Dibatalkan (Refund)</span>
-                                    <span style="color: #dc2626; font-weight: 600;">- Rp <%= (originalTotal -
-                                            actualTotal).toLocaleString('id-ID') %></span>
-                                </div>
-                                <% } %>
-
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
-                                        <span style="color: var(--text-gray);"
-                                            data-i18n="order_detail.shipping_cost">Ongkos Kirim</span>
-                                        <span style="color: #10b981; font-weight: 600;"
-                                            data-i18n="order_detail.free">GRATIS</span>
-                                    </div>
-                                    <div style="border-top: 1px solid var(--border); margin-bottom: 16px;"></div>
+                            <div style="display: flex; flex-direction: column; gap: 16px;">
+                                <% items.forEach((item, index)=> {
+                                    const itemTotal = (item.price_at_purchase * item.quantity);
+                                    originalTotal += itemTotal;
+                                    if (item.status !== 'cancelled' && item.status !== 'rejected') {
+                                    actualTotal += itemTotal;
+                                    } else {
+                                    hasRefund = true;
+                                    }
+                                    %>
                                     <div
-                                        style="display: flex; justify-content: space-between; font-size: 20px; font-weight: 700;">
-                                        <span data-i18n="order_detail.total">Total Bayar Akhir</span>
-                                        <span style="color: #FF6B35;">Rp <%= order.total_price ?
-                                                parseFloat(order.total_price).toLocaleString('id-ID') :
-                                                actualTotal.toLocaleString('id-ID') %></span>
+                                        style="display: flex; gap: 16px; background: var(--bg-white); padding: 16px; border-radius: 12px; border: 1px solid var(--border); transition: all 0.3s; <%= item.status === 'cancelled' || item.status === 'rejected' ? 'opacity: 0.6; filter: grayscale(0.5);' : '' %>">
+                                        <img src="<%= item.image_url || '/img/default-product.svg' %>"
+                                            style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(0,0,0,0.05);">
+
+                                        <div
+                                            style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                                            <div
+                                                style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                                <div>
+                                                    <div
+                                                        style="font-weight: 700; font-size: 16px; color: var(--text-dark); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                                                        <%= item.product_name %>
+                                                            <%- renderItemInlineStatus(item.status, t) %>
+                                                    </div>
+                                                    <div
+                                                        style="color: var(--primary); font-size: 13px; font-weight: 600; margin-bottom: 6px;">
+                                                        🏪 <%= item.seller_name %>
+                                                    </div>
+                                                </div>
+                                                <div style="text-align: right;">
+                                                    <div
+                                                        style="font-weight: 700; font-size: 16px; color: var(--text-dark);">
+                                                        Rp <%= itemTotal.toLocaleString('id-ID') %>
+                                                    </div>
+                                                    <div style="color: var(--text-gray); font-size: 13px;">
+                                                        <%= item.quantity %> x Rp <%=
+                                                                parseFloat(item.price_at_purchase).toLocaleString('id-ID')
+                                                                %>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div
+                                                style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 12px;">
+                                                <span style="font-size: 12px; color: var(--text-gray);"><span
+                                                        data-i18n="order_detail.shipped_from">📍 Dikirim dari</span>:
+                                                    <%= item.seller_address || '-' %>
+                                                </span>
+
+                                                <div style="display: flex; gap: 8px;">
+                                                    <!-- Actions -->
+                                                    <% if (item.status==='shipped' ) { %>
+                                                        <form action="/orders/items/<%= item.id %>/complete"
+                                                            method="POST" style="margin: 0;">
+                                                            <button type="submit"
+                                                                style="background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px;"
+                                                                data-i18n="order_detail.btn_received">✅
+                                                                Diterima</button>
+                                                        </form>
+                                                        <% } %>
+
+                                                            <% if ((item.status==='pending' || item.status==='paid' ) &&
+                                                                order.status !=='cancelled' ) { %>
+                                                                <form action="/orders/items/<%= item.id %>/cancel"
+                                                                    method="POST" style="margin: 0;"
+                                                                    onsubmit="return confirmAction(event, '<%- t('order.cancel_item_confirm') %>', '<%- t('order.yes_cancel_item') %>', '#dc2626');">
+                                                                    <button type="submit"
+                                                                        style="background: transparent; color: #dc2626; border: 1px solid #dc2626; padding: 5px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer;"
+                                                                        data-i18n="order_detail.btn_cancel_item">❌
+                                                                        Batalkan</button>
+                                                                </form>
+                                                                <% } %>
+
+                                                                    <% if (item.seller && item.seller.id) { %>
+                                                                        <form action="/chat/start" method="POST"
+                                                                            style="margin: 0;">
+                                                                            <input type="hidden" name="sellerId"
+                                                                                value="<%= item.seller.id %>">
+                                                                            <input type="hidden" name="orderId"
+                                                                                value="<%= order.id %>">
+                                                                            <input type="hidden" name="productId"
+                                                                                value="<%= item.product_id %>">
+                                                                            <button type="submit"
+                                                                                style="background: transparent; color: #00B09B; border: 1px solid #00B09B; padding: 5px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer;"
+                                                                                data-i18n="chat.chat_seller">
+                                                                                💬 Chat Penjual
+                                                                            </button>
+                                                                        </form>
+                                                                        <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <% }); %>
+                            </div>
+
+                            <!-- Receipt Summary -->
+                            <div
+                                style="margin-top: 32px; padding: 24px; background: var(--bg-light); border-radius: 12px; border: 1px dashed var(--border);">
+                                <div style="display: flex; justify-content: flex-end;">
+                                    <div style="width: 350px;">
+                                        <div
+                                            style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px;">
+                                            <span style="color: var(--text-gray);"
+                                                data-i18n="order_detail.subtotal">Subtotal Produk</span>
+                                            <span
+                                                style="<%= hasRefund ? 'text-decoration: line-through;' : '' %> font-weight: 600; color: var(--text-dark);">
+                                                Rp <%= originalTotal.toLocaleString('id-ID') %>
+                                            </span>
+                                        </div>
+
+                                        <% if (hasRefund) { %>
+                                            <div
+                                                style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #dc2626;">
+                                                <span data-i18n="order_detail.refund_label">Total Refund</span>
+                                                <span style="font-weight: 600;">- Rp <%= (originalTotal -
+                                                        actualTotal).toLocaleString('id-ID') %></span>
+                                            </div>
+                                            <% } %>
+
+                                                <div
+                                                    style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 14px;">
+                                                    <span style="color: var(--text-gray);"
+                                                        data-i18n="order_detail.shipping_cost">Ongkos Kirim</span>
+                                                    <span style="color: #10b981; font-weight: 700;"
+                                                        data-i18n="order_detail.free">GRATIS</span>
+                                                </div>
+
+                                                <div style="border-top: 2px dashed #cbd5e1; margin: 16px 0;"></div>
+
+                                                <div
+                                                    style="display: flex; justify-content: space-between; align-items: center;">
+                                                    <span
+                                                        style="font-weight: 700; font-size: 16px; color: var(--text-dark);"
+                                                        data-i18n="order_detail.total">Total Belanja</span>
+                                                    <span style="color: #FF6B35; font-size: 24px; font-weight: 800;">
+                                                        Rp <%= order.total_price ?
+                                                            parseFloat(order.total_price).toLocaleString('id-ID') :
+                                                            actualTotal.toLocaleString('id-ID') %>
+                                                    </span>
+                                                </div>
+                                    </div>
+                                </div>
+
+                                <!-- Cancel Entire Order Button -->
+                                <% if (order.status !=='cancelled' && order.status !=='completed' && order.status
+                                    !=='rejected' ) { %>
+                                    <div
+                                        style="margin-top: 32px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border); padding-top: 24px;">
+                                        <form action="/orders/<%= order.id %>/cancel" method="POST" style="margin: 0;"
+                                            onsubmit="return confirmAction(event, '<%- t('order.cancel_order_confirm') %>', '<%- t('order.yes_cancel') %>', '#EF4444');">
+                                            <button type="submit"
+                                                style="background: #fee2e2; color: #dc2626; border: 1px solid #f87171; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;"
+                                                onmouseover="this.style.background='#fecaca'"
+                                                onmouseout="this.style.background='#fee2e2'">
+                                                🚫 <span data-i18n="order_detail.btn_cancel_order">Batalkan Seluruh
+                                                    Pesanan</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <% } %>
+                            </div>
                     </div>
                 </div>
-
-                <!-- Action Buttons -->
-                <% if (order.status !=='cancelled' && order.status !=='completed' && order.status !=='rejected' ) { %>
-                    <div style="margin-top: 32px; display: flex; justify-content: flex-end;">
-                        <form action="/orders/<%= order.id %>/cancel" method="POST"
-                            onsubmit="return confirmAction(event, t('order.cancel_order_confirm'), t('order.yes_cancel'), '#EF4444');">
-                            <button type="submit" class="btn-outline-danger"
-                                style="padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
-                                <span>🚫</span> <span data-i18n="order_detail.btn_cancel_order">Batalkan Pesanan</span>
-                            </button>
-                        </form>
-                    </div>
-                    <% } %>
             </div>
         </div>
-    </div>
 
-    <%- include('partials/footer') %>
+        <%- include('partials/footer') %>

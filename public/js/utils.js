@@ -22,13 +22,29 @@ const Utils = {
      */
     getIconForCategory(category) {
         const icons = {
-            'Obat Bebas': '💊',
+            'Obat Bebas': '🟢',
             'Obat Keras': '💉',
+            'Obat Nyeri': '💊',
             'Vitamin': '🍊',
             'Alat Kesehatan': '🩹',
             'Herbal': '🌿'
         };
         return icons[category] || '💊';
+    },
+
+    /**
+     * Get translated category name
+     * @param {string} category - Product category
+     * @returns {string} Translated category name
+     */
+    getTranslatedCategory(category) {
+        if (!category) return '';
+        const key = 'category.' + category.toLowerCase().replace(/ /g, '_');
+        if (typeof window.t === 'function') {
+            const trans = window.t(key);
+            return trans !== key ? trans : category;
+        }
+        return category;
     },
 
     /**

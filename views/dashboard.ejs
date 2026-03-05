@@ -123,7 +123,9 @@
                                                     <tr>
                                                         <td
                                                             style="padding: 16px; border-bottom: 1px solid var(--border);">
-                                                            <%= new Date(item.created_at).toLocaleDateString('id-ID') %>
+                                                            <%= new Date(item.created_at).toLocaleDateString(typeof lang
+                                                                !=='undefined' && lang==='en' ? 'en-US' : 'id-ID' , {
+                                                                timeZone: userTz }) %>
                                                         </td>
                                                         <td
                                                             style="padding: 16px; border-bottom: 1px solid var(--border);">
@@ -150,13 +152,7 @@
                                                         </td>
                                                         <td
                                                             style="padding: 16px; border-bottom: 1px solid var(--border);">
-                                                            <span style="padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500; 
-                                            <%= item.status === 'processed' || item.status === 'completed' ? 'background: #d1fae5; color: #065f46;' : 
-                                               item.status === 'rejected' || item.status === 'cancelled' ? 'background: #fee2e2; color: #b91c1c;' : 
-                                               'background: #fef3c7; color: #92400e;' %>">
-                                                                <%= item.status.charAt(0).toUpperCase() +
-                                                                    item.status.slice(1) %>
-                                                            </span>
+                                                            <%- renderOrderBadge(item.status, 'seller' , null, t) %>
                                                         </td>
                                                         <td
                                                             style="padding: 16px; border-bottom: 1px solid var(--border);">
@@ -262,9 +258,9 @@
                                                             </td>
                                                             <td
                                                                 style="padding: 16px; border-bottom: 1px solid var(--border);">
-                                                                <%= new
-                                                                    Date(order.created_at).toLocaleDateString('id-ID')
-                                                                    %>
+                                                                <%= new Date(order.created_at).toLocaleDateString(typeof
+                                                                    lang !=='undefined' && lang==='en' ? 'en-US'
+                                                                    : 'id-ID' , { timeZone: userTz }) %>
                                                             </td>
                                                             <td
                                                                 style="padding: 16px; border-bottom: 1px solid var(--border); font-weight: 600;">
@@ -274,13 +270,7 @@
                                                             </td>
                                                             <td
                                                                 style="padding: 16px; border-bottom: 1px solid var(--border);">
-                                                                <span style="padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500; 
-                                        <%= order.status === 'completed' ? 'background: #d1fae5; color: #065f46;' : 
-                                           order.status === 'cancelled' ? 'background: #fee2e2; color: #b91c1c;' : 
-                                           'background: #fef3c7; color: #92400e;' %>">
-                                                                    <%= order.status.charAt(0).toUpperCase() +
-                                                                        order.status.slice(1) %>
-                                                                </span>
+                                                                <%- renderOrderBadge(order.status, 'buyer' , null, t) %>
                                                             </td>
                                                             <td
                                                                 style="padding: 16px; border-bottom: 1px solid var(--border);">

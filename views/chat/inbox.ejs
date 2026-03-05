@@ -6,8 +6,10 @@
             <div class="chat-header-bar">
                 <h1 data-i18n="chat.inbox_title">💬 Pesan</h1>
                 <% if (totalUnread> 0) { %>
-                    <span class="conv-unread-badge" style="font-size: 13px; padding: 4px 12px;">
-                        <%= totalUnread %> <span data-i18n="chat.unread">belum dibaca</span>
+                    <span class="conv-unread-badge"
+                        style="font-size: 13px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 4px;">
+                        <%= totalUnread %>
+                            <span data-i18n="chat.unread">belum dibaca</span>
                     </span>
                     <% } %>
             </div>

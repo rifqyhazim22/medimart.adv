@@ -52,7 +52,9 @@ module.exports = {
                     }
 
                     return req.session.save(() => {
-                        req.flash('success_msg', req.t('auth.welcome_back', user.full_name));
+                        const randomGreetingIndex = Math.floor(Math.random() * 5) + 1;
+                        req.flash('auth_success', req.t(`auth.welcome_back_${randomGreetingIndex}`, user.full_name));
+
                         if (user.role === 'admin') {
                             return res.redirect('/admin/dashboard');
                         }
@@ -108,7 +110,7 @@ module.exports = {
             }
 
             req.session.save(() => {
-                req.flash('success_msg', req.t('auth.register_success', full_name));
+                req.flash('auth_success', req.t('auth.register_success', full_name));
                 res.redirect('/login');
             });
         } catch (err) {

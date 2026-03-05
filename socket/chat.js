@@ -47,7 +47,7 @@ module.exports = function (io, sessionMiddleware) {
                     var newMessage = await Message.create({
                         conversation_id: conversationId,
                         sender_id: userId,
-                        message: message,
+                        message: message || '',
                         context_type: contextType || 'text',
                         context_data: contextData || null,
                         image_url: imageUrl
@@ -56,7 +56,7 @@ module.exports = function (io, sessionMiddleware) {
                     // Update conversation — track last sender for read receipts
                     var isBuyer = conversation.buyer_id === userId;
                     var updateData = {
-                        last_message: message.substring(0, 100),
+                        last_message: message ? message.substring(0, 100) : (imageUrl ? '📷' : ''),
                         last_message_at: new Date(),
                         last_sender_id: userId,
                         last_message_read: false

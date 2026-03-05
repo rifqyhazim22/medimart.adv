@@ -215,7 +215,7 @@ function renderCart() {
                 
                 <div class="cart-item-details">
                     <div class="seller-badge" style="margin-bottom: 4px; font-size: 11px;">🏪 ${Utils.sanitizeHTML(product.sellerName || 'Toko Resmi')}</div>
-                    <div class="cart-item-category">${Utils.sanitizeHTML(product.category)}</div>
+                    <div class="cart-item-category"><span ${product.category ? `data-i18n="category.${product.category.toLowerCase().replace(/ /g, '_')}"` : ''}>${Utils.sanitizeHTML(Utils.getTranslatedCategory(product.category))}</span></div>
                     <div class="cart-item-name">${Utils.sanitizeHTML(product.name)}</div>
                     <div class="cart-item-price">${Utils.formatPrice(product.price)}</div>
                     <div class="cart-item-stock">Stok tersedia: ${product.stock}</div>
@@ -416,7 +416,7 @@ function loadRecommendedProducts() {
                 ${product.image ? '' : product.icon}
             </div>
             <div class="product-info">
-                <div class="product-category">${Utils.sanitizeHTML(product.category)}</div>
+                <div class="product-category">${Utils.sanitizeHTML(Utils.getTranslatedCategory(product.category))}</div>
                 <div class="product-name" style="font-size: 14px;">${Utils.sanitizeHTML(product.name)}</div>
                 <div class="product-price" style="font-size: 16px;">${Utils.formatPrice(product.price)}</div>
                 <div class="product-actions">

@@ -24,6 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     recipient_name: DataTypes.STRING,
     recipient_phone: DataTypes.STRING,
     shipping_address: DataTypes.TEXT,
+    external_id: DataTypes.STRING,
+    invoice_url: DataTypes.STRING,
     visible_to_customer: {
       type: DataTypes.BOOLEAN,
       defaultValue: true

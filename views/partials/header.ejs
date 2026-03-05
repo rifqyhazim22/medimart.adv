@@ -20,6 +20,21 @@
     <!-- i18n System -->
     <script src="/js/i18n.js"></script>
 
+    <!-- Timezone Dynamic System -->
+    <script>
+        (function () {
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            if (document.cookie.indexOf('tz=' + tz) === -1) {
+                document.cookie = 'tz=' + tz + '; path=/; max-age=31536000';
+                // Trigger a silent reload only if this is the very first time setting the cookie
+                // to make sure SSR EJS correctly renders dates.
+                if (document.cookie.indexOf('tz=') === -1) {
+                    window.location.reload();
+                }
+            }
+        })();
+    </script>
+
     <!-- Theme Initialization Script (Prevent FOUC) -->
     <script>
         const savedTheme = localStorage.getItem('medimart_theme') || 'light';
@@ -276,7 +291,8 @@
                                                                 </div>
                                                 </div>
                                             </a>
-                                            <a href="/logout" class="auth-btn btn-logout"
+                                            <a href="/logout" onclick="return window.confirmLogout(event)"
+                                                class="auth-btn btn-logout"
                                                 style="text-decoration: none; font-size: 12px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; color: var(--text-dark); background: var(--bg-white); transition: all 0.2s;"><span
                                                     data-i18n="auth.logout">Logout</span></a>
                                         </div>
@@ -452,7 +468,7 @@
                 position: 'top-end',
                 icon: type,
                 title: getRandomTitle(type),
-                text: message,
+                text: t(message), // Attempt client-side translation if backend passed a raw key
                 showConfirmButton: false,
                 timer: isError ? 5000 : 4000, // Error messages need more reading context time
                 timerProgressBar: true,
@@ -520,6 +536,55 @@
             });
             return false;
         };
+
+        // Global Guest Interceptor
+        window.promptLogin = function (event, actionText) {
+            event.preventDefault();
+            Swal.fire({
+                title: t('swal.login_required'),
+                html: `<span style="font-size: 15px; color: var(--text-gray);">${t('swal.login_prompt')} ${actionText}.</span>`,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#FF6B35',
+                cancelButtonColor: 'var(--border)',
+                confirmButtonText: t('swal.login_now'),
+                cancelButtonText: `<span style="color: var(--text-gray);">${t('swal.later')}</span>`,
+                reverseButtons: true,
+                showClass: {
+                    popup: 'animate__animated animate__fadeInUp animate__faster'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__zoomOut animate__faster'
+                },
+                customClass: { popup: 'psych-modal' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/login';
+                }
+            });
+            return false;
+        };
+        // Global Logout Interceptor
+        window.confirmLogout = function (event) {
+            event.preventDefault();
+            Swal.fire({
+                title: t('auth.logout_confirm') || 'Ingin Keluar?',
+                html: `<span style="font-size: 15px; color: var(--text-gray);">${t('auth.logout_confirm_desc') || 'Anda akan keluar dari sesi ini.'}</span>`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: 'var(--border)',
+                confirmButtonText: t('auth.logout') || 'Logout',
+                cancelButtonText: `<span style="color: var(--text-gray);">${t('swal.back') || 'Batal'}</span>`,
+                reverseButtons: true,
+                customClass: { popup: 'psych-modal' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/logout';
+                }
+            });
+            return false;
+        };
     </script>
 
     <!-- Confetti Library -->
@@ -528,16 +593,27 @@
     <!-- Handle Server-Side Flash Messages -->
     <script>
         <% if (success_msg && success_msg.length > 0) { %>
-            window.showToast('<%= success_msg %>', 'success');
+            (function () {
+                const msgStr = <%- JSON.stringify(Array.isArray(success_msg) ? success_msg.join(' ') : success_msg) %>;
+                window.showToast(msgStr, 'success');
+            })();
+        <% } %>
 
-            // 🔥 Pemicu Perayaan Confetti Universal (Selamat, Sukses, Berjalan Lancar)
-            <% 
-            const confettiKeywords = ['berhasil', 'selamat', 'sukses', 'disimpan', 'ditambahkan', 'diproses'];
-            const msgStr = Array.isArray(success_msg) ? success_msg.join(' ') : String(success_msg);
-            const shouldConfetti = confettiKeywords.some(keyword => msgStr.toLowerCase().includes(keyword));
-            if (shouldConfetti) { 
-            %>
-                    let duration = 2.5 * 1000;
+        <% if (typeof auth_success !== 'undefined' && auth_success.length > 0) { %>
+            (function () {
+                const authStr = <%- JSON.stringify(Array.isArray(auth_success) ? auth_success.join(' ') : auth_success) %>;
+                Swal.fire({
+                    icon: 'success',
+                    title: "<%= typeof t !== 'undefined' && t('swal.success_title') && t('swal.success_title') !== 'swal.success_title' ? t('swal.success_title') : 'Berhasil' %>",
+                    text: authStr,
+                    confirmButtonColor: '#00B09B',
+                    customClass: { popup: 'psych-modal' },
+                    timer: 4000,
+                    timerProgressBar: true
+                });
+
+                // Confetti Animation
+                let duration = 2.5 * 1000;
                 let end = Date.now() + duration;
 
                 (function frame() {
@@ -546,29 +622,29 @@
                         angle: 60,
                         spread: 55,
                         origin: { x: 0 },
-                        colors: ['#FF6B35', '#22c55e', '#E040FB']
+                        colors: ['#FF6B35', '#00B09B', '#E040FB']
                     });
                     confetti({
                         particleCount: 5,
                         angle: 120,
                         spread: 55,
                         origin: { x: 1 },
-                        colors: ['#FF6B35', '#22c55e', '#E040FB']
+                        colors: ['#FF6B35', '#00B09B', '#E040FB']
                     });
 
                     if (Date.now() < end) {
                         requestAnimationFrame(frame);
                     }
                 }());
-            <% } %>
+            })();
         <% } %>
         
         <% if (error_msg && error_msg.length > 0) { %>
-            window.showToast('<%= error_msg %>', 'error');
+            window.showToast(<%- JSON.stringify(error_msg) %>, 'error');
         <% } %>
         
         <% if (error && error.length > 0) { %>
-            window.showToast('<%= error %>', 'error');
+            window.showToast(<%- JSON.stringify(error) %>, 'error');
         <% } %>
     </script>
 

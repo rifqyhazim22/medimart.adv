@@ -28,9 +28,13 @@
                         style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-white); color: var(--text-dark);">
                         <option value="" data-i18n="product_form.select_category">Pilih Kategori</option>
                         <% const categories=['Obat Bebas', 'Obat Keras' , 'Vitamin' , 'Alat Kesehatan' , 'Herbal' ]; %>
-                            <% categories.forEach(cat=> { %>
+                            <% categories.forEach(cat=> {
+                                const formCatKey = 'category.' + cat.toLowerCase().split(' ').join('_');
+                                const formCatText = typeof t !== 'undefined' ? (t(formCatKey) !== formCatKey ?
+                                t(formCatKey) : cat) : cat;
+                                %>
                                 <option value="<%= cat %>" <%=isEdit && product.category===cat ? 'selected' : '' %>><%=
-                                        cat %>
+                                        formCatText %>
                                 </option>
                                 <% }); %>
                     </select>

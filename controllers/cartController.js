@@ -74,18 +74,18 @@ module.exports = {
                     if (existingItem.quantity < product.stock) {
                         existingItem.quantity++;
                         await existingItem.save();
-                        message = 'Jumlah produk ditambahkan';
+                        message = req.t('cart.product_added_quantity');
                     } else {
                         success = false;
-                        message = 'Stok tidak mencukupi';
+                        message = req.t('cart.insufficient_stock');
                     }
                 } else {
                     if (product.stock > 0) {
                         await CartItem.create({ cart_id: cart.id, product_id: product.id, quantity: 1 });
-                        message = 'Produk masuk keranjang';
+                        message = req.t('cart.product_added');
                     } else {
                         success = false;
-                        message = 'Stok habis';
+                        message = req.t('cart.out_of_stock');
                     }
                 }
             } else {
@@ -97,10 +97,10 @@ module.exports = {
                 if (existingItem) {
                     if (existingItem.quantity < product.stock) {
                         existingItem.quantity++;
-                        message = 'Jumlah produk ditambahkan';
+                        message = req.t('cart.product_added_quantity');
                     } else {
                         success = false;
-                        message = 'Stok tidak mencukupi';
+                        message = req.t('cart.insufficient_stock');
                     }
                 } else {
                     if (product.stock > 0) {
@@ -112,10 +112,10 @@ module.exports = {
                             seller_id: product.seller_id,
                             quantity: 1
                         });
-                        message = 'Produk masuk keranjang';
+                        message = req.t('cart.product_added');
                     } else {
                         success = false;
-                        message = 'Stok habis';
+                        message = req.t('cart.out_of_stock');
                     }
                 }
                 req.session.cart = cart;
@@ -183,13 +183,13 @@ module.exports = {
                         if (cart[itemIndex].quantity < product.stock) {
                             cart[itemIndex].quantity++;
                         } else {
-                            if (isAjax) return res.json({ success: false, message: 'Stok makasimal tercapai' });
+                            if (isAjax) return res.json({ success: false, message: req.t('cart.max_stock') });
                         }
                     } else if (action === 'decrease') {
                         if (cart[itemIndex].quantity > 1) {
                             cart[itemIndex].quantity--;
                         } else {
-                            if (isAjax) return res.json({ success: false, message: 'Minimal 1 barang' });
+                            if (isAjax) return res.json({ success: false, message: req.t('cart.min_quantity') });
                             cart.splice(itemIndex, 1);
                         }
                     }

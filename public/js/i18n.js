@@ -5,6 +5,14 @@
  */
 
 const translations = {
+    // ========== CATEGORIES ==========
+    'category.obat_bebas': { id: 'Obat Bebas', en: 'Over-the-Counter' },
+    'category.obat_keras': { id: 'Obat Keras', en: 'Prescription Drugs' },
+    'category.obat_nyeri': { id: 'Obat Nyeri', en: 'Pain Relievers' },
+    'category.vitamin': { id: 'Vitamin', en: 'Vitamins' },
+    'category.alat_kesehatan': { id: 'Alat Kesehatan', en: 'Medical Devices' },
+    'category.herbal': { id: 'Herbal', en: 'Herbal Medicine' },
+
     // ========== HEADER ==========
     'nav.marketplace': { id: 'Marketplace', en: 'Marketplace' },
     'nav.admin_dashboard': { id: 'Admin Dashboard', en: 'Admin Dashboard' },
@@ -17,12 +25,24 @@ const translations = {
     'auth.login': { id: 'Masuk', en: 'Login' },
     'auth.register': { id: 'Daftar', en: 'Register' },
     'auth.logout': { id: 'Logout', en: 'Logout' },
+    'auth.logout_confirm': { id: 'Yakin Ingin Keluar?', en: 'Sure You Want to Logout?' },
+    'auth.logout_confirm_desc': { id: 'Sesi Anda akan segera diakhiri, tapi Anda bisa kembali nanti.', en: 'Your session will end, but you can return later.' },
     'header.search_placeholder': { id: 'Cari obat, vitamin, toko...', en: 'Search medicines, vitamins, stores...' },
     'header.search_seller': { id: 'Cari inventaris saya...', en: 'Search my inventory...' },
     'header.search_admin': { id: 'Cari profil pengguna...', en: 'Search user profiles...' },
     'header.theme_title': { id: 'Ganti Layar Siang/Malam', en: 'Toggle Day/Night Mode' },
     'header.lang_title': { id: 'Ganti Bahasa', en: 'Switch Language' },
     'header.profile_title': { id: 'Manajemen Profil Akun', en: 'Account Profile Management' },
+
+    // ========== SWAL & ROUTE ===========
+    'swal.success_title': { id: 'Berhasil', en: 'Success' },
+    'swal.login_required': { id: 'Dibutuhkan Login', en: 'Login Required' },
+    'swal.login_prompt': { id: 'Tolong login terlebih dahulu untuk %s.', en: 'Please login first to %s.' },
+    'swal.login_now': { id: 'Login Sekarang', en: 'Login Now' },
+    'swal.later': { id: 'Nanti', en: 'Later' },
+    'route.login_required': { id: 'Anda harus login untuk mengakses halaman ini.', en: 'You must be logged in to access this page.' },
+    'route.seller_only': { id: 'Akses ditolak. Halaman ini hanya untuk Penjual.', en: 'Access denied. This page is for Sellers only.' },
+    'route.admin_only': { id: 'Akses ditolak. Hanya Admin yang dapat mengakses halaman ini.', en: 'Access denied. Admins only.' },
 
     // ========== LOGIN PAGE ==========
     'login.welcome': { id: 'Selamat Datang!', en: 'Welcome!' },
@@ -143,7 +163,21 @@ const translations = {
     'checkout.total_pay': { id: 'Total Bayar', en: 'Total Payment' },
     'checkout.confirm_pay': { id: 'Konfirmasi & Bayar', en: 'Confirm & Pay' },
     'checkout.securing': { id: 'Mengamankan Transaksi..', en: 'Securing Transaction..' },
+    'checkout.xendit_secure': { id: 'Pembayaran Aman by Xendit', en: 'Secure Payment by Xendit' },
+    'checkout.xendit_desc': { id: 'Anda akan diarahkan ke halaman pembayaran aman Xendit setelah konfirmasi.', en: 'You will be redirected to Xendit secure payment page after confirmation.' },
+
+    // Midtrans SweetAlerts
+    'swal.payment_success': { id: 'Pembayaran Berhasil!', en: 'Payment Successful!' },
+    'swal.payment_success_desc': { id: 'Terima kasih, pesanan Anda sedang diproses oleh penjual.', en: 'Thank you, your order is being processed by the seller.' },
+    'swal.payment_pending': { id: 'Menunggu Pembayaran', en: 'Awaiting Payment' },
+    'swal.payment_pending_desc': { id: 'Silakan selesaikan pembayaran Anda sesuai instruksi Xendit.', en: 'Please complete your payment according to Xendit instructions.' },
+    'swal.payment_error': { id: 'Pembayaran Gagal', en: 'Payment Failed' },
+    'swal.payment_error_desc': { id: 'Terjadi masalah dengan transaksi Anda. Silakan coba lagi.', en: 'There was a problem with your transaction. Please try again.' },
+    'swal.payment_cancelled': { id: 'Pembayaran Dibatalkan', en: 'Payment Cancelled' },
+    'swal.payment_cancelled_desc': { id: 'Anda menutup halaman pembayaran sebelum selesai.', en: 'You closed the payment page before finishing.' },
     'checkout.please_wait': { id: 'Mohon tunggu, kami sedang menyandikan pesanan Anda 🔒', en: 'Please wait, we are encrypting your order 🔒' },
+    'toast.checkout_success': { id: 'Checkout Berhasil!', en: 'Checkout Successful!' },
+    'toast.checkout_success_desc': { id: 'Pesanan Anda sedang diproses oleh penjual.', en: 'Your order is currently being processed by the seller.' },
 
     // ========== SELLER DASHBOARD ==========
     'seller.dashboard_title': { id: 'Dashboard Toko', en: 'Store Dashboard' },
@@ -414,13 +448,13 @@ const translations = {
     'product.processing_btn': { id: 'Memproses ⏳...', en: 'Processing ⏳...' },
 
     // ========== SELLER ORDER STATUS ==========
-    'status.waiting': { id: '🟡 Menunggu Diproses', en: '🟡 Awaiting Processing' },
-    'status.packing': { id: '🔵 Sedang Dikemas', en: '🔵 Being Packed' },
+    'status.waiting': { id: '⏳ Menunggu Diproses', en: '⏳ Awaiting Processing' },
+    'status.packing': { id: '📦 Sedang Dikemas', en: '📦 Being Packed' },
     'status.shipping': { id: '🚚 Dalam Pengiriman', en: '🚚 In Transit' },
     'status.completed': { id: '✅ Selesai Diterima', en: '✅ Completed' },
     'status.rejected_seller': { id: '⛔ Saya Tolak', en: '⛔ Rejected by Me' },
     'status.cancelled_buyer': { id: '❌ Dibatalkan Pembeli', en: '❌ Cancelled by Buyer' },
-    'status.shipping_inline': { id: 'Sedang Dikirim...', en: 'In Transit...' },
+    'status.shipping_inline': { id: '🚚 Sedang Dikirim...', en: '🚚 In Transit...' },
     'status.completed_inline': { id: '✅ Selesai', en: '✅ Completed' },
 
     // ========== SELLER ORDER TABLE ==========
@@ -456,12 +490,12 @@ const translations = {
     'admin.col_customer': { id: 'Pelanggan', en: 'Customer' },
     'admin.col_date': { id: 'Tanggal', en: 'Date' },
     'admin.no_transactions': { id: 'Belum ada transaksi terbaru.', en: 'No recent transactions yet.' },
-    'admin.status_waiting': { id: 'Menunggu Proses', en: 'Awaiting Processing' },
-    'admin.status_processing': { id: 'Sedang Diproses', en: 'Processing' },
-    'admin.status_shipping': { id: 'Sedang Dikirim', en: 'Being Shipped' },
-    'admin.status_completed': { id: 'Selesai', en: 'Completed' },
-    'admin.status_cancelled': { id: 'Dibatalkan Pembeli / Gagal Total', en: 'Cancelled by Buyer / Total Failure' },
-    'admin.status_rejected': { id: 'Ditolak Penjual / Habis', en: 'Rejected by Seller / Out of Stock' },
+    'admin.status_waiting': { id: '⏳ Menunggu Proses', en: '⏳ Awaiting Processing' },
+    'admin.status_processing': { id: '📦 Sedang Diproses', en: '📦 Processing' },
+    'admin.status_shipping': { id: '🚚 Sedang Dikirim', en: '🚚 Being Shipped' },
+    'admin.status_completed': { id: '✅ Selesai', en: '✅ Completed' },
+    'admin.status_cancelled': { id: '❌ Dibatalkan Pembeli / Gagal Total', en: '❌ Cancelled by Buyer / Total Failure' },
+    'admin.status_rejected': { id: '⛔ Ditolak Penjual / Habis', en: '⛔ Rejected by Seller / Out of Stock' },
     'admin.chart_title': { id: 'Komposisi Platform', en: 'Platform Composition' },
     'admin.intel_title': { id: 'Intelijen Performa Sistem', en: 'System Performance Intelligence' },
     'admin.store_hub': { id: 'Pusat Etalase Obat', en: 'Medicine Store Hub' },
@@ -470,8 +504,13 @@ const translations = {
     'admin.platform_composition': { id: 'Komposisi Platform', en: 'Platform Composition' },
     'admin.system_perf': { id: 'Intelijen Performa Sistem', en: 'System Performance Intelligence' },
     'admin.margin_prefix': { id: 'Margin 10% dari GMV:', en: 'Margin 10% from GMV:' },
-    'admin.dividend_desc': { id: 'Total penerimaan bersih potong margin untuk Medimart.', en: 'Net revenue after margin deduction for Medimart.' },
     'admin.no_transactions': { id: 'Belum ada transaksi terbaru.', en: 'No recent transactions.' },
+    'admin.stat_desc_1': { id: 'Menghimpun', en: 'Accumulating' },
+    'admin.stat_desc_2': { id: 'obat-obatan yang dinaungi oleh', en: 'medicines under' },
+    'admin.stat_desc_3': { id: 'Mitra Lapak Aktif.', en: 'Active Store Partners.' },
+    'admin.stat_desc_4': { id: 'Perputaran dana kotor sebesar', en: 'Gross fund turnover of' },
+    'admin.stat_desc_5': { id: 'via kesuksesan', en: 'via successful' },
+    'admin.stat_desc_6': { id: 'transaksi pesanan.', en: 'order transactions.' },
 
     // ========== PRODUCT DETAIL ==========
     'detail.sold_out': { id: 'HABIS TERJUAL', en: 'SOLD OUT' },
@@ -530,18 +569,20 @@ const translations = {
     'user.product_deleted': { id: 'Produk Terhapus', en: 'Product Deleted' },
     'user.item_suffix': { id: 'item', en: 'items' },
     'user.currency_prefix': { id: 'Rp', en: 'Rp' },
-    'user.status_paid': { id: '✅ Menunggu Dikemas', en: '✅ Awaiting Packaging' },
-    'user.status_processing': { id: '⏳ Sedang Diproses Penjual', en: '⏳ Being Processed' },
+    'user.status_pending': { id: '⏳ Menunggu Pembayaran', en: '⏳ Awaiting Payment' },
+    'user.status_paid': { id: '⏳ Menunggu Konfirmasi', en: '⏳ Awaiting Confirmation' },
+    'user.status_processing': { id: '📦 Sedang Diproses', en: '📦 Processing' },
     'user.status_shipped': { id: '🚚 Sedang Dikirim', en: '🚚 In Transit' },
-    'user.status_completed': { id: '🎉 Pesanan Selesai', en: '🎉 Completed' },
+    'user.status_completed': { id: '✅ Pesanan Selesai', en: '✅ Completed' },
     'user.status_cancelled': { id: '❌ Dibatalkan Pembeli', en: '❌ Cancelled by Buyer' },
-    'user.status_rejected': { id: '⛔ Ditolak Penjual', en: '⛔ Rejected by Seller' },
-    'user.status_cancelled_both': { id: '⛔ Batal (Pembeli & Penjual)', en: '⛔ Cancelled (Buyer & Seller)' },
+    'user.status_rejected': { id: '⛔ Ditolak Keseluruhan', en: '⛔ Fully Rejected' },
+    'user.status_cancelled_both': { id: '⛔ Batal (Parsial)', en: '⛔ Partially Cancelled' },
     'user.status_partial': { id: 'Parsial', en: 'Partial' },
-    'user.status_paid_short': { id: '✅ Menunggu Dikemas', en: '✅ Awaiting Package' },
-    'user.status_processing_short': { id: '⏳ Diproses', en: '⏳ Processing' },
-    'user.status_shipped_short': { id: '🚚 Dikirim', en: '🚚 Shipped' },
-    'user.status_completed_short': { id: '🎉 Selesai', en: '🎉 Done' },
+    'user.status_pending_short': { id: '⏳ Menunggu Bayar', en: '⏳ Awaiting Payment' },
+    'user.status_paid_short': { id: '⏳ Menunggu Konfirmasi', en: '⏳ Awaiting Confirmation' },
+    'user.status_processing_short': { id: '📦 Sedang Diproses', en: '📦 Processing' },
+    'user.status_shipped_short': { id: '🚚 Sedang Dikirim', en: '🚚 In Transit' },
+    'user.status_completed_short': { id: '✅ Pesanan Selesai', en: '✅ Completed' },
     'user.status_cancelled_short': { id: '❌ Dibatalkan', en: '❌ Cancelled' },
     'user.status_rejected_short': { id: '⛔ Ditolak', en: '⛔ Rejected' },
 
@@ -565,6 +606,7 @@ const translations = {
     'chat.conversation_started': { id: 'Percakapan dimulai', en: 'Conversation started' },
     'chat.just_now': { id: 'Baru saja', en: 'Just now' },
     'chat.msg_ready': { id: 'Gambar siap dikirim', en: 'Image ready to send' },
+    'chat.image_only': { id: '📷 Gambar', en: '📷 Image' },
     'chat.upload_failed': { id: 'Gagal upload gambar', en: 'Failed to upload image' },
     // Context option chips (product)
 
@@ -598,7 +640,7 @@ const translations = {
     'seller.th_status': { id: 'Status Order', en: 'Order Status' },
     'seller.th_date': { id: 'Tanggal Berlangsung', en: 'Date' },
     'seller.st_pending': { id: '⏳ Menunggu Dibayar', en: '⏳ Awaiting Payment' },
-    'seller.st_paid': { id: '⚠️ Perlu Diproses', en: '⚠️ Needs Processing' },
+    'seller.st_paid': { id: '⏳ Perlu Diproses', en: '⏳ Needs Processing' },
     'seller.st_processed': { id: '📦 Sedang Dikemas', en: '📦 Being Packed' },
     'seller.st_shipped': { id: '🚚 Meluncur Dikirim', en: '🚚 Shipped' },
     'seller.st_completed': { id: '✅ Transaksi Selesai', en: '✅ Completed' },
@@ -653,6 +695,10 @@ const translations = {
     'profile_edit.change_photo': { id: 'Ubah Foto Profil', en: 'Change Profile Photo' },
     'profile_edit.save': { id: 'Simpan Perubahan', en: 'Save Changes' },
     'profile_edit.confirm_password': { id: 'Konfirmasi Sandi Baru', en: 'Confirm New Password' },
+    'profile.saving': { id: 'Menyimpan Perubahan...', en: 'Saving Changes...' },
+    'profile.saving_desc': { id: 'Mohon tunggu sebentar selagi kami mengamankan data Anda.', en: 'Please wait a moment while we secure your data.' },
+    'profile.updating_password': { id: 'Memperbarui Sandi...', en: 'Updating Password...' },
+    'profile.updating_password_desc': { id: 'Mohon tunggu, kami sedang mengamankan akses akun Anda.', en: 'Please wait, we are securing your account access.' },
 
     // ========== SELLER PRODUCTS PAGE ==========
     'seller_products.title': { id: 'Produk Saya', en: 'My Products' },
@@ -728,6 +774,188 @@ const translations = {
     'login.demo_title': { id: '💡 Akun Demo (Auto-Fill Aktif):', en: '💡 Demo Account (Auto-Fill Active):' },
     'login.demo_desc': { id: 'Pilih tab di atas untuk mengisi akun secara otomatis.', en: 'Select a tab above to auto-fill credentials.' },
     'login.divider_or': { id: 'atau', en: 'or' },
+    // Auto-generated backend keys
+    'admin.btn_chat': { id: 'Chat', en: 'Chat' },
+    // Auto-generated backend keys
+    'admin.col_email': { id: 'EMAIL', en: 'EMAIL' },
+    // Auto-generated backend keys
+    'admin.col_id': { id: 'ID', en: 'ID' },
+    // Auto-generated backend keys
+    'admin.col_order_id': { id: 'ORDER ID', en: 'ORDER ID' },
+    // Auto-generated backend keys
+    'admin.col_role': { id: 'PERAN', en: 'ROLE' },
+    // Auto-generated backend keys
+    'admin.col_status': { id: 'STATUS', en: 'STATUS' },
+    // Auto-generated backend keys
+    'admin.col_total': { id: 'TOTAL', en: 'TOTAL' },
+    // Auto-generated backend keys
+    'admin.col_username': { id: 'NAMA PENGGUNA', en: 'USERNAME' },
+    // Auto-generated backend keys
+    'admin.dividend_desc': { id: 'Total Pendapatan Platform Bersih (10% dari GMV)', en: 'Net Platform Profit (10% of GMV)' },
+    // Auto-generated backend keys
+    'auth.email_not_found': { id: 'Email tidak ditemukan.', en: 'Email not found.' },
+    // Auto-generated backend keys
+    'auth.error_generic': { id: 'Terjadi kesalahan sistem. Coba lagi nanti.', en: 'System error occurred. Please try again later.' },
+    // Auto-generated backend keys
+    'auth.password_mismatch': { id: 'Password tidak cocok.', en: 'Passwords do not match.' },
+    // Auto-generated backend keys
+    'auth.password_reset_failed': { id: 'Gagal mengatur ulang password.', en: 'Failed to reset password.' },
+    // Auto-generated backend keys
+    'auth.password_reset_success': { id: 'Password berhasil diatur ulang.', en: 'Password successfully reset.' },
+    // Auto-generated backend keys
+    'auth.register_failed': { id: 'Pendaftaran gagal.', en: 'Registration failed.' },
+    // Auto-generated backend keys
+    'auth.register_success': { id: 'Pendaftaran berhasil! Silakan login.', en: 'Registration successful! Please login.' },
+    // Auto-generated backend keys
+    'auth.request_failed': { id: 'Permintaan gagal diproses.', en: 'Request failed to process.' },
+    // Auto-generated backend keys
+    'auth.reset_link_sent': { id: 'Link reset password telah dikirim.', en: 'Password reset link has been sent.' },
+    // Auto-generated backend keys
+    'auth.role_denied': { id: 'Akses ditolak untuk peran %s.', en: 'Access denied for role %s.' },
+    // Auto-generated backend keys
+    'auth.server_error': { id: 'Terjadi masalah pada server.', en: 'A server issue occurred.' },
+    // Auto-generated backend keys
+    'auth.token_invalid': { id: 'Token tidak valid atau kadaluarsa.', en: 'Invalid or expired token.' },
+    // Auto-generated backend keys
+    'auth.username_taken': { id: 'Username atau Email sudah terdaftar.', en: 'Username or Email is already taken.' },
+    // Auto-generated backend keys
+    'auth.welcome_back': { id: 'Selamat datang kembali!', en: 'Welcome back!' },
+    // Auto-generated backend keys
+    'auth.wrong_credentials': { id: 'Username atau Password salah.', en: 'Incorrect Username or Password.' },
+    // Auto-generated backend keys
+    'cart.cleared': { id: '[ID] Berhasil: Cleared', en: '[EN] Cleared' },
+    // Auto-generated backend keys
+    'cart.cleared_flash': { id: '[ID] Berhasil: Cleared Flash', en: '[EN] Cleared Flash' },
+    // Auto-generated backend keys
+    'cart.insufficient_stock': { id: '[ID] Gagal: Insufficient Stock', en: '[EN] Insufficient Stock' },
+    // Auto-generated backend keys
+    'cart.item_removed': { id: '[ID] Berhasil Dihapus', en: '[EN] Successfully Removed' },
+    // Auto-generated backend keys
+    'cart.item_removed_flash': { id: '[ID] Berhasil Dihapus', en: '[EN] Successfully Removed' },
+    // Auto-generated backend keys
+    'cart.max_stock': { id: '[ID] Max Stock', en: '[EN] Max Stock' },
+    // Auto-generated backend keys
+    'cart.min_quantity': { id: '[ID] Min Quantity', en: '[EN] Min Quantity' },
+    // Auto-generated backend keys
+    'cart.out_of_stock': { id: '[ID] Out Of Stock', en: '[EN] Out Of Stock' },
+    // Auto-generated backend keys
+    'cart.own_product': { id: '[ID] Own Product', en: '[EN] Own Product' },
+    // Auto-generated backend keys
+    'cart.own_product_flash': { id: '[ID] Own Product Flash', en: '[EN] Own Product Flash' },
+    // Auto-generated backend keys
+    'cart.product_added': { id: '[ID] Berhasil Ditambahkan', en: '[EN] Successfully Added' },
+    // Auto-generated backend keys
+    'cart.product_added_quantity': { id: '[ID] Berhasil Ditambahkan', en: '[EN] Successfully Added' },
+    // Auto-generated backend keys
+    'cart.product_not_found': { id: '[ID] Tidak Ditemukan', en: '[EN] Not Found' },
+    // Auto-generated backend keys
+    'cart.server_error': { id: '[ID] Gagal: Server Error', en: '[EN] Server Error' },
+    // Auto-generated backend keys
+    'dashboard.store_save_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'dashboard.store_updated': { id: '[ID] Berhasil Diperbarui', en: '[EN] Successfully Updated' },
+    // Auto-generated backend keys
+    'order.already_rejected': { id: '[ID] Already Rejected', en: '[EN] Already Rejected' },
+    // Auto-generated backend keys
+    'order.cancel_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'order.cancelled': { id: '[ID] Cancelled', en: '[EN] Cancelled' },
+    // Auto-generated backend keys
+    'order.cart_empty': { id: '[ID] Gagal: Cart Empty', en: '[EN] Cart Empty' },
+    // Auto-generated backend keys
+    'order.checkout_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'order.checkout_success_multi': { id: '[ID] Berhasil: Checkout Success Multi', en: '[EN] Checkout Success Multi' },
+    // Auto-generated backend keys
+    'order.checkout_success_single': { id: '[ID] Berhasil: Checkout Success Single', en: '[EN] Checkout Success Single' },
+    // Auto-generated backend keys
+    'order.complete_success': { id: '[ID] Berhasil: Complete Success', en: '[EN] Complete Success' },
+    // Auto-generated backend keys
+    'order.confirm_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'order.delete_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'order.hide_restriction': { id: '[ID] Hide Restriction', en: '[EN] Hide Restriction' },
+    // Auto-generated backend keys
+    'order.hide_restriction_short': { id: '[ID] Hide Restriction Short', en: '[EN] Hide Restriction Short' },
+    // Auto-generated backend keys
+    'order.history_removed': { id: '[ID] Berhasil Dihapus', en: '[EN] Successfully Removed' },
+    // Auto-generated backend keys
+    'order.item_cancel_error': { id: '[ID] Gagal: Item Cancel Error', en: '[EN] Item Cancel Error' },
+    // Auto-generated backend keys
+    'order.item_cancel_flash': { id: '[ID] Item Cancel Flash', en: '[EN] Item Cancel Flash' },
+    // Auto-generated backend keys
+    'order.item_cancelled': { id: '[ID] Item Cancelled', en: '[EN] Item Cancelled' },
+    // Auto-generated backend keys
+    'order.item_cannot_cancel': { id: '[ID] Item Cannot Cancel', en: '[EN] Item Cannot Cancel' },
+    // Auto-generated backend keys
+    'order.item_not_found': { id: '[ID] Tidak Ditemukan', en: '[EN] Not Found' },
+    // Auto-generated backend keys
+    'order.not_found': { id: '[ID] Tidak Ditemukan', en: '[EN] Not Found' },
+    // Auto-generated backend keys
+    'order.order_not_found': { id: '[ID] Tidak Ditemukan', en: '[EN] Not Found' },
+    // Auto-generated backend keys
+    'order.permanent_deleted': { id: '[ID] Berhasil Dihapus', en: '[EN] Successfully Deleted' },
+    // Auto-generated backend keys
+    'order.processed': { id: '[ID] Berhasil: Processed', en: '[EN] Processed' },
+    // Auto-generated backend keys
+    'order.reject_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'order.rejected': { id: '[ID] Rejected', en: '[EN] Rejected' },
+    // Auto-generated backend keys
+    'order.seller_detail_denied': { id: '[ID] Gagal: Seller Detail Denied', en: '[EN] Seller Detail Denied' },
+    // Auto-generated backend keys
+    'order.seller_process_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'order.seller_reject_error': { id: '[ID] Gagal: Seller Reject Error', en: '[EN] Seller Reject Error' },
+    // Auto-generated backend keys
+    'order.seller_stock_insufficient': { id: '[ID] Gagal: Seller Stock Insufficient', en: '[EN] Seller Stock Insufficient' },
+    // Auto-generated backend keys
+    'order.ship_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'order.shipped': { id: '[ID] Berhasil: Shipped', en: '[EN] Shipped' },
+    // Auto-generated backend keys
+    'order.stock_insufficient': { id: '[ID] Gagal: Stock Insufficient', en: '[EN] Stock Insufficient' },
+    // Auto-generated backend keys
+    'product.add_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'product.added': { id: '[ID] Berhasil Ditambahkan', en: '[EN] Successfully Added' },
+    // Auto-generated backend keys
+    'product.delete_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'product.deleted': { id: '[ID] Berhasil Dihapus', en: '[EN] Successfully Deleted' },
+    // Auto-generated backend keys
+    'product.not_found': { id: '[ID] Tidak Ditemukan', en: '[EN] Not Found' },
+    // Auto-generated backend keys
+    'product.store_not_found': { id: '[ID] Tidak Ditemukan', en: '[EN] Not Found' },
+    // Auto-generated backend keys
+    'product.update_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'product.updated': { id: '[ID] Berhasil Diperbarui', en: '[EN] Successfully Updated' },
+    // Auto-generated backend keys
+    'profile.active_orders': { id: '[ID] Active Orders', en: '[EN] Active Orders' },
+    // Auto-generated backend keys
+    'profile.active_seller_orders': { id: '[ID] Active Seller Orders', en: '[EN] Active Seller Orders' },
+    // Auto-generated backend keys
+    'profile.delete_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'profile.edit_load_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'profile.load_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'profile.password_mismatch': { id: '[ID] Gagal: Password Mismatch', en: '[EN] Password Mismatch' },
+    // Auto-generated backend keys
+    'profile.update_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'profile.updated': { id: '[ID] Berhasil Diperbarui', en: '[EN] Successfully Updated' },
+    // Auto-generated backend keys
+    'profile.username_taken': { id: '[ID] Username Taken', en: '[EN] Username Taken' },
+    // Auto-generated backend keys
+    'user.cannot_delete_self': { id: '[ID] Cannot Delete Self', en: '[EN] Cannot Delete Self' },
+    // Auto-generated backend keys
+    'user.delete_failed': { id: '[ID] Aksi Gagal', en: '[EN] Action Failed' },
+    // Auto-generated backend keys
+    'user.deleted': { id: '[ID] Berhasil Dihapus', en: '[EN] Successfully Deleted' }
 };
 
 /**

@@ -37,11 +37,16 @@
                                     <div
                                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                         <div class="product-category" style="margin-bottom: 0;">
-                                            <% const recoIcons={ 'Obat Bebas' : '💊' , 'Obat Keras' : '💉' , 'Vitamin'
-                                                : '🍊' , 'Alat Kesehatan' : '🩹' , 'Herbal' : '🌿' }; const
-                                                recoIcon=recoIcons[product.category] || '💊' ; %>
+                                            <% const recoIcons={ 'Obat Bebas' : '🟢' , 'Obat Keras' : '💉'
+                                                , 'Obat Nyeri' : '💊' , 'Vitamin' : '🍊' , 'Alat Kesehatan' : '🩹'
+                                                , 'Herbal' : '🌿' }; const recoIcon=recoIcons[product.category] || '💊'
+                                                ; const catKey='category.' +
+                                                product.category.toLowerCase().split(' ').join(' _'); const
+                                                catText=typeof t !=='undefined' ? (t(catKey) !==catKey ? t(catKey) :
+                                                product.category) : product.category; %>
                                                 <%= recoIcon %>
-                                                    <%= product.category %>
+                                                    <span <%- catKey ? `data-i18n="${catKey}" ` : '' %>><%= catText %>
+                                                    </span>
                                         </div>
                                         <% if (product.stock===0) { %>
                                             <span class="stock-badge error"
@@ -115,30 +120,30 @@
                     <a href="/?category=Obat Bebas"
                         class="filter-btn <%= (category === 'Obat Bebas') ? 'active' : '' %>"
                         style="text-decoration: none;">
-                        <span class="filter-icon">💊</span> Obat Bebas
+                        <span class="filter-icon">🟢</span> <span data-i18n="category.obat_bebas">Obat Bebas</span>
                     </a>
                     <a href="/?category=Obat Keras"
                         class="filter-btn <%= (category === 'Obat Keras') ? 'active' : '' %>"
                         style="text-decoration: none;">
-                        <span class="filter-icon">💉</span> Obat Keras
+                        <span class="filter-icon">💉</span> <span data-i18n="category.obat_keras">Obat Keras</span>
                     </a>
                     <a href="/?category=Obat Nyeri"
                         class="filter-btn <%= (category === 'Obat Nyeri') ? 'active' : '' %>"
                         style="text-decoration: none;">
-                        <span class="filter-icon">🩺</span> Obat Nyeri
+                        <span class="filter-icon">💊</span> <span data-i18n="category.obat_nyeri">Obat Nyeri</span>
                     </a>
                     <a href="/?category=Vitamin" class="filter-btn <%= (category === 'Vitamin') ? 'active' : '' %>"
                         style="text-decoration: none;">
-                        <span class="filter-icon">🍊</span> Vitamin
+                        <span class="filter-icon">🍊</span> <span data-i18n="category.vitamin">Vitamin</span>
                     </a>
                     <a href="/?category=Alat Kesehatan"
                         class="filter-btn <%= (category === 'Alat Kesehatan') ? 'active' : '' %>"
                         style="text-decoration: none;">
-                        <span class="filter-icon">🩹</span> Alkes
+                        <span class="filter-icon">🩹</span> <span data-i18n="category.alat_kesehatan">Alkes</span>
                     </a>
                     <a href="/?category=Herbal" class="filter-btn <%= (category === 'Herbal') ? 'active' : '' %>"
                         style="text-decoration: none;">
-                        <span class="filter-icon">🌿</span> Herbal
+                        <span class="filter-icon">🌿</span> <span data-i18n="category.herbal">Herbal</span>
                     </a>
                 </div>
 
@@ -160,11 +165,16 @@
                                         <div
                                             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                             <div class="product-category" style="margin-bottom: 0;">
-                                                <% const icons={ 'Obat Bebas' : '💊' , 'Obat Keras' : '💉' , 'Vitamin'
-                                                    : '🍊' , 'Alat Kesehatan' : '🩹' , 'Herbal' : '🌿' }; const
-                                                    icon=icons[product.category] || '💊' ; %>
+                                                <% const icons={ 'Obat Bebas' : '🟢' , 'Obat Keras' : '💉'
+                                                    , 'Obat Nyeri' : '💊' , 'Vitamin' : '🍊' , 'Alat Kesehatan' : '🩹'
+                                                    , 'Herbal' : '🌿' }; const icon=icons[product.category] || '💊' ;
+                                                    const pgCatKey='category.' +
+                                                    product.category.toLowerCase().split(' ').join(' _'); const
+                                                    pgCatText=typeof t !=='undefined' ? (t(pgCatKey) !==pgCatKey ?
+                                                    t(pgCatKey) : product.category) : product.category; %>
                                                     <%= icon %>
-                                                        <%= product.category %>
+                                                        <span <%- pgCatKey ? `data-i18n="${pgCatKey}" ` : '' %>><%=
+                                                                pgCatText %></span>
                                             </div>
                                             <% if (product.stock===0) { %>
                                                 <span class="stock-badge error"
@@ -205,16 +215,18 @@
                                             <div class="product-price">Rp <%=
                                                     parseInt(product.price).toLocaleString('id-ID') %>
                                             </div>
-                                            <form action="/cart/add" method="POST">
-                                                <input type="hidden" name="productId" value="<%= product.id %>">
-                                                <button type="submit" class="btn-add-cart" <%=product.stock===0
-                                                    ? 'disabled' : '' %>>
-                                                    <% if (product.stock===0) { %>
-                                                        <span data-i18n="index.btn_out_of_stock">Habis</span>
-                                                        <% } else { %>
-                                                            <span data-i18n="index.btn_add_cart">+ Keranjang</span>
-                                                            <% } %>
-                                                </button>
+                                            <form action="/cart/add" method="POST" <% if (!currentUser) { %>
+                                                onsubmit="return promptLogin(event, 'menambah produk ke keranjang');" <%
+                                                    } %>>
+                                                    <input type="hidden" name="productId" value="<%= product.id %>">
+                                                    <button type="submit" class="btn-add-cart" <%=product.stock===0
+                                                        ? 'disabled' : '' %>>
+                                                        <% if (product.stock===0) { %>
+                                                            <span data-i18n="index.btn_out_of_stock">Habis</span>
+                                                            <% } else { %>
+                                                                <span data-i18n="index.btn_add_cart">+ Keranjang</span>
+                                                                <% } %>
+                                                    </button>
                                             </form>
                                         </div>
                                     </div>
@@ -257,8 +269,8 @@
                 🛍️
             </div>
             <div style="display: flex; flex-direction: column;">
-                <span
-                    style="font-size: 11px; color: rgba(255,255,255,0.95); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase;">
+                <span data-i18n="index.total_shopping"
+                    style="font-size: 11px; color: rgba(255,255,255,0.95); font-weight: 500; letter-spacing: 0.5px;">
                     Total Belanja
                 </span>
                 <div style="display: flex; align-items:baseline; gap: 6px;">
@@ -273,24 +285,24 @@
             </div>
         </div>
 
-        <button onclick="window.location.href='/cart'" class="checkout-pulse-btn" style="
-            background: var(--bg-white); 
-            color: #FF5252; 
-            border: none; 
-            padding: 8px 16px; 
-            border-radius: 99px; 
-            font-size: 13px;
-            font-weight: 800; 
-            cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        ">
-            <span data-i18n="index.continue">Lanjut</span> <span style="font-size: 14px;">➔</span>
+        <button <% if (!currentUser) { %> onclick="return promptLogin(event, 'melanjutkan ke pembayaran');" <% } else {
+                %> onclick="window.location.href='/cart'" <% } %> class="checkout-pulse-btn" style="
+                    background: var(--bg-white);
+                    color: #FF5252;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 99px;
+                    font-size: 13px;
+                    font-weight: 800;
+                    cursor: pointer;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    letter-spacing: 0.5px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    ">
+                    <span data-i18n="index.continue">Lanjut</span> <span style="font-size: 14px;">➔</span>
         </button>
     </div>
 

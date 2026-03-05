@@ -1,5 +1,6 @@
 const { Order, OrderItem, Product, User, Cart, CartItem, sequelize } = require('../models');
 const { Op } = require('sequelize');
+const { Invoice } = require('../utils/xendit');
 
 const updateOrderStatus = async (orderId, transaction = null) => {
     const options = transaction ? { transaction } : {};
@@ -9,8 +10,18 @@ const updateOrderStatus = async (orderId, transaction = null) => {
     const activeItems = items.filter(i => i.status !== 'cancelled' && i.status !== 'rejected');
 
     // Recalculate true Total Price left for the Invoice
-    const recalculatedTotal = activeItems.reduce((acc, i) => acc + (parseFloat(i.price_at_purchase) * i.quantity), 0);
+    const recalculatedTotal = parseFloat(activeItems.reduce((acc, i) => acc + (parseFloat(i.price_at_purchase) * i.quantity), 0));
+
+    const order = await Order.findByPk(orderId, options);
+    if (!order) return;
+
     const updatePayload = { total_price: recalculatedTotal };
+
+    // If total price changed (e.g. an item was cancelled), void the old invoice link
+    // so we can regenerate it with the correct amount.
+    if (parseFloat(order.total_price) !== recalculatedTotal) {
+        updatePayload.invoice_url = null;
+    }
 
     if (activeItems.length === 0) {
         // Distinguish between purely rejected vs cancelled vs mixed
@@ -35,11 +46,19 @@ const updateOrderStatus = async (orderId, transaction = null) => {
         return;
     }
 
+    // Removed duplicate findByPk call
+
     const allActiveCompleted = activeItems.every(i => i.status === 'completed');
     const allActiveShipped = activeItems.every(i => i.status === 'shipped' || i.status === 'completed');
     const anyActiveProcessed = activeItems.some(i => i.status === 'processed' || i.status === 'shipped' || i.status === 'completed');
 
-    let newStatus = 'paid';
+    // If ANY item is paid, or the order was already paid, the base state is 'paid'
+    // Otherwise, if all items are pending, the base state is 'pending'
+    const anyItemPaid = activeItems.some(i => i.status === 'paid');
+    const isActuallyPaid = order.status !== 'pending' || anyItemPaid;
+
+    let newStatus = isActuallyPaid ? 'paid' : 'pending';
+
     if (allActiveCompleted) newStatus = 'completed';
     else if (allActiveShipped) newStatus = 'shipped';
     else if (anyActiveProcessed) newStatus = 'processing';
@@ -47,8 +66,8 @@ const updateOrderStatus = async (orderId, transaction = null) => {
     updatePayload.status = newStatus;
     await Order.update(updatePayload, { where: { id: orderId }, ...options });
 };
-
 module.exports = {
+    updateOrderStatus,
     // Create Order
     create: async (req, res) => {
         const { recipient_name, recipient_phone, shipping_address, payment_method } = req.body;
@@ -76,6 +95,9 @@ module.exports = {
         }
 
         if (cart.length === 0) {
+            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+                return res.status(400).json({ success: false, message: req.t('order.cart_empty') });
+            }
             req.flash('error', req.t('order.cart_empty'));
             return res.redirect('/cart');
         }
@@ -106,8 +128,8 @@ module.exports = {
                 const order = await Order.create({
                     user_id: req.session.user.id,
                     total_price: group.total,
-                    status: 'paid',
-                    payment_method,
+                    status: 'pending', // Pending payment
+                    payment_method: payment_method || 'midtrans',
                     recipient_name,
                     recipient_phone,
                     shipping_address
@@ -148,17 +170,68 @@ module.exports = {
             } else {
                 req.session.cart = [];
             }
+
+            // Create Xendit Invoice
+            const totalGross = Object.values(ordersBySeller).reduce((sum, group) => sum + group.total, 0);
+
+            const externalId = `MASTER-${Date.now()}-${createdOrderIds.join('-')}`;
+
+            const invoiceItems = cart.map(item => ({
+                name: item.name.substring(0, 50),
+                price: item.price,
+                quantity: item.quantity,
+                category: 'Health & Pharmacy'
+            }));
+
+            const invoiceData = {
+                externalId: externalId,
+                amount: totalGross,
+                description: `Purchase for order ${externalId}`,
+                customer: {
+                    givenNames: recipient_name.substring(0, 50),
+                    mobileNumber: recipient_phone
+                    // address info is available but Xendit simplified payload is usually enough
+                },
+                items: invoiceItems,
+                successRedirectUrl: `${req.protocol}://${req.get('host')}/user/dashboard?checkout=success&order_ids=${createdOrderIds.join(',')}`,
+                failureRedirectUrl: `${req.protocol}://${req.get('host')}/cart?checkout=failed&order_ids=${createdOrderIds.join(',')}`
+            };
+
+            const invoiceResponse = await Invoice.createInvoice({ data: invoiceData });
+            const invoiceUrl = invoiceResponse.invoiceUrl;
+
+            // Store external_id and invoice_url for polling fallback and "Pay Now" logic
+            await Order.update({
+                external_id: externalId,
+                invoice_url: invoiceUrl
+            }, { where: { id: createdOrderIds } });
+
+            // Return JSON response for AJAX to catch and redirect
+            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+                return res.json({
+                    success: true,
+                    invoiceUrl: invoiceUrl,
+                    orderIds: createdOrderIds
+                });
+            }
+
+            // Fallback
             req.session.save(() => {
                 const flashMsg = createdOrderIds.length > 1
                     ? req.t('order.checkout_success_multi', createdOrderIds.length)
                     : req.t('order.checkout_success_single');
                 req.flash('success_msg', flashMsg);
-                res.redirect('/user/dashboard');
+                res.redirect('/user/dashboard?checkout=success');
             });
 
         } catch (err) {
             await t.rollback();
-            console.error(err);
+            console.error('Checkout error:', err);
+
+            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+                return res.status(500).json({ success: false, message: req.t('order.checkout_failed', err.message) });
+            }
+
             req.flash('error', req.t('order.checkout_failed', err.message));
             res.redirect('/cart');
         }
@@ -192,8 +265,10 @@ module.exports = {
                 quantity: i.quantity,
                 status: i.status,
                 price_at_purchase: i.price_at_purchase,
+                product_id: i.product_id,
                 product_name: i.Product ? i.Product.name : 'Unknown Product',
                 image_url: i.Product ? i.Product.image_url : '',
+                seller: i.seller,
                 seller_name: i.seller ? i.seller.full_name : 'Unknown Seller',
                 seller_address: i.seller ? i.seller.address : 'Alamat Seller Tidak Tersedia',
                 order_id: i.order_id
@@ -608,6 +683,126 @@ module.exports = {
                 req.flash('error', req.t('order.delete_failed', err.message));
                 res.redirect('/admin/dashboard');
             });
+        }
+    },
+
+    // Xendit Webhook Notification
+    xenditWebhook: async (req, res) => {
+        try {
+            // Verify callback token if you have it in .env
+            const callbackToken = req.headers['x-callback-token'];
+            if (process.env.XENDIT_CALLBACK_TOKEN && callbackToken !== process.env.XENDIT_CALLBACK_TOKEN) {
+                return res.status(401).json({ status: 'error', message: 'Unauthorized' });
+            }
+
+            const { external_id, status } = req.body;
+            console.log(`Xendit webhook received for ${external_id}. Status: ${status}`);
+
+            // Parse external_id (e.g., "MASTER-123456789-1-2-3")
+            const parts = external_id.split('-');
+            const orderIds = parts.slice(2);
+
+            let newStatus = 'pending';
+
+            if (status === 'PAID' || status === 'SETTLED') {
+                newStatus = 'paid';
+            } else if (status === 'EXPIRED') {
+                newStatus = 'cancelled';
+            }
+
+            // Update all related Orders and their items
+            const t = await sequelize.transaction();
+            try {
+                for (let oid of orderIds) {
+                    await Order.update({ status: newStatus }, { where: { id: oid }, transaction: t });
+                    await OrderItem.update({ status: newStatus }, { where: { order_id: oid }, transaction: t });
+
+                    // Trigger internal status sync (handling partially processed logic if needed)
+                    await updateOrderStatus(oid, t);
+                }
+                await t.commit();
+                res.status(200).json({ status: 'success', message: 'OK' });
+            } catch (updateErr) {
+                await t.rollback();
+                console.error('Failed to update orders from Xendit webhook:', updateErr);
+                res.status(500).json({ status: 'error', message: 'Database update failed' });
+            }
+
+        } catch (err) {
+            console.error('Xendit Notification Error:', err);
+            res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+        }
+    },
+
+    // Resume Payment (Regenerate Invoice if needed)
+    resumePayment: async (req, res) => {
+        try {
+            const order = await Order.findOne({
+                where: { id: req.params.id, user_id: req.session.user.id },
+                include: [{ model: OrderItem, as: 'items', include: [Product] }]
+            });
+
+            if (!order) {
+                req.flash('error', req.t('order.not_found'));
+                return res.redirect('/user/dashboard');
+            }
+
+            if (order.status !== 'pending') {
+                req.flash('error', 'Pesanan ini sudah dibayar atau tidak bisa dilanjutkan.');
+                return res.redirect('/orders/' + order.id);
+            }
+
+            // If we have a valid invoice_url and price matches, use it
+            if (order.invoice_url) {
+                return res.redirect(order.invoice_url);
+            }
+
+            // Otherwise, generate a NEW invoice with current active items
+            const activeItems = (order.items || []).filter(i => i.status !== 'cancelled' && i.status !== 'rejected');
+
+            if (activeItems.length === 0) {
+                req.flash('error', 'Semua item dalam pesanan ini telah dibatalkan.');
+                return res.redirect('/orders/' + order.id);
+            }
+
+            const totalGross = parseFloat(order.total_price);
+            const externalId = `RENEW-${Date.now()}-${order.id}`;
+
+            const invoiceItems = activeItems.map(item => ({
+                name: (item.Product ? item.Product.name : 'Product').substring(0, 50),
+                price: parseFloat(item.price_at_purchase),
+                quantity: item.quantity,
+                category: 'Health & Pharmacy'
+            }));
+
+            const invoiceData = {
+                externalId: externalId,
+                amount: totalGross,
+                description: `Payment for order #ORD-${order.id}`,
+                customer: {
+                    givenNames: order.recipient_name.substring(0, 50),
+                    mobileNumber: order.recipient_phone
+                },
+                items: invoiceItems,
+                successRedirectUrl: `${req.protocol}://${req.get('host')}/user/dashboard?checkout=success&order_ids=${order.id}`,
+                failureRedirectUrl: `${req.protocol}://${req.get('host')}/cart?checkout=failed&order_ids=${order.id}`
+            };
+
+            const invoiceResponse = await Invoice.createInvoice({ data: invoiceData });
+            const invoiceUrl = invoiceResponse.invoiceUrl;
+
+            // Update order with NEW link and external_id
+            await order.update({
+                invoice_url: invoiceUrl,
+                external_id: externalId
+            });
+
+            res.redirect(invoiceUrl);
+
+        } catch (err) {
+            console.error('Resume payment error:', err);
+            req.flash('error', 'Gagal memproses pembayaran. Silakan coba lagi nanti.');
+            res.redirect('/orders/' + req.params.id);
         }
     }
 };

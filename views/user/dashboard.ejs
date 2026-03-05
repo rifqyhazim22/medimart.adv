@@ -107,137 +107,7 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .order-card {
-            background: var(--bg-white);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            padding: 24px;
-            margin-bottom: 24px;
-            transition: all 0.2s;
-        }
 
-        .order-card:hover {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border-color: var(--border);
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #f9fafb;
-        }
-
-        .order-info {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
-
-        .order-icon-box {
-            width: 48px;
-            height: 48px;
-            background: var(--border);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .order-details h3 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .order-date {
-            margin: 4px 0 0;
-            color: var(--text-gray);
-            font-size: 13px;
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 9999px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .status-badge.completed,
-        .status-badge.paid {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-badge.cancelled,
-        .status-badge.rejected {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .status-badge.processing,
-        .status-badge.shipped {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .status-badge.pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .order-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 8px;
-        }
-
-        .total-label {
-            font-size: 13px;
-            color: var(--text-gray);
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        .total-amount {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn-detail {
-            display: inline-flex;
-            align-items: center;
-            padding: 10px 20px;
-            background: #00B09B;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: all 0.2s;
-            border: none;
-            box-shadow: 0 4px 6px -1px rgba(0, 176, 155, 0.2);
-        }
-
-        .btn-detail:hover {
-            background: #009684;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 8px -1px rgba(0, 176, 155, 0.3);
-        }
 
         .btn-ghost-danger {
             display: inline-flex;
@@ -315,75 +185,109 @@
             </div>
 
             <!-- Recent Orders Preview -->
-            <div class="section-header"
-                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                <h2 class="section-title" style="margin: 0; border: none;" data-i18n="user.recent_orders">Pesanan
-                    Terbaru</h2>
-                <a href="/user/orders" class="btn-detail" style="padding: 8px 16px; font-size: 14px;"
-                    data-i18n="user.view_all_orders">📦 Lihat Semua Pesanan</a>
-            </div>
-
-
-            <% if (recentOrders.length===0) { %>
-                <div class="empty-state">
-                    <span class="empty-icon">🛍️</span>
-                    <h3 style="color: var(--text-dark); margin: 0 0 8px 0;" data-i18n="user.no_orders">
-                        Belum ada pesanan</h3>
-                    <p style="color: var(--text-gray); margin: 0 0 20px 0;" data-i18n="user.no_orders_desc">Yuk,
-                        mulai belanja kebutuhan kesehatanmu sekarang!</p>
-                    <a href="/" class="btn-detail" data-i18n="user.shop_again">🛍️ Belanja Sekarang</a>
+            <div
+                style="margin-top: 24px; background: var(--bg-white); padding: 24px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0; color: var(--text-dark); font-size: 18px;"><span
+                            data-i18n="user.recent_orders">Pesanan Terbaru</span> 🛍️</h3>
+                    <a href="/user/orders"
+                        style="color: #00B09B; text-decoration: none; font-size: 14px; font-weight: 600; padding: 6px 12px; background: var(--bg-light); border: 1px solid var(--border); border-radius: 8px; transition: background 0.2s;"
+                        onmouseover="this.style.background='var(--border)'"
+                        onmouseout="this.style.background='var(--bg-light)'"><span data-i18n="user.view_all_orders">📦
+                            Lihat Semua Pesanan</span> &rarr;</a>
                 </div>
-                <% } else { %>
-                    <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px;">
-                        <% recentOrders.forEach(order=> { %>
-                            <div class="order-card" style="margin-bottom: 0;">
-                                <div class="order-header" style="margin-bottom: 12px; padding-bottom: 12px;">
-                                    <div class="order-info">
-                                        <div class="order-icon-box">📦</div>
-                                        <div class="order-details">
-                                            <h3>#ORD-<%= order.id %>
-                                            </h3>
-                                            <p class="order-date">
-                                                <%= new Date(order.createdAt).toLocaleDateString('id-ID', {
-                                                    day: 'numeric' , month: 'short' , year: 'numeric' }) %>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <% var badgeClass=order.status; var i18nStatusKey='user.status_' + order.status
-                                        + '_short' ; var badgeText=order.status; if (order.status==='paid' )
-                                        badgeText='✅ Menunggu Dikemas' ; else if (order.status==='processing' )
-                                        badgeText='⏳ Diproses' ; else if (order.status==='shipped' )
-                                        badgeText='🚚 Dikirim' ; else if (order.status==='completed' )
-                                        badgeText='🎉 Selesai' ; else if (order.status==='cancelled' )
-                                        badgeText='❌ Dibatalkan' ; else if (order.status==='rejected' )
-                                        badgeText='⛔ Ditolak' ; %>
-                                        <span class="status-badge <%= badgeClass %>" data-i18n="<%= i18nStatusKey %>">
-                                            <%= badgeText %>
-                                        </span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <span style="font-size: 13px; color: var(--text-gray);"
-                                            data-i18n="user.items_count">Item:</span>
-                                        <strong>
-                                            <%= order.items ? order.items.length : 0 %>
-                                        </strong>
-                                    </div>
-                                    <a href="/orders/<%= order.id %>" class="btn-detail"
-                                        style="padding: 8px 16px; font-size: 13px;"
-                                        data-i18n="user.detail_invoice">Detail Invoice</a>
-                                </div>
-                            </div>
-                            <% }); %>
-                    </div>
 
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <a href="/user/orders"
-                            style="color: #00B09B; font-weight: 600; text-decoration: none; font-size: 15px;"
-                            data-i18n="user.see_full_history">Lihat Riwayat Lengkap →</a>
+
+                <% if (recentOrders.length===0) { %>
+                    <div class="empty-state" style="border: none; box-shadow: none; margin-top: 0;">
+                        <span class="empty-icon">🛍️</span>
+                        <h3 style="color: var(--text-dark); margin: 0 0 8px 0;" data-i18n="user.no_orders">
+                            Belum ada pesanan</h3>
+                        <p style="color: var(--text-gray); margin: 0 0 20px 0;" data-i18n="user.no_orders_desc">Yuk,
+                            mulai belanja kebutuhan kesehatanmu sekarang!</p>
+                        <a href="/" class="btn-detail"
+                            style="display: inline-flex; align-items: center; padding: 10px 20px; background: #00B09B; color: white; font-weight: 600; font-size: 14px; border-radius: 8px; text-decoration: none; transition: all 0.2s; border: none; box-shadow: 0 4px 6px -1px rgba(0, 176, 155, 0.2);"
+                            data-i18n="user.shop_again">🛍️ Belanja Sekarang</a>
                     </div>
-                    <% } %>
+                    <% } else { %>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid var(--border); background: var(--bg-light);">
+                                        <th
+                                            style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center;">
+                                            NO. INVOICE</th>
+                                        <th style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; text-align: left;"
+                                            data-i18n="user.items_count">ITEM</th>
+                                        <th style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center;"
+                                            data-i18n="user.total_spent">TOTAL BELANJA</th>
+                                        <th style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center;"
+                                            data-i18n="user.th_status">STATUS ORDER</th>
+                                        <th style="padding: 12px 16px; color: var(--text-gray); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center;"
+                                            data-i18n="user.th_date">TANGGAL BERLANGSUNG</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% recentOrders.forEach(order=> { %>
+                                        <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;"
+                                            onmouseover="this.style.background='var(--bg-light)'"
+                                            onmouseout="this.style.background='transparent'">
+                                            <td
+                                                style="padding: 16px; font-weight: 600; color: var(--text-dark); font-size: 14px; text-align: center;">
+                                                #ORD-<%= order.id %>
+                                            </td>
+                                            <td
+                                                style="padding: 16px; color: var(--text-gray); font-size: 14px; text-align: left;">
+                                                <span style="font-weight: 700; color: #00B09B;">
+                                                    <%= order.items ? order.items.length : 0 %>
+                                                </span> Item
+                                            </td>
+                                            <td
+                                                style="padding: 16px; font-weight: 700; color: var(--text-dark); font-size: 14px; text-align: center;">
+                                                Rp <%= parseInt(order.total_price).toLocaleString('id-ID') %>
+                                            </td>
+                                            <td style="padding: 16px; text-align: center;">
+                                                <%- renderOrderBadge(order.status, 'buyer' , order.items, t) %>
+                                            </td>
+                                            <td
+                                                style="padding: 16px; color: var(--text-gray); font-size: 13px; text-align: center;">
+                                                <%= new Date(order.createdAt).toLocaleDateString(typeof lang
+                                                    !=='undefined' && lang==='en' ? 'en-US' : 'id-ID' , {
+                                                    year: 'numeric' , month: 'long' , day: 'numeric' , timeZone: userTz
+                                                    }) %>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } %>
+            </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('checkout') === 'success') {
+                // Fire Confetti!
+                if (typeof confetti !== 'undefined') {
+                    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#FF6B35', '#22c55e', '#E040FB', '#0d9488'] });
+                }
+
+                // Show Success SweetAlert
+                Swal.fire({
+                    icon: 'success',
+                    title: t('toast.checkout_success') || 'Checkout Berhasil!',
+                    html: `<span style="color: var(--text-gray); font-size:15px;">${t('toast.checkout_success_desc') || 'Pesanan Anda sedang diproses oleh penjual.'}</span>`,
+                    confirmButtonColor: '#00B09B',
+                    confirmButtonText: 'Lanjutkan',
+                    showClass: { popup: 'animate__animated animate__zoomIn animate__faster' }
+                });
+
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+    </script>
 
     <%- include('../partials/footer') %>

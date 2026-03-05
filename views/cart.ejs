@@ -100,47 +100,289 @@
 
                 <!-- Order Summary Sidebar -->
                 <div class="order-summary">
-                    <div class="summary-card">
-                        <h3 data-i18n="cart.order_summary">Ringkasan Pesanan</h3>
+                    <style>
+                        .modern-summary {
+                            background: var(--bg-white);
+                            border-radius: 20px;
+                            padding: 32px 24px;
+                            color: var(--text-dark);
+                            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+                            position: relative;
+                            overflow: hidden;
+                            font-family: 'Outfit', sans-serif;
+                            margin-bottom: 24px;
+                            border: 1px solid var(--border);
+                        }
 
-                        <div class="summary-row">
-                            <span>Subtotal (<%= cart.reduce((a, b)=> a + b.quantity, 0) %> item)</span>
-                            <span id="subtotal">Rp <%= subtotal.toLocaleString('id-ID') %></span>
+                        .modern-summary::before {
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            height: 6px;
+                            background: linear-gradient(90deg, #6ee7b7, #fde047, #f9a8d4, #fca5a5);
+                        }
+
+                        .modern-summary-title {
+                            font-size: 22px;
+                            font-weight: 800;
+                            margin: 0 0 24px 0;
+                            color: var(--text-dark);
+                        }
+
+                        .modern-summary-row {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 16px;
+                            font-size: 15px;
+                            color: var(--text-gray);
+                            font-weight: 500;
+                        }
+
+                        .modern-summary-row .val {
+                            color: var(--text-dark);
+                            font-weight: 700;
+                        }
+
+                        .modern-summary-row .val.free {
+                            color: #10b981;
+                            text-transform: uppercase;
+                            font-weight: 800;
+                            letter-spacing: 0.5px;
+                        }
+
+                        .modern-summary-row .val.discount {
+                            color: #10b981;
+                        }
+
+                        .modern-total-box {
+                            background: var(--bg-white);
+                            border: 2px solid var(--border);
+                            border-radius: 12px;
+                            padding: 20px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin: 32px 0;
+                        }
+
+                        .modern-total-label {
+                            font-size: 18px;
+                            font-weight: 800;
+                            color: var(--text-dark);
+                        }
+
+                        .modern-total-value {
+                            font-size: 24px;
+                            font-weight: 800;
+                            color: #10b981;
+                        }
+
+                        .modern-checkout-btn {
+                            background: linear-gradient(135deg, #6ee7b7 0%, #34d399 50%, #10b981 100%);
+                            color: #ffffff;
+                            width: 100%;
+                            border-radius: 16px;
+                            padding: 16px;
+                            font-size: 16px;
+                            font-weight: 700;
+                            border: none;
+                            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+                            cursor: pointer;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            gap: 12px;
+                            transition: all 0.3s ease;
+                        }
+
+                        .modern-checkout-btn:hover {
+                            transform: translateY(-2px);
+                            box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4);
+                        }
+
+                        .modern-payment-divider {
+                            border-top: 1px dashed var(--border);
+                            margin: 24px 0;
+                        }
+
+                        .modern-payment-methods {
+                            text-align: center;
+                        }
+
+                        .modern-payment-title {
+                            font-size: 12px;
+                            color: var(--text-gray);
+                            font-weight: 700;
+                            letter-spacing: 1px;
+                            text-transform: uppercase;
+                            margin-bottom: 16px;
+                        }
+
+                        .modern-payment-icons {
+                            display: flex;
+                            justify-content: center;
+                            gap: 16px;
+                            font-size: 24px;
+                        }
+
+                        /* Custom Scrollbar for items */
+                        #checkoutItems::-webkit-scrollbar {
+                            width: 6px;
+                        }
+
+                        #checkoutItems::-webkit-scrollbar-track {
+                            background: transparent;
+                            border-radius: 10px;
+                        }
+
+                        #checkoutItems::-webkit-scrollbar-thumb {
+                            background: var(--border);
+                            border-radius: 10px;
+                        }
+
+                        #checkoutItems::-webkit-scrollbar-thumb:hover {
+                            background: var(--text-gray);
+                        }
+
+                        /* Promo Card Styles */
+                        .modern-promo-card {
+                            background: var(--bg-white);
+                            border-radius: 16px;
+                            padding: 24px;
+                            border: 1px solid var(--border);
+                            margin-bottom: 24px;
+                            font-family: 'Outfit', sans-serif;
+                            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+                        }
+
+                        .modern-promo-title {
+                            font-size: 18px;
+                            font-weight: 800;
+                            margin: 0 0 16px 0;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            color: var(--text-dark);
+                        }
+
+                        .modern-promo-box {
+                            display: flex;
+                            gap: 12px;
+                        }
+
+                        .modern-promo-input {
+                            flex: 1;
+                            padding: 12px 16px;
+                            border-radius: 8px;
+                            border: 1px solid var(--border);
+                            background: var(--bg-light);
+                            color: var(--text-dark);
+                            font-size: 15px;
+                            font-family: inherit;
+                            outline: none;
+                            transition: border-color 0.3s ease;
+                        }
+
+                        .modern-promo-input:focus {
+                            border-color: #10b981;
+                        }
+
+                        .modern-promo-btn {
+                            background: #1e293b;
+                            /* Dark slate matching the ref screenshot */
+                            color: #ffffff;
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+                            border-radius: 8px;
+                            padding: 0 24px;
+                            font-weight: 700;
+                            font-size: 15px;
+                            cursor: pointer;
+                            transition: opacity 0.3s ease;
+                        }
+
+                        [data-theme='light'] .modern-promo-btn {
+                            background: var(--text-dark);
+                        }
+
+                        .modern-promo-btn:hover {
+                            opacity: 0.85;
+                        }
+                    </style>
+                    <div class="modern-summary">
+                        <h3 class="modern-summary-title" data-i18n="cart.order_summary">Order Summary</h3>
+
+                        <!-- Added Items List per user request -->
+                        <div id="checkoutItems"
+                            style="max-height: 200px; overflow-y: auto; margin-bottom: 24px; padding-right: 8px;">
+                            <% cart.forEach(item=> { %>
+                                <div id="summary-item-<%= item.id %>"
+                                    style="display: flex; gap: 12px; margin-bottom: 16px; border-bottom: 1px dashed var(--border); padding-bottom: 16px;">
+                                    <img src="<%= item.image_url || '/img/default-product.svg' %>"
+                                        style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
+                                    <div style="flex: 1;">
+                                        <div
+                                            style="font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--text-dark); line-height: 1.3;">
+                                            <%= item.name %>
+                                        </div>
+                                        <div style="font-size: 12px; color: var(--text-gray); font-weight: 500;">
+                                            <span class="summary-item-qty">
+                                                <%= item.quantity %>
+                                            </span> x Rp <%= parseFloat(item.price).toLocaleString('id-ID') %>
+                                        </div>
+                                    </div>
+                                    <div style="font-weight: 700; font-size: 13px; color: #10b981;"
+                                        class="summary-item-total">
+                                        Rp <%= (item.price * item.quantity).toLocaleString('id-ID') %>
+                                    </div>
+                                </div>
+                                <% }); %>
                         </div>
 
-                        <div class="summary-row">
-                            <span data-i18n="cart.shipping">Ongkos Kirim</span>
-                            <span class="text-primary" id="shipping" data-i18n="cart.free">GRATIS</span>
+                        <div class="modern-summary-row">
+                            <span><span data-i18n="checkout.subtotal">Subtotal</span> (<span id="subtotalItemCount">
+                                    <%= cart.reduce((a, b)=> a + b.quantity, 0) %>
+                                </span> <span data-i18n="misc.item">Item</span>)</span>
+                            <span class="val" id="subtotal">Rp <%= subtotal.toLocaleString('id-ID') %></span>
                         </div>
 
-                        <div class="summary-row">
-                            <span data-i18n="cart.discount">Diskon</span>
-                            <span class="text-success" id="discount">Rp 0</span>
+                        <div class="modern-summary-row">
+                            <span data-i18n="cart.shipping">Shipping</span>
+                            <span class="val free" id="shipping" data-i18n="cart.free">FREE</span>
                         </div>
 
-                        <div class="divider-summary"></div>
+                        <div class="modern-summary-row">
+                            <span data-i18n="cart.discount">Discount</span>
+                            <span class="val discount" id="discount">Rp 0</span>
+                        </div>
 
-                        <div class="summary-row total">
-                            <span>Total</span>
-                            <span id="total">Rp <%= subtotal.toLocaleString('id-ID') %></span>
+                        <div class="modern-total-box">
+                            <span class="modern-total-label" data-i18n="cart.total">Total</span>
+                            <span class="modern-total-value" id="total">Rp <%= subtotal.toLocaleString('id-ID') %>
+                            </span>
                         </div>
 
                         <% if (currentUser) { %>
-                            <button onclick="window.location.href='/checkout'" class="btn-checkout-page"
+                            <button onclick="window.location.href='/checkout'" class="modern-checkout-btn"
                                 <%=cart.length===0 ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : '' %>>
-                                <span data-i18n="cart.checkout_now">Checkout Sekarang</span>
+                                <span data-i18n="cart.checkout_now">Checkout Now</span>
                                 <span>→</span>
                             </button>
                             <% } else { %>
-                                <a href="/login" class="btn-checkout-page"
-                                    style="display: flex; justify-content: center; align-items: center; text-decoration: none;">
-                                    <span data-i18n="cart.login_to_checkout">Login untuk Checkout</span>
+                                <a href="/login" class="modern-checkout-btn" style="text-decoration: none;">
+                                    <span data-i18n="cart.login_to_checkout">Login</span>
+                                    <span>→</span>
                                 </a>
                                 <% } %>
 
-                                    <div class="payment-methods">
-                                        <p data-i18n="cart.payment_methods">Metode Pembayaran:</p>
-                                        <div class="payment-icons">
+                                    <div class="modern-payment-divider"></div>
+
+                                    <div class="modern-payment-methods">
+                                        <div class="modern-payment-title" data-i18n="cart.payment_methods">PAYMENT
+                                            METHODS:</div>
+                                        <div class="modern-payment-icons">
                                             <span>💳</span>
                                             <span>🏦</span>
                                             <span>📱</span>
@@ -150,14 +392,16 @@
                     </div>
 
                     <!-- Promo Code -->
-                    <div class="promo-card">
-                        <h4 data-i18n="cart.promo_title">Punya Kode Promo?</h4>
-                        <div class="promo-box">
-                            <input type="text" data-i18n-placeholder="cart.promo_placeholder"
-                                placeholder="Masukkan kode promo">
-                            <button type="button" class="btn btn-secondary"
+                    <div class="modern-promo-card">
+                        <h4 class="modern-promo-title">
+                            🏷️ <span data-i18n="cart.promo_title">Have a Promo Code?</span>
+                        </h4>
+                        <div class="modern-promo-box">
+                            <input type="text" class="modern-promo-input" data-i18n-placeholder="cart.promo_placeholder"
+                                placeholder="Enter promo code">
+                            <button type="button" class="modern-promo-btn"
                                 onclick="window.showToast(t('toast.promo_unavailable'), 'info')"><span
-                                    data-i18n="cart.promo_apply">Pakai</span></button>
+                                    data-i18n="cart.promo_apply">Apply</span></button>
                         </div>
                     </div>
 
@@ -179,49 +423,64 @@
                 </div>
             </div>
 
-            <!-- Recommended Products (Static for now to match layout) -->
+            <!-- Recommended Products -->
             <div class="recommended-section">
-                <h2 class="section-title" data-i18n="cart.you_may_like">Mungkin Anda Tertarik</h2>
-                <div class="recommended-grid" id="recommendedProducts"
-                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+                <h2 class="section-title" data-i18n="cart.you_may_like" style="margin-bottom: 20px;">Mungkin Anda
+                    Tertarik</h2>
+                <div class="products-grid" id="recommendedProducts" style="margin-bottom: 40px;">
                     <% if (typeof recommendedProducts !=='undefined' && recommendedProducts.length> 0) { %>
                         <% recommendedProducts.forEach(product=> { %>
-                            <div class="product-card"
-                                style="border: 1px solid var(--border); border-radius: 12px; padding: 16px; background: var(--bg-white);">
-                                <div>
-                                    <img src="<%= product.image_url || '/img/default-product.svg' %>"
-                                        style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;">
+                            <div class="product-card" onclick="window.location.href='/product/<%= product.id %>'">
+                                <div class="product-image" style="height: 180px;">
+                                    <% if (product.image_url) { %>
+                                        <img src="<%= product.image_url %>" alt="<%= product.name %>"
+                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                        <% } else { %>
+                                            💊
+                                            <% } %>
                                 </div>
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px;">
-                                    <h3 style="font-size: 16px; margin: 0; flex: 1;">
-                                        <%= product.name %>
-                                    </h3>
-                                    <% if (product.stock===0) { %>
-                                        <span class="stock-badge error"
-                                            style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap;">Habis</span>
-                                        <% } else if (product.stock <=5) { %>
-                                            <span class="stock-badge warning"
-                                                style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap;">Sisa:
-                                                <%= product.stock %>
-                                            </span>
-                                            <% } else { %>
-                                                <span class="stock-badge"
-                                                    style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap;">Stok:
+                                <div class="product-info">
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px;">
+                                        <h3 class="product-title"
+                                            style="font-size: 15px; margin: 0; flex: 1; -webkit-line-clamp: 2;">
+                                            <%= product.name %>
+                                        </h3>
+                                        <% if (product.stock===0) { %>
+                                            <span class="stock-badge error"
+                                                style="background: #fee2e2; color: #dc2626; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; white-space: nowrap;"><span
+                                                    data-i18n="index.out_of_stock">Habis</span></span>
+                                            <% } else if (product.stock <=5) { %>
+                                                <span class="stock-badge warning"
+                                                    style="background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; white-space: nowrap;"><span
+                                                        data-i18n="index.remaining_prefix">Sisa:</span>
                                                     <%= product.stock %>
                                                 </span>
-                                                <% } %>
+                                                <% } else { %>
+                                                    <span class="stock-badge"
+                                                        style="background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; white-space: nowrap;"><span
+                                                            data-i18n="index.stock_prefix">Stok:</span>
+                                                        <%= product.stock %>
+                                                    </span>
+                                                    <% } %>
+                                    </div>
+                                    <div class="product-footer">
+                                        <div class="product-price">Rp <%=
+                                                parseInt(product.price).toLocaleString('id-ID') %>
+                                        </div>
+                                        <form action="/cart/add" method="POST" onclick="event.stopPropagation();">
+                                            <input type="hidden" name="productId" value="<%= product.id %>">
+                                            <button type="submit" class="btn-add-cart" <%=product.stock===0 ? 'disabled'
+                                                : '' %>>
+                                                <% if (product.stock===0) { %>
+                                                    <span data-i18n="index.btn_out_of_stock">Habis</span>
+                                                    <% } else { %>
+                                                        <span data-i18n="index.btn_add_cart">+ Keranjang</span>
+                                                        <% } %>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
-                                <div style="font-weight: 700; color: #FF6B35; margin-bottom: 12px;">Rp <%=
-                                        parseInt(product.price).toLocaleString('id-ID') %>
-                                </div>
-                                <form action="/cart/add" method="POST">
-                                    <input type="hidden" name="productId" value="<%= product.id %>">
-                                    <button type="submit" class="btn-add-cart" <%=product.stock===0 ? 'disabled' : ''
-                                        %>>
-                                        <%= product.stock===0 ? 'Habis' : '+ Keranjang' %>
-                                    </button>
-                                </form>
                             </div>
                             <% }); %>
                                 <% } else { %>
@@ -236,6 +495,26 @@
     <%- include('partials/footer') %>
 
         <script>
+            // Check for checkout failure
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('checkout') === 'failed') {
+                Swal.fire({
+                    title: 'Pembayaran Dibatalkan',
+                    text: 'Anda membatalkan pembayaran atau transaksi gagal. Jangan khawatir, pesanan Anda telah tersimpan di Riwayat Pesanan. Anda dapat melanjutkan pembayaran atau membatalkannya di sana kapan saja.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#FF6B35',
+                    confirmButtonText: 'Buka Riwayat Pesanan',
+                    cancelButtonText: 'Tetap di Sini'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/user/orders';
+                    }
+                    // Clean URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });
+            }
+
             // AJAX Cart Update
             document.querySelectorAll('form[action="/cart/update"]').forEach(form => {
                 form.addEventListener('submit', async (e) => {
@@ -267,10 +546,23 @@
                             if (qtyDisplay) qtyDisplay.textContent = data.itemQuantity;
                             if (itemTotal) itemTotal.innerText = 'Rp ' + parseInt(data.itemTotal).toLocaleString('id-ID');
 
-                            // Update Summary
+                            // Update Sidebar Summary Item
+                            const pId = form.querySelector('input[name="productId"]').value;
+                            const sidebarRow = document.getElementById('summary-item-' + pId);
+                            if (sidebarRow) {
+                                const sideBarQty = sidebarRow.querySelector('.summary-item-qty');
+                                const sideBarTotal = sidebarRow.querySelector('.summary-item-total');
+                                if (sideBarQty) sideBarQty.innerText = data.itemQuantity;
+                                if (sideBarTotal) sideBarTotal.innerText = 'Rp ' + parseInt(data.itemTotal).toLocaleString('id-ID');
+                            }
+
+                            // Update Summary globals
                             document.getElementById('subtotal').innerText = 'Rp ' + parseInt(data.subtotal).toLocaleString('id-ID');
                             document.getElementById('total').innerText = 'Rp ' + parseInt(data.cartTotal).toLocaleString('id-ID');
                             document.getElementById('itemCount').innerText = data.cartCount;
+
+                            const subCount = document.getElementById('subtotalItemCount');
+                            if (subCount) subCount.innerText = data.cartCount;
 
                             // Update Header Badge
                             const badge = document.getElementById('cartBadge');
@@ -390,10 +682,21 @@
                                 cartItem.style.opacity = '0';
                                 setTimeout(() => cartItem.remove(), 300);
 
+                                const pId = form.querySelector('input[name="productId"]').value;
+                                const sidebarRow = document.getElementById('summary-item-' + pId);
+                                if (sidebarRow) {
+                                    sidebarRow.style.transition = 'all 0.3s';
+                                    sidebarRow.style.opacity = '0';
+                                    setTimeout(() => sidebarRow.remove(), 300);
+                                }
+
                                 // Update Totals
                                 document.getElementById('subtotal').innerText = 'Rp ' + parseInt(data.subtotal).toLocaleString('id-ID');
                                 document.getElementById('total').innerText = 'Rp ' + parseInt(data.cartTotal).toLocaleString('id-ID');
                                 document.getElementById('itemCount').innerText = data.cartCount;
+
+                                const subCount = document.getElementById('subtotalItemCount');
+                                if (subCount) subCount.innerText = data.cartCount;
 
                                 // Update Header
                                 const badge = document.getElementById('cartBadge');

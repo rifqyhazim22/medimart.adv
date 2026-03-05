@@ -1,4 +1,6 @@
 <%- include('partials/header') %>
+    <!-- Xendit Invoice Script (Optional if using redirect, but good for styling check) -->
+
     <!-- CSS -->
     <link rel="stylesheet" href="/css/cart.css">
     <style>
@@ -109,6 +111,163 @@
             border-color: #FF5252;
         }
 
+        /* Re-using Modern Summary CSS from cart.ejs */
+        .modern-summary {
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 32px 24px;
+            color: var(--text-dark);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Outfit', sans-serif;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .modern-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #6ee7b7, #fde047, #f9a8d4, #fca5a5);
+        }
+
+        .modern-summary-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 0 0 24px 0;
+            color: var(--text-dark);
+        }
+
+        .modern-summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            font-size: 15px;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        .modern-summary-row .val {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .modern-summary-row .val.free {
+            color: #10b981;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .modern-summary-row .val.discount {
+            color: #10b981;
+        }
+
+        .modern-total-box {
+            background: var(--bg-white);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 32px 0;
+        }
+
+        .modern-total-label {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .modern-total-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #10b981;
+        }
+
+        .modern-checkout-btn {
+            background: linear-gradient(135deg, #6ee7b7 0%, #34d399 50%, #10b981 100%);
+            color: #ffffff;
+            width: 100%;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .modern-checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .modern-payment-divider {
+            border-top: 1px dashed var(--border);
+            margin: 24px 0;
+        }
+
+        .modern-payment-methods {
+            text-align: center;
+        }
+
+        .modern-payment-title {
+            font-size: 12px;
+            color: var(--text-gray);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .modern-payment-icons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            font-size: 24px;
+        }
+
+        /* Custom Scrollbar for items */
+        #checkoutItems::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #checkoutItems::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 10px;
+        }
+
+        #checkoutItems::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        #checkoutItems::-webkit-scrollbar-thumb:hover {
+            background: var(--text-gray);
+        }
+
+        /* Fix Webkit Autofill Background for Dark Mode */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px var(--bg-white) inset !important;
+            -webkit-text-fill-color: var(--text-dark) !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
         @media (max-width: 968px) {
             .checkout-container {
                 grid-template-columns: 1fr;
@@ -163,77 +322,84 @@
                                 <h2>💳 <span data-i18n="checkout.payment_method">Metode Pembayaran</span></h2>
                             </div>
                             <div class="payment-options">
-                                <label class="payment-option selected" onclick="selectPayment(this)">
-                                    <input type="radio" name="payment_method" class="payment-radio" checked
-                                        value="Transfer Bank (BCA/Mandiri)">
-                                    <span data-i18n="checkout.bank_label">🏦 Transfer Bank (BCA/Mandiri)</span>
-                                </label>
-                                <label class="payment-option" onclick="selectPayment(this)">
-                                    <input type="radio" name="payment_method" class="payment-radio"
-                                        value="E-Wallet (GoPay/OVO/Dana)">
-                                    <span data-i18n="checkout.ewallet_label">📱 E-Wallet (GoPay/OVO/Dana)</span>
-                                </label>
-                                <label class="payment-option" onclick="selectPayment(this)">
-                                    <input type="radio" name="payment_method" class="payment-radio"
-                                        value="COD (Bayar di Tempat)">
-                                    <span data-i18n="checkout.cod_label">💰 Bayar di Tempat (COD)</span>
-                                </label>
+                                <div
+                                    style="padding: 16px; border: 2px solid var(--border); border-radius: 12px; background: rgba(16, 185, 129, 0.05); border-color: #10b981; text-align: center;">
+                                    <span style="font-size: 24px; display: block; margin-bottom: 8px;">🛡️</span>
+                                    <strong style="color: var(--text-dark);" data-i18n="checkout.xendit_secure">Secure
+                                        Payment by Xendit</strong>
+                                    <p style="font-size: 13px; color: var(--text-gray); margin-top: 4px;"
+                                        data-i18n="checkout.xendit_desc">Anda akan diarahkan ke halaman pembayaran
+                                        aman Xendit setelah konfirmasi.</p>
+                                </div>
+                                <input type="hidden" name="payment_method" value="xendit">
                             </div>
                         </div>
                     </div>
 
                     <!-- Right Column: Summary -->
                     <div class="order-summary">
-                        <div class="summary-card"
-                            style="background: var(--bg-white); padding: 24px; border-radius: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 100px;">
-                            <h3 data-i18n="cart.order_summary">Ringkasan Pesanan</h3>
+                        <div class="modern-summary" style="position: sticky; top: 100px;">
+                            <h3 class="modern-summary-title" data-i18n="cart.order_summary">Order Summary</h3>
 
-                            <div id="checkoutItems" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+                            <!-- Checkout Items List -->
+                            <div id="checkoutItems"
+                                style="max-height: 200px; overflow-y: auto; margin-bottom: 24px; padding-right: 8px;">
                                 <% cart.forEach(item=> { %>
                                     <div
-                                        style="display: flex; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+                                        style="display: flex; gap: 12px; margin-bottom: 16px; border-bottom: 1px dashed var(--border); padding-bottom: 16px;">
                                         <img src="<%= item.image_url || '/img/default-product.svg' %>"
-                                            style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
+                                            style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
                                         <div style="flex: 1;">
-                                            <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">
+                                            <div
+                                                style="font-size: 14px; font-weight: 600; margin-bottom: 4px; color: var(--text-dark); line-height: 1.3;">
                                                 <%= item.name %>
                                             </div>
-                                            <div style="font-size: 12px; color: var(--text-gray);">
+                                            <div style="font-size: 12px; color: var(--text-gray); font-weight: 500;">
                                                 <%= item.quantity %> x Rp <%=
                                                         parseFloat(item.price).toLocaleString('id-ID') %>
                                             </div>
                                         </div>
-                                        <div style="font-weight: 600; font-size: 14px;">Rp <%= (item.price *
-                                                item.quantity).toLocaleString('id-ID') %>
+                                        <div style="font-weight: 700; font-size: 14px; color: #10b981;">
+                                            Rp <%= (item.price * item.quantity).toLocaleString('id-ID') %>
                                         </div>
                                     </div>
                                     <% }); %>
                             </div>
 
-                            <div class="divider-summary"
-                                style="height: 1px; background: var(--border); margin: 16px 0;">
+                            <div class="modern-summary-row">
+                                <span><span data-i18n="checkout.subtotal">Subtotal</span> (<%= cart.reduce((a, b)=> a +
+                                        b.quantity, 0) %> <span data-i18n="misc.item">Item</span>)</span>
+                                <span class="val" id="subtotal">Rp <%= cartTotal.toLocaleString('id-ID') %></span>
                             </div>
 
-                            <div class="summary-row"
-                                style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span>Subtotal</span>
-                                <span id="subtotal">Rp <%= cartTotal.toLocaleString('id-ID') %></span>
-                            </div>
-                            <div class="summary-row"
-                                style="display: flex; justify-content: space-between; margin-bottom: 16px;">
-                                <span data-i18n="cart.shipping">Ongkos Kirim</span>
-                                <span class="text-primary" style="color: #10b981; font-weight: 600;">GRATIS</span>
-                            </div>
-                            <div class="summary-row total"
-                                style="display: flex; justify-content: space-between; margin-bottom: 24px; font-size: 18px; font-weight: 700;">
-                                <span data-i18n="checkout.total_pay">Total Bayar</span>
-                                <span id="total">Rp <%= cartTotal.toLocaleString('id-ID') %></span>
+                            <div class="modern-summary-row">
+                                <span data-i18n="cart.shipping">Shipping</span>
+                                <span class="val free" data-i18n="cart.free">FREE</span>
                             </div>
 
-                            <button type="submit" class="btn-checkout-page">
-                                <span data-i18n="checkout.confirm_pay">Konfirmasi & Bayar</span>
+                            <div class="modern-total-box">
+                                <span class="modern-total-label" data-i18n="checkout.total_pay">Total Pay</span>
+                                <span class="modern-total-value" id="total">Rp <%= cartTotal.toLocaleString('id-ID') %>
+                                </span>
+                            </div>
+
+                            <button type="submit" class="modern-checkout-btn" style="margin-top: 24px;">
+                                <span data-i18n="checkout.confirm_pay">Confirm & Pay</span>
                                 <span>→</span>
                             </button>
+
+                            <div class="modern-payment-divider"></div>
+
+                            <div class="modern-payment-methods">
+                                <div class="modern-payment-title" data-i18n="cart.payment_methods">PAYMENT METHODS:
+                                </div>
+                                <div class="modern-payment-icons">
+                                    <span>💳</span>
+                                    <span>🏦</span>
+                                    <span>📱</span>
+                                    <span>💰</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -242,37 +408,63 @@
     </div>
 
     <script>
-        // Logika Pilihan Metode Pembayaran
-        function selectPayment(label) {
-            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
-            label.classList.add('selected');
-            label.querySelector('input').checked = true;
-        }
+        // Intersepsi Psikologis Pembayaran & Integrasi Midtrans
+        let isCheckoutSubmitting = false;
+        document.getElementById('checkoutForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-        // Intersepsi Psikologis Pembayaran
-        document.getElementById('checkoutForm').addEventListener('submit', function (e) {
-            e.preventDefault(); // Tahan pengiriman aslinya
+            if (isCheckoutSubmitting) return;
+            isCheckoutSubmitting = true;
 
-            // Tampilkan Modal Penenang
-            Swal.fire({
-                title: t('swal.securing'),
-                html: `<span style="color: var(--text-gray); font-size:15px;">${t('swal.securing_desc')}</span>`,
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                willOpen: () => {
-                    Swal.showLoading();
-                },
-                showClass: {
-                    popup: 'animate__animated animate__fadeIn animate__faster'
-                },
-                customClass: { popup: 'psych-modal' }
-            });
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
 
-            // Tahan secara virtual selama 1.5 detik agar terbentuk esensi "Sistem Sedang Kerja Keras" (Anticipation UX)
-            setTimeout(() => {
-                this.submit();
-            }, 1500);
+            submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width:1rem;height:1rem;border-width:2px;display:inline-block;border: 2px solid white; border-right-color: transparent; border-radius: 50%; animation: spin 0.75s linear infinite;"></span> <span data-i18n="misc.processing">Memproses...</span>`;
+
+            try {
+                const formData = new FormData(this);
+                const payload = Object.fromEntries(formData.entries());
+
+                const response = await fetch('/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Terjadi kesalahan saat membuat pesanan.');
+                }
+
+                // Redirect to Xendit Invoice URL
+                if (result.invoiceUrl) {
+                    window.location.href = result.invoiceUrl;
+                } else {
+                    throw new Error('Invoice URL tidak ditemukan.');
+                }
+
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: t('swal.error_title', 'Ups!'),
+                    text: err.message,
+                    confirmButtonColor: '#FF5252'
+                });
+                isCheckoutSubmitting = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
         });
     </script>
+    <style>
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 
     <%- include('partials/footer') %>

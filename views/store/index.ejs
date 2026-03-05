@@ -132,11 +132,15 @@
                                 <div
                                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                     <div class="product-category" style="margin-bottom: 0;">
-                                        <% const icons={ 'Obat Bebas' : '💊' , 'Obat Keras' : '💉' , 'Vitamin' : '🍊'
-                                            , 'Alat Kesehatan' : '🩹' , 'Herbal' : '🌿' }; const
-                                            icon=icons[product.category] || '💊' ; %>
+                                        <% const icons={ 'Obat Bebas' : '🟢' , 'Obat Keras' : '💉' , 'Obat Nyeri' : '💊'
+                                            , 'Vitamin' : '🍊' , 'Alat Kesehatan' : '🩹' , 'Herbal' : '🌿' }; const
+                                            icon=icons[product.category] || '💊' ; const stCatKey='category.' +
+                                            product.category.toLowerCase().split(' ').join('_'); const stCatText=typeof t
+                                            !=='undefined' ? (t(stCatKey) !==stCatKey ? t(stCatKey) : product.category)
+                                            : product.category; %>
                                             <%= icon %>
-                                                <%= product.category %>
+                                                <span <%- stCatKey ? `data-i18n="${stCatKey}" ` : '' %>><%= stCatText %>
+                                                        </span>
                                     </div>
                                     <% if (product.stock===0) { %>
                                         <span class="stock-badge error"

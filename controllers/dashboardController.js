@@ -1,11 +1,39 @@
 const { User, Product, Order, OrderItem, sequelize } = require('../models');
 const { Op } = require('sequelize');
+const { updateOrderStatus } = require('./orderController');
+const { Invoice } = require('../utils/xendit');
 
 module.exports = {
     // User Dashboard (Stats Only)
     userDashboard: async (req, res) => {
         try {
             const user = req.session.user;
+
+            // Poll for status updates for any pending orders before rendering
+            const pendingOrders = await Order.findAll({
+                where: { user_id: user.id, status: 'pending', external_id: { [Op.ne]: null } }
+            });
+
+            for (const order of pendingOrders) {
+                try {
+                    // Fetch invoices matching this external_id
+                    const invoices = await Invoice.getInvoices({ externalId: order.external_id });
+                    if (invoices && invoices.length > 0) {
+                        const inv = invoices[0]; // Take the first match
+                        if (inv.status === 'PAID' || inv.status === 'SETTLED') {
+                            await Order.update({ status: 'paid' }, { where: { id: order.id } });
+                            await OrderItem.update({ status: 'paid' }, { where: { order_id: order.id } });
+                            await updateOrderStatus(order.id);
+                        } else if (inv.status === 'EXPIRED') {
+                            await Order.update({ status: 'cancelled' }, { where: { id: order.id } });
+                            await OrderItem.update({ status: 'cancelled' }, { where: { order_id: order.id } });
+                            await updateOrderStatus(order.id);
+                        }
+                    }
+                } catch (e) {
+                    console.error(`Polling fallback failed for Order ${order.id}:`, e.message);
+                }
+            }
 
             // Calculate Stats accurately based on authentic Order counts
             const totalOrders = await Order.count({ where: { user_id: user.id, visible_to_customer: true } });
@@ -45,6 +73,31 @@ module.exports = {
     userOrders: async (req, res) => {
         try {
             const user = req.session.user;
+
+            // Poll for status updates for any pending orders
+            const pendingOrders = await Order.findAll({
+                where: { user_id: user.id, status: 'pending', external_id: { [Op.ne]: null } }
+            });
+
+            for (const order of pendingOrders) {
+                try {
+                    const invoices = await Invoice.getInvoices({ externalId: order.external_id });
+                    if (invoices && invoices.length > 0) {
+                        const inv = invoices[0];
+                        if (inv.status === 'PAID' || inv.status === 'SETTLED') {
+                            await Order.update({ status: 'paid' }, { where: { id: order.id } });
+                            await OrderItem.update({ status: 'paid' }, { where: { order_id: order.id } });
+                            await updateOrderStatus(order.id);
+                        } else if (inv.status === 'EXPIRED') {
+                            await Order.update({ status: 'cancelled' }, { where: { id: order.id } });
+                            await OrderItem.update({ status: 'cancelled' }, { where: { order_id: order.id } });
+                            await updateOrderStatus(order.id);
+                        }
+                    }
+                } catch (e) {
+                    console.error(`Polling fallback failed for Order ${order.id}:`, e.message);
+                }
+            }
 
             const orders = await Order.findAll({
                 where: { user_id: user.id, visible_to_customer: true },

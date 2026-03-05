@@ -7,232 +7,507 @@
             padding: 0 20px;
         }
 
-        .detail-card {
-            background: var(--bg-white);
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .detail-header {
-            padding: 24px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg-light);
-        }
-
-        .detail-section {
-            padding: 24px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-        }
-
-        .info-group {
-            margin-bottom: 16px;
-        }
-
-        .info-label {
-            font-size: 13px;
-            color: var(--text-gray);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-
-        .info-value {
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--text-dark);
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 9999px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .status-paid,
-        .status-processed,
-        .status-completed {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-cancelled,
-        .status-rejected {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
         .btn-back {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             color: var(--text-gray);
             text-decoration: none;
+            margin-bottom: 24px;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 99px;
+            background: var(--bg-white);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            color: #FF6B35;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .detail-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .detail-header {
+            padding: 32px;
+            background: linear-gradient(to right, rgba(0, 176, 155, 0.03), rgba(150, 201, 61, 0.03));
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        /* Modern Progress Tracker */
+        .progress-tracker {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 32px 40px;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .step-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-gray);
+            border: 4px solid var(--bg-white);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0 2px var(--border);
+        }
+
+        .step-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-align: center;
+        }
+
+        .step-sub {
+            font-size: 11px;
+            color: #d1d5db;
+        }
+
+        /* Active/Completed States */
+        .progress-step.completed .step-icon {
+            background: #d1fae5;
+            color: #059669;
+            box-shadow: 0 0 0 2px #10b981;
+        }
+
+        .progress-step.completed .step-label {
+            color: #059669;
+        }
+
+        .progress-step.active .step-icon {
+            background: #FF6B35;
+            color: white;
+            box-shadow: 0 0 0 2px #FF6B35;
+            animation: pulse-ring 2s infinite;
+        }
+
+        .progress-step.active .step-label {
+            color: #FF6B35;
+            font-weight: 800;
+        }
+
+        .progress-step.rejected .step-icon {
+            background: #fee2e2;
+            color: #dc2626;
+            box-shadow: 0 0 0 2px #ef4444;
+        }
+
+        .progress-step.rejected .step-label {
+            color: #dc2626;
+        }
+
+        /* Progress Lines Connecting Steps */
+        .progress-line {
+            position: absolute;
+            top: 56px;
+            /* center of icon + padding */
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: var(--border);
+            z-index: 1;
+            border-radius: 4px;
+        }
+
+        .progress-line-fill {
+            height: 100%;
+            background: #10b981;
+            transition: width 0.5s ease;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 107, 53, 0);
+            }
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            padding: 32px;
+        }
+
+        .info-panel {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .info-panel h3 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            margin-top: 0;
             margin-bottom: 20px;
+            color: var(--text-dark);
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .info-group {
+            margin-bottom: 16px;
+        }
+
+        .info-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: var(--text-gray);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .info-value {
+            font-size: 15px;
             font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .action-footer {
+            padding: 24px 32px;
+            background: var(--bg-light);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-action {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-accept {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .btn-accept:hover {
+            background: #10b981;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-reject {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .btn-reject:hover {
+            background: #ef4444;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-ship {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-ship:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 107, 53, 0.3);
         }
     </style>
 
     <div class="detail-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <a href="/seller/orders" class="btn-back" style="margin-bottom: 0;">
-                <span>←</span> <span data-i18n="order_detail.back_seller">Kembali ke Orderan Masuk</span>
-            </a>
-            <% if (order.User) { %>
-                <form action="/chat/start" method="POST" style="margin: 0;">
-                    <input type="hidden" name="sellerId" value="<%= order.User.id %>">
-                    <input type="hidden" name="orderId" value="<%= order.id %>">
-                    <button type="submit"
-                        style="padding: 8px 16px; border-radius: 8px; background: transparent; color: #00B09B; border: 1.5px solid #00B09B; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"
-                        onmouseover="this.style.background='rgba(0,176,155,0.05)'"
-                        onmouseout="this.style.background='transparent'">
-                        💬 <span data-i18n="chat.chat_buyer">Chat Pembeli</span>
-                    </button>
-                </form>
-                <% } %>
+        <!-- Navigation -->
+        <a href="/seller/orders" class="btn-back">
+            <span>←</span> <span data-i18n="order_detail.back_seller">Kembali ke Orderan Masuk</span>
+        </a>
+
+        <div class="detail-card animate__animated animate__fadeInUp">
+
+            <% /* Determine Progress States */ let step1='' , step2='' , step3='' , step4='' , step5='' ; let
+                fillWidth='0%' ; if (item.status==='pending' ) { step1='active' ; fillWidth='10%' ; } if
+                (item.status==='paid' ) { step1='completed' ; step2='active' ; fillWidth='30%' ; } if
+                (item.status==='processed' ) { step1='completed' ; step2='completed' ; step3='active' ; fillWidth='55%'
+                ; } if (item.status==='shipped' ) { step1='completed' ; step2='completed' ; step3='completed' ;
+                step4='active' ; fillWidth='80%' ; } if (item.status==='completed' ) { step1='completed' ;
+                step2='completed' ; step3='completed' ; step4='completed' ; step5='completed' ; fillWidth='100%' ; } if
+                (item.status==='cancelled' || item.status==='rejected' ) { step1='rejected' ; fillWidth='0%' ; } %>
+
+                <!-- Header Title -->
+                <div class="detail-header">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <h2
+                            style="margin: 0; font-size: 24px; color: var(--text-dark); display: flex; align-items: center; gap: 12px;">
+                            <span>Invoice</span> #ORD-<%= item.order_id %>-ITM-<%= item.id %>
+                        </h2>
+                        <div class="transaction-date">
+                            <span
+                                style="color: var(--text-gray); font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                                📅 <%= new Date(item.Order.createdAt).toLocaleDateString(typeof lang !=='undefined' &&
+                                    lang==='en' ? 'en-US' : 'id-ID' , { weekday: 'long' , day: 'numeric' , month: 'long'
+                                    , year: 'numeric' , hour: '2-digit' , minute: '2-digit' , timeZone: userTz }) %>
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <% if (item.status==='pending' ) { %>
+                            <div
+                                style="display: flex; align-items: center; gap: 8px; color: #f59e0b; background: #fef3c7; padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px;">
+                                <span>⏳</span>
+                                <span data-i18n="order_detail.awaiting_payment">
+                                    <%= t('order_detail.status_waiting') %>
+                                </span>
+                            </div>
+                            <% } else if (item.status==='paid' ) { %>
+                                <div
+                                    style="display: flex; align-items: center; gap: 8px; color: #00B09B; background: rgba(0, 176, 155, 0.1); padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px;">
+                                    <span>📋</span>
+                                    <span data-i18n="order_detail.needs_processing">
+                                        <%= t('order_detail.status_processing') %>
+                                    </span>
+                                </div>
+                                <% } else if (item.status==='processed' ) { %>
+                                    <div
+                                        style="display: flex; align-items: center; gap: 8px; color: #3b82f6; background: #dbeafe; padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px;">
+                                        <span>📦</span>
+                                        <span data-i18n="order_detail.being_packed">
+                                            <%= t('order_detail.item_packing') %>
+                                        </span>
+                                    </div>
+                                    <% } else if (item.status==='shipped' ) { %>
+                                        <div
+                                            style="display: flex; align-items: center; gap: 8px; color: #6366f1; background: #e0e7ff; padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px;">
+                                            <span>🚚</span>
+                                            <span data-i18n="order_detail.awaiting_buyer">
+                                                <%= t('order_detail.awaiting_buyer') %>
+                                            </span>
+                                        </div>
+                                        <% } else if (item.status==='completed' ) { %>
+                                            <div
+                                                style="display: flex; align-items: center; gap: 8px; color: #059669; background: #d1fae5; padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px;">
+                                                <span>🎉</span>
+                                                <span data-i18n="order_detail.transaction_done">
+                                                    <%= t('order_detail.transaction_done') %>
+                                                </span>
+                                            </div>
+                                            <% } else { %>
+                                                <div
+                                                    style="display: flex; align-items: center; gap: 8px; color: var(--text-gray); background: var(--bg-light); padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px;">
+                                                    <span>ℹ️</span>
+                                                    <span>Status: <%= item.status %></span>
+                                                </div>
+                                                <% } %>
+                    </div>
+                </div>
         </div>
 
-        <div class="detail-card">
-            <!-- Header -->
-            <div class="detail-header">
-                <div>
-                    <h1 style="font-size: 24px; margin: 0 0 4px 0;">Order #ORD-<%= item.order_id %>-ITM-<%= item.id %>
-                    </h1>
-                    <p style="color: var(--text-gray); margin: 0;">
-                        <%= new Date(item.createdAt).toLocaleDateString('id-ID', { weekday: 'long' , day: 'numeric' ,
-                            month: 'long' , year: 'numeric' , hour: '2-digit' , minute: '2-digit' }) %>
-                    </p>
-                </div>
-                <div>
-                    <span class="status-badge status-<%= item.status %>">
-                        <%= item.status.toUpperCase() %>
-                    </span>
-                </div>
+        <!-- Visual Progress Tracker -->
+        <div class="progress-tracker">
+            <div class="progress-line">
+                <div class="progress-line-fill" style="width: <%= fillWidth %>;"></div>
             </div>
 
-            <!-- Info Grid -->
-            <div class="detail-section">
-                <div class="info-grid">
-                    <!-- Buyer & Shipping Info -->
-                    <div>
-                        <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 18px;">👤 <span
-                                data-i18n="order_detail.buyer_info">Informasi Pembeli</span></h3>
-                        <div class="info-group">
-                            <div class="info-label" data-i18n="order_detail.buyer_name">Nama Pembeli</div>
-                            <div class="info-value">
-                                <%= item.Order && item.Order.User ? item.Order.User.full_name ||
-                                    item.Order.User.username : 'Unknown' %>
-                            </div>
+            <% if (item.status==='cancelled' || item.status==='rejected' ) { %>
+                <div class="progress-step rejected" style="flex: unset; width: 100%;">
+                    <div class="step-icon">❌</div>
+                    <div class="step-label" data-i18n="user.status_cancelled_both">Pesanan Dibatalkan / Ditolak
+                    </div>
+                </div>
+                <% } else { %>
+                    <div class="progress-step <%= step1 %>">
+                        <div class="step-icon">⏳</div>
+                        <div class="step-label" data-i18n="seller.st_pending">Menunggu</div>
+                    </div>
+                    <div class="progress-step <%= step2 %>">
+                        <div class="step-icon">📋</div>
+                        <div class="step-label" data-i18n="seller.st_paid">Perlu Proses</div>
+                    </div>
+                    <div class="progress-step <%= step3 %>">
+                        <div class="step-icon">📦</div>
+                        <div class="step-label" data-i18n="seller.st_processed">Dikemas</div>
+                    </div>
+                    <div class="progress-step <%= step4 %>">
+                        <div class="step-icon">🚚</div>
+                        <div class="step-label" data-i18n="seller.st_shipped">Dikirim</div>
+                    </div>
+                    <div class="progress-step <%= step5 %>">
+                        <div class="step-icon">✅</div>
+                        <div class="step-label" data-i18n="seller.st_completed">Selesai</div>
+                    </div>
+                    <% } %>
+        </div>
+
+        <!-- Detailed Grid Info -->
+        <div class="info-grid">
+
+            <!-- Buyer Panel -->
+            <div class="info-panel">
+                <h3>👤 <span data-i18n="order_detail.buyer_info">Informasi Pengiriman</span></h3>
+
+                <div class="info-group">
+                    <div class="info-label" data-i18n="order_detail.buyer_name">Akun Pembeli</div>
+                    <div class="info-value" style="display: flex; align-items: center; gap: 8px;">
+                        <div
+                            style="width: 24px; height: 24px; background: #FF6B35; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;">
+                            <%= item.Order && item.Order.user && item.Order.user.username ?
+                                item.Order.user.username.charAt(0).toUpperCase() : '?' %>
                         </div>
-                        <div class="info-group">
-                            <div class="info-label" data-i18n="order_detail.recipient_at_address">Penerima (di Alamat)
-                            </div>
-                            <div class="info-value">
-                                <%= item.Order ? item.Order.recipient_name : '-' %>
-                            </div>
-                        </div>
-                        <div class="info-group">
-                            <div class="info-label" data-i18n="order_detail.phone">Telepon</div>
-                            <div class="info-value">
-                                <%= item.Order ? item.Order.recipient_phone : '-' %>
-                            </div>
-                        </div>
-                        <div class="info-group">
-                            <div class="info-label" data-i18n="order_detail.shipping_address">Alamat Pengiriman</div>
-                            <div class="info-value" style="line-height: 1.5;">
-                                <%= item.Order ? item.Order.shipping_address : '-' %>
-                            </div>
+                        <div style="font-weight: 600; font-size: 15px; color: var(--text-dark);">
+                            <%= item.Order && item.Order.user ? (item.Order.user.full_name || item.Order.user.username)
+                                : 'Anonim' %>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Product Info -->
-                    <div>
-                        <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 18px;">📦 <span
-                                data-i18n="order_detail.product_ordered">Produk Dipesan</span></h3>
-                        <div style="display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px;">
-                            <img src="<%= item.Product ? item.Product.image_url : '/img/default-product.svg' %>"
-                                style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover;">
-                            <div>
-                                <div style="font-weight: 600; font-size: 16px; margin-bottom: 4px;">
-                                    <%= item.Product ? item.Product.name : 'Unknown Product' %>
-                                </div>
-                                <div style="font-size: 14px; color: var(--text-gray);">
-                                    <span data-i18n="order_detail.unit_price">Harga Satuan</span>: Rp <%=
-                                        parseFloat(item.price_at_purchase).toLocaleString('id-ID') %>
-                                </div>
-                                <div style="font-size: 14px; color: var(--text-gray);">
-                                    <span data-i18n="order_detail.quantity">Jumlah</span>: <strong>
-                                        <%= item.quantity %>
-                                    </strong>
-                                </div>
-                            </div>
-                        </div>
+                <div style="height: 1px; background: rgba(0,0,0,0.05); margin: 16px 0;"></div>
 
-                        <div style="border-top: 1px solid var(--border); padding-top: 16px;">
-                            <div
-                                style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 700;">
-                                <span data-i18n="order_detail.total_revenue">Total Pendapatan</span>
-                                <span style="color: #FF6B35;">Rp <%= (item.price_at_purchase *
-                                        item.quantity).toLocaleString('id-ID') %></span>
-                            </div>
-                        </div>
+                <div class="info-group">
+                    <div class="info-label" data-i18n="order_detail.recipient_at_address">Penerima & Kontak
+                    </div>
+                    <div class="info-value" style="font-weight: 700;">
+                        <%= item.Order ? item.Order.recipient_name : '-' %>
+                            <span
+                                style="color: var(--text-gray); font-weight: 500; font-size: 14px; margin-left: 8px;">(
+                                <%= item.Order ? item.Order.recipient_phone : '-' %>)
+                            </span>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label" data-i18n="order_detail.shipping_address">Alamat Tujuan</div>
+                    <div class="info-value"
+                        style="line-height: 1.6; color: var(--text-gray); font-size: 14px; background: var(--bg-white); padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+                        📍 <%= item.Order ? item.Order.shipping_address : '-' %>
                     </div>
                 </div>
             </div>
 
-            <!-- Actions -->
-            <!-- Only show actions if not cancelled/rejected/completed -->
-            <div class="detail-section"
-                style="background: var(--bg-light); display: flex; justify-content: flex-end; gap: 12px;">
-                <% if (item.status==='pending' || item.status==='paid' ) { %>
-                    <form action="/orders/items/<%= item.id %>/reject" method="POST"
-                        onsubmit="return confirmAction(event, t('seller.reject_confirm'), t('seller.yes_reject'), '#EF4444');">
-                        <button type="submit" class="btn-danger"
-                            style="padding: 10px 20px; border-radius: 8px; font-weight: 600; border: none; background: #fee2e2; color: #b91c1c; cursor: pointer;">
-                            ❌ <span data-i18n="order_detail.btn_reject">Tolak Pesanan</span>
+            <!-- Product Panel -->
+            <div class="info-panel">
+                <h3>📦 <span data-i18n="order_detail.product_ordered">Rincian Produk</span></h3>
+
+                <div
+                    style="display: flex; gap: 16px; margin-bottom: 24px; background: var(--bg-white); padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
+                    <img src="<%= item.Product ? item.Product.image_url : '/img/default-product.svg' %>"
+                        style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border);">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; font-size: 16px; margin-bottom: 4px; color: var(--text-dark);">
+                            <%= item.Product ? item.Product.name : 'Unknown Product' %>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                            <div style="font-size: 14px; color: var(--text-gray);">
+                                <%= item.quantity %>x Rp <%= parseFloat(item.price_at_purchase).toLocaleString('id-ID')
+                                        %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="border-top: 2px dashed var(--border); padding-top: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <span class="info-label" style="font-size: 14px;" data-i18n="order_detail.total_revenue">Total
+                            Pendapatan</span>
+                        <span style="color: #FF6B35; font-size: 24px; font-weight: 800;">
+                            Rp <%= (item.price_at_purchase * item.quantity).toLocaleString('id-ID') %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Controls Engine -->
+        <div class="action-footer">
+            <% if (item.status==='pending' || item.status==='paid' ) { %>
+                <form action="/orders/items/<%= item.id %>/reject" method="POST"
+                    onsubmit="return confirmAction(event, `<%- t('order.seller_reject_error') %>`, `<%- t('order_detail.btn_reject') %>`, '#EF4444');">
+                    <button type="submit" class="btn-action btn-reject">
+                        ❌ <span data-i18n="order_detail.btn_reject">Tolak Pesanan</span>
+                    </button>
+                </form>
+
+                <form action="/orders/items/<%= item.id %>/accept" method="POST"
+                    onsubmit="return confirmAction(event, `<%- t('seller.accept_desc') %>`, `<%- t('order_detail.btn_accept') %>`, '#10B981');">
+                    <button type="submit" class="btn-action btn-accept">
+                        ✅ <span data-i18n="order_detail.btn_accept">Proses Pesanan</span>
+                    </button>
+                </form>
+
+                <% } else if (item.status==='processed' ) { %>
+                    <form action="/orders/items/<%= item.id %>/ship" method="POST"
+                        onsubmit="return confirmAction(event, `<%- t('seller.ship_desc') %>`, `<%- t('order_detail.btn_ship') %>`, '#FF6B35');">
+                        <button type="submit" class="btn-action btn-ship">
+                            🚚 <span data-i18n="order_detail.btn_ship">Kirim Paket Sekarang</span>
                         </button>
                     </form>
-                    <form action="/orders/items/<%= item.id %>/accept" method="POST">
-                        <button type="submit" class="btn-success"
-                            style="padding: 10px 20px; border-radius: 8px; font-weight: 600; border: none; background: #d1fae5; color: #065f46; cursor: pointer;">
-                            ✅ <span data-i18n="order_detail.btn_accept">Terima/Proses</span>
-                        </button>
-                    </form>
-                    <% } else if (item.status==='processed' ) { %>
-                        <form action="/orders/items/<%= item.id %>/ship" method="POST">
-                            <button type="submit" class="btn-primary"
-                                style="padding: 10px 20px; border-radius: 8px; font-weight: 600; border: none; background: #e0e7ff; color: #4338ca; cursor: pointer;">
-                                🚚 <span data-i18n="order_detail.btn_ship">Kirim Pesanan</span>
-                            </button>
-                        </form>
-                        <% } else if (item.status==='shipped' ) { %>
-                            <span style="color: #6366f1; font-weight: 600;"
-                                data-i18n="order_detail.awaiting_buyer">Sedang Dikirim... (Menunggu konfirmasi
+
+                    <% } else if (item.status==='shipped' ) { %>
+                        <div
+                            style="display: flex; align-items: center; gap: 8px; color: #6366f1; background: #e0e7ff; padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px;">
+                            <span>🚚</span>
+                            <span data-i18n="order_detail.awaiting_buyer">Sedang Dikirim... (Menunggu konfirmasi
                                 pembeli)</span>
-                            <% } else if (item.status==='completed' ) { %>
-                                <span style="color: #059669; font-weight: 600;"
-                                    data-i18n="order_detail.transaction_done">✅ Transaksi Selesai</span>
-                                <% } else { %>
-                                    <span style="color: var(--text-gray); font-weight: 600;">Status: <%= item.status %>
-                                    </span>
-                                    <% } %>
-            </div>
+                        </div>
+
+                        <% } else if (item.status==='completed' ) { %>
+                            <div
+                                style="display: flex; align-items: center; gap: 8px; color: #059669; background: #d1fae5; padding: 12px 24px; border-radius: 99px; font-weight: 600; font-size: 14px;">
+                                <span>🎉</span>
+                                <span data-i18n="order_detail.transaction_done">Pendapatan Telah Cair!</span>
+                            </div>
+                            <% } %>
         </div>
     </div>
 

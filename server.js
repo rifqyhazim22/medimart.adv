@@ -5,7 +5,9 @@ const flash = require('connect-flash');
 const path = require('path');
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 const { i18nMiddleware } = require('./utils/serverI18n');
+const viewHelpers = require('./utils/viewHelpers');
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 3001;
@@ -21,6 +23,10 @@ const io = new Server(server, {
 const routes = require('./routes');
 
 // Middleware
+app.use(helmet({
+    contentSecurityPolicy: false, // Dinonaktifkan sementara gara-gara script eksternal (CDN/Socket) bisa terblokir jika konfig tidak tepat
+    crossOriginEmbedderPolicy: false
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
@@ -70,8 +76,16 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(async (req, res, next) => {
     res.locals.currentUser = req.session.user || null;
     res.locals.success_msg = req.flash('success_msg');
+    res.locals.auth_success = req.flash('auth_success');
     res.locals.error_msg = req.flash('error_msg');
     res.locals.error = req.flash('error');
+
+    // Global Timezone User Tracking
+    res.locals.userTz = req.cookies.tz || 'Asia/Jakarta';
+
+    // UI Helpers
+    res.locals.renderOrderBadge = viewHelpers.renderOrderBadge;
+    res.locals.renderItemInlineStatus = viewHelpers.renderItemInlineStatus;
 
     res.locals.cartCount = 0;
     res.locals.cartTotal = 0;

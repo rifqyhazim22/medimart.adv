@@ -788,8 +788,9 @@ class UI {
             badge = '<span class="product-badge badge-warning">Sisa Sedikit</span>';
         }
 
-        // Category Icon/Badge
-        const categoryBadge = `<span class="category-tag">${Utils.sanitizeHTML(product.category)}</span>`;
+        const catKey = product.category ? 'category.' + product.category.toLowerCase().replace(/ /g, '_') : '';
+        const catIcon = Utils.getIconForCategory ? Utils.getIconForCategory(product.category) : '💊';
+        const categoryBadge = `<span class="category-tag">${catIcon} <span ${catKey ? `data-i18n="${catKey}"` : ''}>${Utils.sanitizeHTML(Utils.getTranslatedCategory(product.category))}</span></span>`;
 
         // Actions based on view and role
         const user = this.db.getCurrentUser();

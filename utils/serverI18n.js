@@ -5,14 +5,38 @@
  */
 
 const translations = {
+    // ========== CATEGORIES ==========
+    'category.obat_bebas': { id: 'Obat Bebas', en: 'Over-the-Counter' },
+    'category.obat_keras': { id: 'Obat Keras', en: 'Prescription Drugs' },
+    'category.obat_nyeri': { id: 'Obat Nyeri', en: 'Pain Relievers' },
+    'category.vitamin': { id: 'Vitamin', en: 'Vitamins' },
+    'category.alat_kesehatan': { id: 'Alat Kesehatan', en: 'Medical Devices' },
+    'category.herbal': { id: 'Herbal', en: 'Herbal Medicine' },
+
     // ========== AUTH ==========
     'auth.role_denied': {
         id: (role) => `Akses ditolak. Coba periksa lagi, karena sepertinya ini bukan akun ${role}.`,
         en: (role) => `Access denied. Please check again, this doesn't seem to be a ${role} account.`
     },
-    'auth.welcome_back': {
+    'auth.welcome_back_1': {
         id: (name) => `Selamat datang kembali, ${name}! Senang melihat Anda bertransaksi lagi.`,
         en: (name) => `Welcome back, ${name}! Nice to see you again.`
+    },
+    'auth.welcome_back_2': {
+        id: (name) => `Halo ${name}, selamat datang! Temukan kembali kebutuhan kesehatan Anda hari ini.`,
+        en: (name) => `Hello ${name}, welcome back! Find your healthcare needs today.`
+    },
+    'auth.welcome_back_3': {
+        id: (name) => `Senang berjumpa dengan Anda lagi, ${name}! Yuk, mulai belanja hemat hari ini!`,
+        en: (name) => `Great to see you again, ${name}! Let's start shopping smart today!`
+    },
+    'auth.welcome_back_4': {
+        id: (name) => `Selamat datang, ${name}! Sudah siap mengeksplor promo menarik hari ini?`,
+        en: (name) => `Welcome, ${name}! Are you ready to explore today's exciting offers?`
+    },
+    'auth.welcome_back_5': {
+        id: (name) => `Halo ${name}! Terima kasih sudah kembali mempercayakan kesehatan Anda bersama kami.`,
+        en: (name) => `Hi ${name}! Thank you for trusting us with your health again.`
     },
     'auth.wrong_credentials': {
         id: 'Hmm, sepertinya Username atau Password Anda kurang tepat. Coba lagi ya!',
@@ -58,6 +82,14 @@ const translations = {
         id: 'Password tidak cocok.',
         en: 'Passwords do not match.'
     },
+    'auth.logout_confirm': {
+        id: 'Ingin Keluar?',
+        en: 'Ready to Leave?'
+    },
+    'auth.logout_confirm_desc': {
+        id: 'Anda akan keluar dari sesi saat ini. Anda harus masuk lagi untuk mengakses dashboard dan keranjang belanja Anda.',
+        en: 'You will be logged out of your current session. You will need to log in again to access your dashboard and cart.'
+    },
     'auth.password_reset_success': {
         id: 'Password berhasil diubah. Silakan login.',
         en: 'Password changed successfully. Please login.'
@@ -66,7 +98,66 @@ const translations = {
         id: 'Gagal mereset password.',
         en: 'Failed to reset password.'
     },
+    'swal.error_title': {
+        id: 'Gagal',
+        en: 'Error'
+    },
+    'swal.success_title': {
+        id: 'Berhasil',
+        en: 'Success'
+    },
+    'order.status_shipped': {
+        id: 'Dikirim',
+        en: 'Shipped'
+    },
 
+    // ========== XENDIT CHECKOUT (SWEETALERT TRANSLATIONS) ==========
+    'swal.securing': {
+        id: 'Mengamankan Transaksi..',
+        en: 'Securing Transaction..'
+    },
+    'swal.securing_desc': {
+        id: 'Mohon tunggu, kami sedang menyandikan pesanan Anda 🔒',
+        en: 'Please wait, we are encrypting your order 🔒'
+    },
+    'swal.payment_success': {
+        id: 'Pembayaran Berhasil!',
+        en: 'Payment Successful!'
+    },
+    'swal.payment_success_desc': {
+        id: 'Terima kasih, pesanan Anda sedang diproses oleh penjual.',
+        en: 'Thank you, your order is being processed by the seller.'
+    },
+    'swal.payment_pending': {
+        id: 'Menunggu Pembayaran',
+        en: 'Awaiting Payment'
+    },
+    'swal.payment_pending_desc': {
+        id: 'Silakan selesaikan pembayaran Anda sesuai instruksi Xendit.',
+        en: 'Please complete your payment according to Xendit instructions.'
+    },
+    'swal.payment_error': {
+        id: 'Pembayaran Gagal',
+        en: 'Payment Failed'
+    },
+    'swal.payment_error_desc': {
+        id: 'Terjadi masalah dengan transaksi Anda. Silakan coba lagi.',
+        en: 'There was a problem with your transaction. Please try again.'
+    },
+    'swal.payment_cancelled': {
+        id: 'Pembayaran Dibatalkan',
+        en: 'Payment Cancelled'
+    },
+    'swal.payment_cancelled_desc': {
+        id: 'Anda menutup halaman pembayaran sebelum selesai.',
+        en: 'You closed the payment page before finishing.'
+    },
+    'swal.error_title': {
+        id: 'Ups!',
+        en: 'Oops!'
+    },
+
+    // ========== CHAT ==========
     // ========== CART ==========
     'cart.product_not_found': {
         id: 'Produk tidak ditemukan',
@@ -107,6 +198,22 @@ const translations = {
     'cart.cleared_flash': {
         id: 'Keranjang sudah dibersihkan. Yuk mulai berburu barang baru! ✨',
         en: 'Cart has been cleared. Let\'s start hunting for new items! ✨'
+    },
+    'cart.product_added_quantity': {
+        id: 'Jumlah produk ditambahkan',
+        en: 'Product quantity increased'
+    },
+    'cart.insufficient_stock': {
+        id: 'Stok tidak mencukupi',
+        en: 'Insufficient stock'
+    },
+    'cart.product_added': {
+        id: 'Produk masuk keranjang',
+        en: 'Product added to cart'
+    },
+    'cart.out_of_stock': {
+        id: 'Stok habis',
+        en: 'Out of stock'
     },
 
     // ========== PRODUCT ==========
@@ -356,6 +463,10 @@ const translations = {
         id: 'Gambar siap dikirim',
         en: 'Image ready to send'
     },
+    'chat.image_only': {
+        id: '📷 Gambar',
+        en: '📷 Image'
+    },
     'chat.upload_failed': {
         id: 'Gagal upload gambar',
         en: 'Failed to upload image'
@@ -364,6 +475,38 @@ const translations = {
         id: 'Percakapan dimulai',
         en: 'Conversation started'
     },
+
+    // ========== SELLER DASHBOARD (STATUSES) ==========
+    'seller.st_pending': { id: '⏳ Menunggu Pembayaran', en: '⏳ Awaiting Payment' },
+    'seller.st_paid': { id: '⏳ Perlu Diproses', en: '⏳ Needs Processing' },
+    'seller.st_processed': { id: '📦 Sedang Dikemas', en: '📦 Being Packed' },
+    'seller.st_shipped': { id: '🚚 Meluncur Dikirim', en: '🚚 Shipped' },
+    'seller.st_completed': { id: '✅ Transaksi Selesai', en: '✅ Completed' },
+    'seller.st_cancelled': { id: '❌ Dibatalkan', en: '❌ Cancelled' },
+    'seller.st_rejected': { id: '⛔ Ditolak', en: '⛔ Rejected' },
+
+    // ========== USER DASHBOARD (STATUSES) ==========
+    'user.status_pending': { id: '⏳ Menunggu Pembayaran', en: '⏳ Awaiting Payment' },
+    'user.status_paid': { id: '⏳ Menunggu Konfirmasi', en: '⏳ Awaiting Confirmation' },
+    'user.status_processing': { id: '📦 Sedang Diproses', en: '📦 Processing' },
+    'user.status_shipped': { id: '🚚 Sedang Dikirim', en: '🚚 In Transit' },
+    'user.status_completed': { id: '✅ Pesanan Selesai', en: '✅ Completed' },
+    'user.status_cancelled': { id: '❌ Dibatalkan Pembeli', en: '❌ Cancelled by Buyer' },
+    'user.status_rejected': { id: '⛔ Ditolak Keseluruhan', en: '⛔ Fully Rejected' },
+    'user.status_cancelled_both': { id: '⛔ Batal (Parsial)', en: '⛔ Partially Cancelled' },
+    'user.status_partial': { id: 'Parsial', en: 'Partial' },
+    'user.status_pending_short': { id: '⏳ Menunggu Bayar', en: '⏳ Awaiting Payment' },
+    'user.status_paid_short': { id: '⏳ Menunggu Konfirmasi', en: '⏳ Awaiting Confirmation' },
+    'user.status_processing_short': { id: '📦 Sedang Diproses', en: '📦 Processing' },
+    'user.status_shipped_short': { id: '🚚 Sedang Dikirim', en: '🚚 In Transit' },
+    'user.status_completed_short': { id: '✅ Pesanan Selesai', en: '✅ Completed' },
+    'user.status_cancelled_short': { id: '❌ Dibatalkan', en: '❌ Cancelled' },
+    'user.status_rejected_short': { id: '⛔ Ditolak', en: '⛔ Rejected' },
+    'order_detail.status_waiting': { id: 'Menunggu Pembayaran', en: 'Awaiting Payment' },
+    'order_detail.status_processing': { id: 'Perlu Diproses', en: 'Needs Processing' },
+    'order_detail.item_packing': { id: 'Sedang Dikemas', en: 'Being Packed' },
+    'order_detail.awaiting_buyer': { id: 'Menunggu Konfirmasi Pembeli', en: 'Awaiting Buyer Confirmation' },
+    'order_detail.transaction_done': { id: 'Transaksi Selesai', en: 'Transaction Completed' }
 };
 
 /**

@@ -20,6 +20,10 @@ const ensureSeller = (req, res, next) => {
 // Customer routes
 router.post('/orders', ensureAuthenticated, orderController.create);
 router.get('/orders/:id', ensureAuthenticated, orderController.detail);
+router.get('/orders/:id/resume-payment', ensureAuthenticated, orderController.resumePayment);
+
+// Xendit Webhook Notification
+router.post('/orders/xendit-webhook', orderController.xenditWebhook);
 router.post('/orders/:id/cancel', ensureAuthenticated, orderController.cancel);
 router.post('/orders/items/:id/cancel', ensureAuthenticated, orderController.cancelItem);
 router.post('/orders/items/:id/complete', ensureAuthenticated, orderController.completeItem);

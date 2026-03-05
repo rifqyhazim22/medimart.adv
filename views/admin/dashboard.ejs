@@ -181,14 +181,19 @@
             color: #92400e;
         }
 
+        .badge-info {
+            background: #ccfbf1;
+            color: #0d9488;
+        }
+
+        .badge-shipping {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
         .badge-danger {
             background: #fee2e2;
             color: #b91c1c;
-        }
-
-        .badge-info {
-            background: #dbeafe;
-            color: #1e40af;
         }
 
         .badge-pending {
@@ -309,12 +314,14 @@
                                     data-i18n="admin.store_hub">
                                     Pusat Etalase Obat</h4>
                                 <p style="margin: 0; font-size: 15px; color: var(--text-dark); line-height: 1.6;">
-                                    Menghimpun <strong style="color: #3b82f6; font-size: 18px;">
-                                        <%= stats.totalProducts %>
-                                    </strong> obat-obatan yang dinaungi oleh <strong
+                                    <span data-i18n="admin.stat_desc_1">Menghimpun</span> <strong
                                         style="color: #3b82f6; font-size: 18px;">
+                                        <%= stats.totalProducts %>
+                                    </strong> <span data-i18n="admin.stat_desc_2">obat-obatan yang dinaungi oleh</span>
+                                    <strong style="color: #3b82f6; font-size: 18px;">
                                         <%= stats.totalSellers %>
-                                    </strong> Mitra Lapak Aktif.</p>
+                                    </strong> <span data-i18n="admin.stat_desc_3">Mitra Lapak Aktif.</span>
+                                </p>
                             </div>
 
                             <div
@@ -323,12 +330,13 @@
                                     data-i18n="admin.capital_flow">
                                     Sirkulasi Kapital (GMV)</h4>
                                 <p style="margin: 0; font-size: 15px; color: var(--text-dark); line-height: 1.6;">
-                                    Perputaran dana kotor sebesar <strong style="color: #10b981; font-size: 18px;">Rp
+                                    <span data-i18n="admin.stat_desc_4">Perputaran dana kotor sebesar</span> <strong
+                                        style="color: #10b981; font-size: 18px;">Rp
                                         <%= (stats.totalRevenue || 0).toLocaleString('id-ID') %>
-                                    </strong> via kesuksesan
+                                    </strong> <span data-i18n="admin.stat_desc_5">via kesuksesan</span>
                                     <strong style="color: #f43f5e; font-size: 18px;">
                                         <%= stats.totalOrders %>
-                                    </strong> transaksi pesanan.
+                                    </strong> <span data-i18n="admin.stat_desc_6">transaksi pesanan.</span>
                                 </p>
                             </div>
 
@@ -359,10 +367,10 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Role</th>
+                                <th data-i18n="admin.col_id">ID</th>
+                                <th data-i18n="admin.col_username">Username</th>
+                                <th data-i18n="admin.col_email">Email</th>
+                                <th data-i18n="admin.col_role">Role</th>
                                 <th data-i18n="admin.col_registered">Terdaftar Pada</th>
                                 <th data-i18n="admin.col_action">Aksi</th>
                             </tr>
@@ -385,15 +393,27 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString('id-ID', {
-                                            day: 'numeric' , month: 'short' , year: 'numeric' }) : '-' %>
+                                        <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString(typeof lang
+                                            !=='undefined' && lang==='en' ? 'en-US' : 'id-ID' , { day: 'numeric' ,
+                                            month: 'short' , year: 'numeric' , timeZone: userTz }) : '-' %>
                                     </td>
                                     <td>
                                         <% if (user.role !=='admin' ) { %>
-                                            <form action="/admin/users/<%= user.id %>/delete" method="POST">
-                                                <button type="submit" class="btn-icon-danger"
-                                                    data-i18n="admin.btn_delete">Hapus</button>
-                                            </form>
+                                            <div style="display: flex; gap: 8px;">
+                                                <form action="/chat/start" method="POST" style="margin: 0;">
+                                                    <input type="hidden" name="sellerId" value="<%= user.id %>">
+                                                    <button type="submit" class="btn-icon-danger"
+                                                        style="color: #0d9488; border-color: #ccfbf1;"
+                                                        onmouseover="this.style.background='#ccfbf1'"
+                                                        onmouseout="this.style.background='transparent'"
+                                                        data-i18n="admin.btn_chat">💬 Chat</button>
+                                                </form>
+                                                <form action="/admin/users/<%= user.id %>/delete" method="POST"
+                                                    style="margin: 0;">
+                                                    <button type="submit" class="btn-icon-danger"
+                                                        data-i18n="admin.btn_delete">🗑️ Hapus</button>
+                                                </form>
+                                            </div>
                                             <% } else { %>
                                                 <span style="color: var(--border);">-</span>
                                                 <% } %>
@@ -414,10 +434,10 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Order ID</th>
+                                <th data-i18n="admin.col_order_id">Order ID</th>
                                 <th data-i18n="admin.col_customer">Pelanggan</th>
-                                <th>Total</th>
-                                <th>Status</th>
+                                <th data-i18n="admin.col_total">Total</th>
+                                <th data-i18n="admin.col_status">Status</th>
                                 <th data-i18n="admin.col_date">Tanggal</th>
                                 <th data-i18n="admin.col_action">Aksi</th>
                             </tr>
@@ -436,26 +456,33 @@
                                         </td>
                                         <td>
                                             <% // Minimalist Status Checking for Admin let statusClass='pending' ; let
-                                                badgeText='Menunggu Proses' ; if (order.status==='paid' ) {
-                                                statusClass='info' ; badgeText='Menunggu Proses' ; } else if
-                                                (order.status==='processing' ) { statusClass='warning' ;
-                                                badgeText='Sedang Diproses' ; } else if (order.status==='shipped' ) {
-                                                statusClass='warning' ; badgeText='Sedang Dikirim' ; } else if
-                                                (order.status==='completed' ) { statusClass='success' ;
-                                                badgeText='Selesai' ; } else if (order.status==='cancelled' ) {
-                                                statusClass='danger' ; badgeText='Dibatalkan Pembeli / Gagal Total' ; }
-                                                else if (order.status==='rejected' ) { statusClass='danger' ;
-                                                badgeText='Ditolak Penjual / Habis' ; } else { statusClass='pending' ;
+                                                badgeText='⏳ Menunggu Proses' ; let i18nStatus='user.status_paid' ; if
+                                                (order.status==='paid' ) { statusClass='warning' ;
+                                                badgeText='⏳ Menunggu Proses' ; i18nStatus='user.status_paid' ; } else
+                                                if (order.status==='processing' ) { statusClass='info' ;
+                                                badgeText='📦 Sedang Diproses' ; i18nStatus='user.status_processing' ; }
+                                                else if (order.status==='shipped' ) { statusClass='shipping' ;
+                                                badgeText='🚚 Sedang Dikirim' ; i18nStatus='user.status_shipped' ; }
+                                                else if (order.status==='completed' ) { statusClass='success' ;
+                                                badgeText='✅ Selesai' ; i18nStatus='user.status_completed' ; } else if
+                                                (order.status==='cancelled' ) { statusClass='danger' ;
+                                                badgeText='❌ Dibatalkan Pembeli / Gagal Total' ;
+                                                i18nStatus='user.status_cancelled_both' ; } else if
+                                                (order.status==='rejected' ) { statusClass='danger' ;
+                                                badgeText='⛔ Ditolak Penjual / Habis' ;
+                                                i18nStatus='user.status_rejected' ; } else { statusClass='pending' ;
                                                 badgeText=order.status ? order.status.charAt(0).toUpperCase() +
-                                                order.status.slice(1) : 'Unknown' ; } %>
-                                                <span class="badge badge-<%= statusClass %>">
-                                                    <%= badgeText %>
+                                                order.status.slice(1) : 'Unknown' ; i18nStatus='' ; } %>
+                                                <span class="badge badge-<%= statusClass %>" <% if (i18nStatus) {
+                                                    %>data-i18n="<%= i18nStatus %>"<% } %>>
+                                                            <%= badgeText %>
                                                 </span>
                                         </td>
                                         <td>
-                                            <%= order.created_at ? new
-                                                Date(order.created_at).toLocaleDateString('id-ID', { day: 'numeric' ,
-                                                month: 'short' , year: 'numeric' }) : '-' %>
+                                            <%= order.created_at ? new Date(order.created_at).toLocaleDateString(typeof
+                                                lang !=='undefined' && lang==='en' ? 'en-US' : 'id-ID' , {
+                                                day: 'numeric' , month: 'short' , year: 'numeric' , timeZone: userTz })
+                                                : '-' %>
                                         </td>
                                         <td>
                                             <form action="/admin/orders/<%= order.id %>/delete" method="POST"

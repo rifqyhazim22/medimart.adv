@@ -1324,3 +1324,34 @@ body {
         gap: 10px;
     }
 }
+
+/* ==========================================
+   SweetAlert2 Theme Overrides
+   ========================================== */
+.swal2-popup {
+    background: var(--bg-white) !important;
+    color: var(--text-dark) !important;
+    border-radius: 16px !important;
+    border: 1px solid var(--border) !important;
+}
+
+.swal2-title {
+    color: var(--text-dark) !important;
+}
+
+.swal2-html-container {
+    color: var(--text-gray) !important;
+}
+
+.swal2-confirm {
+    background: var(--primary) !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+}
+
+.swal2-cancel {
+    background: var(--bg-light) !important;
+    color: var(--text-dark) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+}
