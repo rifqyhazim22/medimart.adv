@@ -1,5 +1,7 @@
 # 🏥 MediMart: The Next-Gen Healthcare Ecosystem
 
+[English](README.md) | [Bahasa Indonesia](README.id.md)
+
 ![Architecture](https://img.shields.io/badge/Architecture-MVC%20%7C%20SSR-orange?style=for-the-badge)
 ![Database](https://img.shields.io/badge/Database-PostgreSQL%20(Neon)-blue?style=for-the-badge&logo=postgresql)
 ![Realtime](https://img.shields.io/badge/Realtime-Socket.io-black?style=for-the-badge&logo=socketdotio)
